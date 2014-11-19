@@ -14,6 +14,12 @@
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
+    <style>
+      @import url(Cesium/Build/Cesium/Widgets/widgets.css);
+      html, body, #cesiumContainer {
+        width: 100%; height: 100%; margin: 0; padding: 0;
+      }
+    </style>
   </head>
   <body ng-app="presetsApp">
     <!--[if lt IE 7]>
@@ -21,17 +27,10 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="container">
-      <div class="header">
-        <ul class="nav nav-pills pull-right">
-          <li class="active"><a ng-href="#">Home</a></li>
-          <li><a ng-href="#">About</a></li>
-          <li><a ng-href="#">Contact</a></li>
-        </ul>
-        <h3 class="text-muted">presets</h3>
-      </div>
+    <br />
+    <div class="container-fluid">
 
-      <div ng-include="'views/main.html'" ng-controller="MainCtrl"></div>
+      <div ui-view=""></div>
 
       <div class="footer">
         <p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team</p>
@@ -59,6 +58,7 @@
 
     <!-- build:js(app) scripts/vendor.js -->
     <!-- bower:js -->
+    <script src="Cesium/Build/Cesium/Cesium.js"></script>
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
@@ -70,6 +70,7 @@
     <script src="bower_components/restangular/dist/restangular.js"></script>
     <script src="bower_components/annapolis-data/dist/annapolis-data.js"></script>
     <script src="bower_components/annapolis-map/dist/annapolis-map.js"></script>
+    <script src="bower_components/annapolis-ui/dist/annapolis-ui.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -77,6 +78,7 @@
         <script src="scripts/app.js"></script>
         <script src="scripts/config.js"></script>
         <script src="scripts/controllers/main.js"></script>
+        <script src="scripts/controllers/cesium.ctrl.js"></script>
         <!-- endbuild -->
 </body>
 </html>

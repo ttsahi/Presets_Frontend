@@ -17,7 +17,8 @@
             'ui.router',
             'restangular',
             'annapolis-data',
-            'annapolis-map'
+            'annapolis-map',
+            'annapolis-ui'
         ]);
 
 }());

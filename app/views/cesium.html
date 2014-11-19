@@ -1,0 +1,31 @@
+<div class="row">
+  <div class="col-md-6">
+    <div>
+      <button type="button" class="btn btn-primary" ng-click="startDistribution()">Start distribution</button>
+      <button type="button" class="btn btn-primary" ng-click="stopDistribution()">Stop distribution</button>
+      <button type="button" class="btn btn-primary" ng-click="openConnection()">Open connection</button>
+      <button type="button" class="btn btn-primary" ng-click="closeConnection()">Close connection</button>
+    </div>
+    <br />
+    <div id="cesiumContainer"></div>
+  </div>
+  <div class="col-md-6">
+    <table class="table">
+      <thead>
+      <th>ID</th>
+      <th>Status</th>
+      <th>Location</th>
+      </thead>
+      <tbody>
+      <tr  ng-lazy-repeat="manager" entity="track">
+        <td>{{track.id}}</td>
+        <td>{{track.status}}</td>
+        <td>
+          lat: {{track.location.lat}} <br />
+          lon: {{track.location.lon}} <br />
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

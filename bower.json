@@ -11,7 +11,8 @@
     "angular-ui-router": "~0.2.12",
     "restangular": "~1.4.0",
     "annapolis-data": "*",
-    "annapolis-map": "*"
+    "annapolis-map": "*",
+    "annapolis-ui": "*"
   },
   "devDependencies": {
     "angular-mocks": "~1.2.0",

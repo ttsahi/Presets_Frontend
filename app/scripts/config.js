@@ -9,7 +9,21 @@
     app.config(['$stateProvider', '$urlRouterProvider',
         function($stateProvider, $urlRouterProvider){
 
+          $urlRouterProvider.otherwise('/');
+
+          $stateProvider
+            .state('cesium', {
+              url: '/',
+              templateUrl: 'views/cesium.html',
+              controller: 'cesiumController'
+            });
         }
+    ]).config(['$distributionProvider',
+      function($distributionProvider){
+
+        $distributionProvider.setSocketUrl('ws://localhost:9000/api/sockets/add');
+        $distributionProvider.allowNotifications (false);
+      }
     ]);
 
 }(angular.module('presetsApp')));
