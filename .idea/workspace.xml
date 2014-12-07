@@ -2,19 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32d0c907-dd96-494b-a32c-d7429bc3e1df" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/styles/presets.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/scripts/controllers/presets.ctrl.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/scripts/presets/ui/directives/presets.drv.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/templates/presets.drv.tmp.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/presets.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/scripts/presets/ui/directives/tile.drv.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/templates/workspace.drv.tmp.html" />
-      <change type="DELETED" beforePath="C:\Presets\Presets_Backend\public\Presets_Frontend\app\scripts\controllers\main.js" afterPath="" />
-      <change type="DELETED" beforePath="C:\Presets\Presets_Backend\public\Presets_Frontend\app\views\main.html" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/config.js" afterPath="$PROJECT_DIR$/app/scripts/config.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/index.html" afterPath="$PROJECT_DIR$/app/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/styles/main.css" afterPath="$PROJECT_DIR$/app/styles/main.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js" afterPath="$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Presets_Frontend.iws" />
@@ -42,7 +30,7 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="799" max-vertical-offset="1700">
+            <state vertical-scroll-proportion="-0.0" vertical-offset="799" max-vertical-offset="1700">
               <caret line="47" column="10" selection-start-line="47" selection-start-column="10" selection-end-line="47" selection-end-column="10" />
               <folding />
             </state>
@@ -72,22 +60,17 @@
       <file leaf-file-name="workspace.drv.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.32225063" vertical-offset="714" max-vertical-offset="8715">
-              <caret line="46" column="32" selection-start-line="46" selection-start-column="32" selection-end-line="46" selection-end-column="32" />
+            <state vertical-scroll-proportion="4.0666666" vertical-offset="32129" max-vertical-offset="37401">
+              <caret line="1827" column="131" selection-start-line="1827" selection-start-column="131" selection-end-line="1827" selection-end-column="131" />
               <folding>
-                <element signature="e#2280#3502#0" expanded="false" />
-                <element signature="e#3548#4263#0" expanded="false" />
-                <element signature="e#5033#5936#0" expanded="false" />
-                <element signature="e#5980#6903#0" expanded="false" />
-                <element signature="e#6948#8291#0" expanded="false" />
-                <element signature="e#8337#9700#0" expanded="false" />
-                <element signature="e#9979#41909#0" expanded="false" />
-                <element signature="e#41953#42862#0" expanded="false" />
-                <element signature="e#42945#54275#0" expanded="false" />
-                <element signature="e#55982#67138#0" expanded="false" />
-                <element signature="e#67208#69191#0" expanded="false" />
-                <marker date="1417948521088" expanded="true" signature="73855:73884" placeholder="..." />
-                <marker date="1417948521088" expanded="true" signature="73855:73910" placeholder="..." />
+                <element signature="e#4643#5673#0" expanded="false" />
+                <element signature="e#45464#45734#0" expanded="false" />
+                <element signature="e#45802#46003#0" expanded="false" />
+                <element signature="e#46046#46203#0" expanded="false" />
+                <element signature="e#46301#46625#0" expanded="false" />
+                <element signature="e#46678#46835#0" expanded="false" />
+                <element signature="e#58239#60222#0" expanded="false" />
+                <marker date="1417955525537" expanded="true" signature="65265:65320" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -106,8 +89,8 @@
       <file leaf-file-name="presets.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/styles/presets.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="2384" max-vertical-offset="3536">
-              <caret line="164" column="23" selection-start-line="164" selection-start-column="23" selection-end-line="164" selection-end-column="23" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="2182" max-vertical-offset="3536">
+              <caret line="142" column="27" selection-start-line="142" selection-start-column="21" selection-end-line="142" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -493,7 +476,13 @@
       <option name="project" value="LOCAL" />
       <updated>1416378274465</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Create resizeable windows">
+      <created>1417949102847</created>
+      <option name="number" value="00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1417949102847</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -501,8 +490,9 @@
     <editor active="true" />
     <layout>
       <window_info id="Grunt" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19234544" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19430815" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -516,7 +506,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -539,7 +528,8 @@
     </option>
     <MESSAGE value="Add core annapolis dependencies." />
     <MESSAGE value="Finish the basics." />
-    <option name="LAST_COMMIT_MESSAGE" value="Finish the basics." />
+    <MESSAGE value="Create resizeable windows" />
+    <option name="LAST_COMMIT_MESSAGE" value="Create resizeable windows" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -553,19 +543,14 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="6103">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#2280#3502#0" expanded="false" />
-            <element signature="e#3548#4263#0" expanded="false" />
-            <element signature="e#5033#5936#0" expanded="false" />
-            <element signature="e#5980#6903#0" expanded="false" />
-            <element signature="e#6948#8291#0" expanded="false" />
-            <element signature="e#8337#9700#0" expanded="false" />
-            <element signature="e#9979#41909#0" expanded="false" />
-            <element signature="e#41953#42862#0" expanded="false" />
-            <element signature="e#42945#54275#0" expanded="false" />
-            <element signature="e#55982#67138#0" expanded="false" />
-            <element signature="e#67208#69191#0" expanded="false" />
-            <marker date="1417948521088" expanded="true" signature="73855:73884" placeholder="..." />
-            <marker date="1417948521088" expanded="true" signature="73855:73910" placeholder="..." />
+            <element signature="e#4643#5673#0" expanded="false" />
+            <element signature="e#45464#45734#0" expanded="false" />
+            <element signature="e#45802#46003#0" expanded="false" />
+            <element signature="e#46046#46203#0" expanded="false" />
+            <element signature="e#46301#46625#0" expanded="false" />
+            <element signature="e#46678#46835#0" expanded="false" />
+            <element signature="e#58239#60222#0" expanded="false" />
+            <marker date="1417955525537" expanded="true" signature="65265:65320" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -872,14 +857,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="799" max-vertical-offset="1700">
-          <caret line="47" column="10" selection-start-line="47" selection-start-column="10" selection-end-line="47" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/cesium.ctrl.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.25134408" vertical-offset="0" max-vertical-offset="1190">
@@ -931,30 +908,33 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/styles/presets.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2384" max-vertical-offset="3536">
-          <caret line="164" column="23" selection-start-line="164" selection-start-column="23" selection-end-line="164" selection-end-column="23" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="2182" max-vertical-offset="3536">
+          <caret line="142" column="27" selection-start-line="142" selection-start-column="21" selection-end-line="142" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="799" max-vertical-offset="1700">
+          <caret line="47" column="10" selection-start-line="47" selection-start-column="10" selection-end-line="47" selection-end-column="10" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.32225063" vertical-offset="714" max-vertical-offset="8715">
-          <caret line="46" column="32" selection-start-line="46" selection-start-column="32" selection-end-line="46" selection-end-column="32" />
+        <state vertical-scroll-proportion="4.0666666" vertical-offset="32129" max-vertical-offset="37401">
+          <caret line="1827" column="131" selection-start-line="1827" selection-start-column="131" selection-end-line="1827" selection-end-column="131" />
           <folding>
-            <element signature="e#2280#3502#0" expanded="false" />
-            <element signature="e#3548#4263#0" expanded="false" />
-            <element signature="e#5033#5936#0" expanded="false" />
-            <element signature="e#5980#6903#0" expanded="false" />
-            <element signature="e#6948#8291#0" expanded="false" />
-            <element signature="e#8337#9700#0" expanded="false" />
-            <element signature="e#9979#41909#0" expanded="false" />
-            <element signature="e#41953#42862#0" expanded="false" />
-            <element signature="e#42945#54275#0" expanded="false" />
-            <element signature="e#55982#67138#0" expanded="false" />
-            <element signature="e#67208#69191#0" expanded="false" />
-            <marker date="1417948521088" expanded="true" signature="73855:73884" placeholder="..." />
-            <marker date="1417948521088" expanded="true" signature="73855:73910" placeholder="..." />
+            <element signature="e#4643#5673#0" expanded="false" />
+            <element signature="e#45464#45734#0" expanded="false" />
+            <element signature="e#45802#46003#0" expanded="false" />
+            <element signature="e#46046#46203#0" expanded="false" />
+            <element signature="e#46301#46625#0" expanded="false" />
+            <element signature="e#46678#46835#0" expanded="false" />
+            <element signature="e#58239#60222#0" expanded="false" />
+            <marker date="1417955525537" expanded="true" signature="65265:65320" placeholder="..." />
           </folding>
         </state>
       </provider>
