@@ -2,6 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32d0c907-dd96-494b-a32c-d7429bc3e1df" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/styles/presets.css" afterPath="$PROJECT_DIR$/app/styles/presets.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/controllers/presets.ctrl.js" afterPath="$PROJECT_DIR$/app/scripts/controllers/presets.ctrl.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/presets.html" afterPath="$PROJECT_DIR$/app/views/presets.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/presets/ui/directives/tile.drv.js" afterPath="$PROJECT_DIR$/app/scripts/presets/ui/directives/tile.drv.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js" afterPath="$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -30,7 +34,7 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.0" vertical-offset="799" max-vertical-offset="1700">
+            <state vertical-scroll-proportion="1.9615384" vertical-offset="850" max-vertical-offset="1700">
               <caret line="47" column="10" selection-start-line="47" selection-start-column="10" selection-end-line="47" selection-end-column="10" />
               <folding />
             </state>
@@ -40,8 +44,18 @@
       <file leaf-file-name="presets.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/presets.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="119">
-              <caret line="0" column="22" selection-start-line="0" selection-start-column="22" selection-end-line="0" selection-end-column="22" />
+            <state vertical-scroll-proportion="-1.3076923" vertical-offset="0" max-vertical-offset="153">
+              <caret line="2" column="44" selection-start-line="2" selection-start-column="44" selection-end-line="2" selection-end-column="44" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="presets.ctrl.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/scripts/controllers/presets.ctrl.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="693">
+              <caret line="12" column="19" selection-start-line="12" selection-start-column="19" selection-end-line="12" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -57,11 +71,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="workspace.drv.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="workspace.drv.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="4.0666666" vertical-offset="32129" max-vertical-offset="37401">
-              <caret line="1827" column="131" selection-start-line="1827" selection-start-column="131" selection-end-line="1827" selection-end-column="131" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="34519" max-vertical-offset="38745">
+              <caret line="1757" column="0" selection-start-line="1757" selection-start-column="0" selection-end-line="1757" selection-end-column="0" />
               <folding>
                 <element signature="e#4643#5673#0" expanded="false" />
                 <element signature="e#45464#45734#0" expanded="false" />
@@ -69,8 +83,7 @@
                 <element signature="e#46046#46203#0" expanded="false" />
                 <element signature="e#46301#46625#0" expanded="false" />
                 <element signature="e#46678#46835#0" expanded="false" />
-                <element signature="e#58239#60222#0" expanded="false" />
-                <marker date="1417955525537" expanded="true" signature="65265:65320" placeholder="..." />
+                <marker date="1417962042405" expanded="true" signature="64954:65009" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -89,21 +102,20 @@
       <file leaf-file-name="presets.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/styles/presets.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="2182" max-vertical-offset="3536">
-              <caret line="142" column="27" selection-start-line="142" selection-start-column="21" selection-end-line="142" selection-end-column="27" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="2743" max-vertical-offset="3638">
+              <caret line="206" column="17" selection-start-line="206" selection-start-column="17" selection-end-line="206" selection-end-column="17" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="tile.drv.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="tile.drv.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/directives/tile.drv.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
-              <caret line="13" column="30" selection-start-line="13" selection-start-column="30" selection-end-line="13" selection-end-column="30" />
+            <state vertical-scroll-proportion="0.52332914" vertical-offset="1853" max-vertical-offset="2646">
+              <caret line="110" column="37" selection-start-line="110" selection-start-column="37" selection-end-line="110" selection-end-column="37" />
               <folding>
                 <element signature="e#0#42#0" expanded="false" />
-                <marker date="1417004384319" expanded="true" signature="244:298" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -126,18 +138,18 @@
         <option value="$PROJECT_DIR$/app/views/cesium.html" />
         <option value="$PROJECT_DIR$/app/bower_components/annapolis-ui/dist/annapolis-ui.js" />
         <option value="$PROJECT_DIR$/app/scripts/controllers/cesium.ctrl.js" />
-        <option value="$PROJECT_DIR$/app/scripts/controllers/presets.ctrl.js" />
         <option value="$PROJECT_DIR$/app/scripts/config.js" />
         <option value="$PROJECT_DIR$/app/scripts/templates/preseta.drv.tmp.html" />
         <option value="$PROJECT_DIR$/app/templates/workspace.drv.tmp.html" />
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/directives/presets.drv.js" />
         <option value="$PROJECT_DIR$/app/templates/presets.drv.tmp.html" />
         <option value="$PROJECT_DIR$/app/styles/main.css" />
-        <option value="$PROJECT_DIR$/app/scripts/presets/ui/directives/tile.drv.js" />
         <option value="$PROJECT_DIR$/app/index.html" />
-        <option value="$PROJECT_DIR$/app/views/presets.html" />
         <option value="$PROJECT_DIR$/app/styles/presets.css" />
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js" />
+        <option value="$PROJECT_DIR$/app/scripts/controllers/presets.ctrl.js" />
+        <option value="$PROJECT_DIR$/app/views/presets.html" />
+        <option value="$PROJECT_DIR$/app/scripts/presets/ui/directives/tile.drv.js" />
       </list>
     </option>
   </component>
@@ -482,30 +494,36 @@
       <option name="project" value="LOCAL" />
       <updated>1417949102847</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="fix resize function">
+      <created>1417955620892</created>
+      <option name="number" value="00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1417955620892</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Grunt" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19430815" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Grunt" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25237092" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -529,7 +547,8 @@
     <MESSAGE value="Add core annapolis dependencies." />
     <MESSAGE value="Finish the basics." />
     <MESSAGE value="Create resizeable windows" />
-    <option name="LAST_COMMIT_MESSAGE" value="Create resizeable windows" />
+    <MESSAGE value="fix resize function" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix resize function" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -549,8 +568,7 @@
             <element signature="e#46046#46203#0" expanded="false" />
             <element signature="e#46301#46625#0" expanded="false" />
             <element signature="e#46678#46835#0" expanded="false" />
-            <element signature="e#58239#60222#0" expanded="false" />
-            <marker date="1417955525537" expanded="true" signature="65265:65320" placeholder="..." />
+            <marker date="1417962042405" expanded="true" signature="64954:65009" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -577,7 +595,6 @@
           <caret line="13" column="30" selection-start-line="13" selection-start-column="30" selection-end-line="13" selection-end-column="30" />
           <folding>
             <element signature="e#0#42#0" expanded="false" />
-            <marker date="1417004384319" expanded="true" signature="244:298" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -814,13 +831,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/presets.ctrl.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.2956989" vertical-offset="0" max-vertical-offset="744">
-          <caret line="12" column="5" selection-start-line="12" selection-start-column="5" selection-end-line="12" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/config.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.5107527" vertical-offset="0" max-vertical-offset="800">
@@ -871,30 +881,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/presets.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="718">
-          <caret line="0" column="22" selection-start-line="0" selection-start-column="22" selection-end-line="0" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/templates/workspace.drv.tmp.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="34" max-vertical-offset="204">
           <caret line="2" column="25" selection-start-line="2" selection-start-column="25" selection-end-line="2" selection-end-column="25" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/directives/tile.drv.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
-          <caret line="13" column="30" selection-start-line="13" selection-start-column="30" selection-end-line="13" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#42#0" expanded="false" />
-            <marker date="1417004384319" expanded="true" signature="244:298" placeholder="..." />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -908,24 +899,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/styles/presets.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2182" max-vertical-offset="3536">
-          <caret line="142" column="27" selection-start-line="142" selection-start-column="21" selection-end-line="142" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="799" max-vertical-offset="1700">
-          <caret line="47" column="10" selection-start-line="47" selection-start-column="10" selection-end-line="47" selection-end-column="10" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="2743" max-vertical-offset="3638">
+          <caret line="206" column="17" selection-start-line="206" selection-start-column="17" selection-end-line="206" selection-end-column="17" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="4.0666666" vertical-offset="32129" max-vertical-offset="37401">
-          <caret line="1827" column="131" selection-start-line="1827" selection-start-column="131" selection-end-line="1827" selection-end-column="131" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="34519" max-vertical-offset="38745">
+          <caret line="1757" column="0" selection-start-line="1757" selection-start-column="0" selection-end-line="1757" selection-end-column="0" />
           <folding>
             <element signature="e#4643#5673#0" expanded="false" />
             <element signature="e#45464#45734#0" expanded="false" />
@@ -933,8 +916,41 @@
             <element signature="e#46046#46203#0" expanded="false" />
             <element signature="e#46301#46625#0" expanded="false" />
             <element signature="e#46678#46835#0" expanded="false" />
-            <element signature="e#58239#60222#0" expanded="false" />
-            <marker date="1417955525537" expanded="true" signature="65265:65320" placeholder="..." />
+            <marker date="1417962042405" expanded="true" signature="64954:65009" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.9615384" vertical-offset="850" max-vertical-offset="1700">
+          <caret line="47" column="10" selection-start-line="47" selection-start-column="10" selection-end-line="47" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/presets.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.3076923" vertical-offset="0" max-vertical-offset="153">
+          <caret line="2" column="44" selection-start-line="2" selection-start-column="44" selection-end-line="2" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/presets.ctrl.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="693">
+          <caret line="12" column="19" selection-start-line="12" selection-start-column="19" selection-end-line="12" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/directives/tile.drv.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.52332914" vertical-offset="1853" max-vertical-offset="2646">
+          <caret line="110" column="37" selection-start-line="110" selection-start-column="37" selection-end-line="110" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#42#0" expanded="false" />
           </folding>
         </state>
       </provider>

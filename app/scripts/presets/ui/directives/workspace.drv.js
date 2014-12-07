@@ -1597,6 +1597,70 @@
 
   }
 
+  function resetPanel(panel){
+    panel.overlay.css('z-index', '2');
+
+    panel.container.width = 0;
+    panel.container.height = 0;
+
+    panel.container.element.css({
+      width: '100%',
+      height: '100%'
+    });
+
+    panel.corners = null;
+
+    if(panel.children.length !== 0){
+      while(panel.children.length !== 0){
+        var child = panel.children.pop();
+        child.inUse = false;
+        child.referTo = null;
+      }
+    }
+  }
+
+  function changePanelSizeAndPosition(newPanel, originPanel, panels){
+
+    var realPanel = panels[newPanel.id];
+
+    resetPanel(originPanel);
+
+    if(realPanel.content !== originPanel.content){
+      realPanel.container.element.append(originPanel.content);
+      originPanel.container.element.append(realPanel.content);
+      var tempContent = originPanel.content;
+      originPanel.content = realPanel.content;
+      realPanel.content = tempContent;
+    }
+
+    if(newPanel.corners !== null) {
+      realPanel.corners = newPanel.corners;
+
+      realPanel.children = newPanel.children;
+      for (var i = 0; i < realPanel.children.length; i++) {
+        realPanel.children[i].inUse = true;
+        if(i > 0){
+          realPanel.children[i].referTo = realPanel;
+        }
+      }
+    }else{
+      realPanel.inUse = true;
+      realPanel.corners = null;
+      realPanel.children = [];
+    }
+
+    realPanel.overlay.css('z-index', '3');
+    realPanel.container.width = newPanel.container.width - 1;
+    realPanel.container.height = newPanel.container.height - 1;
+
+    realPanel.container.element.css({
+      width: newPanel.container.width * 100 + '%',
+      height: newPanel.container.height * 100 + '%'
+    });
+
+    return realPanel;
+  }
+
   app.directive('workspace', ['$compile',
     function($compile) {
 
@@ -1628,67 +1692,6 @@
           var errorContainer = null;
           var currentPanel = null;
           var optionalPanels = [];
-
-          function changePanelSizeAndPosition(newPanel, originPanel){
-
-            var i = 0;
-            var realPanel = panels[newPanel.id];
-
-            originPanel.overlay.css('z-index', '2');
-
-            originPanel.container.width = 0;
-            originPanel.container.height = 0;
-
-            originPanel.container.element.css({
-              width: '100%',
-              height: '100%'
-            });
-
-            originPanel.corners = null;
-
-            if(originPanel.children.length !== 0){
-              while(originPanel.children.length !== 0){
-                var child = originPanel.children.pop();
-                child.inUse = false;
-                child.referTo = null;
-              }
-            }
-
-            if(realPanel.content !== originPanel.content){
-              realPanel.container.element.append(originPanel.content);
-              originPanel.container.element.append(realPanel.content);
-              var tempContent = originPanel.content;
-              originPanel.content = realPanel.content;
-              realPanel.content = tempContent;
-            }
-
-            if(newPanel.corners !== null) {
-              realPanel.corners = newPanel.corners;
-
-              realPanel.children = newPanel.children;
-              for (i = 0; i < realPanel.children.length; i++) {
-                realPanel.children[i].inUse = true;
-                if(i > 0){
-                  realPanel.children[i].referTo = realPanel;
-                }
-              }
-            }else{
-              realPanel.inUse = true;
-              realPanel.corners = null;
-              realPanel.children = [];
-            }
-
-            realPanel.overlay.css('z-index', '3');
-            realPanel.container.width = newPanel.container.width - 1;
-            realPanel.container.height = newPanel.container.height - 1;
-
-            realPanel.container.element.css({
-              width: newPanel.container.width * 100 + '%',
-              height: newPanel.container.height * 100 + '%'
-            });
-
-            return realPanel;
-          }
 
           function onMouseDown(event) {
             event.stopPropagation();
@@ -1753,8 +1756,10 @@
               height: (startHeight + 1) * 100 + '%'
             });
 
+            realPanel.overlay.css('z-index', '2');
+
             if(event.data !== panels[originId] && event.data !== errorPanel) {
-              var p = changePanelSizeAndPosition(newPanel, realPanel);
+              var p = changePanelSizeAndPosition(newPanel, realPanel, panels);
               console.log('new panel');
               console.log(p);
             }
