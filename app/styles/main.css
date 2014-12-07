@@ -77,3 +77,8 @@ body {
     border-bottom: 0;
   }
 }
+
+html, body, .full-height {
+  padding-top: 0px;
+  height: 100%;
+}

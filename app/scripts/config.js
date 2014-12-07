@@ -16,6 +16,11 @@
               url: '/',
               templateUrl: 'views/cesium.html',
               controller: 'cesiumController'
+            })
+            .state('presets', {
+              url: '/presets',
+              templateUrl: 'views/presets.html',
+              controller: 'presetsController'
             });
         }
     ]).config(['$distributionProvider',

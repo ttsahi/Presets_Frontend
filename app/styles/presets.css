@@ -1,0 +1,202 @@
+.presets-navbar {
+  background-color: #025b87;
+  border-color: #024566;
+  background-image: -webkit-gradient(linear, left 0%, left 100%, from(#037db9), to(#025b87));
+  background-image: -webkit-linear-gradient(top, #037db9, 0%, #025b87, 100%);
+  background-image: -moz-linear-gradient(top, #037db9 0%, #025b87 100%);
+  background-image: linear-gradient(to bottom, #037db9 0%, #025b87 100%);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff037db9', endColorstr='#ff025b87', GradientType=0);
+}
+.presets-navbar .navbar-brand {
+  color: #ffffff;
+}
+.presets-navbar .navbar-brand:hover,
+.presets-navbar .navbar-brand:focus {
+  color: #e6e6e6;
+  background-color: transparent;
+}
+.presets-navbar .navbar-text {
+  color: #ffffff;
+}
+.presets-navbar .navbar-nav > li:last-child > a {
+  border-right: 1px solid #024566;
+}
+.presets-navbar .navbar-nav > li > a {
+  color: #ffffff;
+  border-left: 1px solid #024566;
+}
+.presets-navbar .navbar-nav > li > a:hover,
+.presets-navbar .navbar-nav > li > a:focus {
+  color: #c0c0c0;
+  background-color: transparent;
+}
+.presets-navbar .navbar-nav > .active > a,
+.presets-navbar .navbar-nav > .active > a:hover,
+.presets-navbar .navbar-nav > .active > a:focus {
+  color: #c0c0c0;
+  background-color: #024566;
+  background-image: -webkit-gradient(linear, left 0%, left 100%, from(#024566), to(#026799));
+  background-image: -webkit-linear-gradient(top, #024566, 0%, #026799, 100%);
+  background-image: -moz-linear-gradient(top, #024566 0%, #026799 100%);
+  background-image: linear-gradient(to bottom, #024566 0%, #026799 100%);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff024566', endColorstr='#ff026799', GradientType=0);
+}
+.presets-navbar .navbar-nav > .disabled > a,
+.presets-navbar .navbar-nav > .disabled > a:hover,
+.presets-navbar .navbar-nav > .disabled > a:focus {
+  color: #cccccc;
+  background-color: transparent;
+}
+.presets-navbar .navbar-toggle {
+  border-color: #dddddd;
+}
+.presets-navbar .navbar-toggle:hover,
+.presets-navbar .navbar-toggle:focus {
+  background-color: #dddddd;
+}
+.presets-navbar .navbar-toggle .icon-bar {
+  background-color: #cccccc;
+}
+.presets-navbar .navbar-collapse,
+.presets-navbar .navbar-form {
+  border-color: #014364;
+}
+.presets-navbar .navbar-nav > .dropdown > a:hover .caret,
+.presets-navbar .navbar-nav > .dropdown > a:focus .caret {
+  border-top-color: #c0c0c0;
+  border-bottom-color: #c0c0c0;
+}
+.presets-navbar .navbar-nav > .open > a,
+.presets-navbar .navbar-nav > .open > a:hover,
+.presets-navbar .navbar-nav > .open > a:focus {
+  background-color: #024566;
+  color: #c0c0c0;
+}
+.presets-navbar .navbar-nav > .open > a .caret,
+.presets-navbar .navbar-nav > .open > a:hover .caret,
+.presets-navbar .navbar-nav > .open > a:focus .caret {
+  border-top-color: #c0c0c0;
+  border-bottom-color: #c0c0c0;
+}
+.presets-navbar .navbar-nav > .dropdown > a .caret {
+  border-top-color: #ffffff;
+  border-bottom-color: #ffffff;
+}
+@media (max-width: 767) {
+  .presets-navbar .navbar-nav .open .dropdown-menu > li > a {
+    color: #ffffff;
+  }
+  .presets-navbar .navbar-nav .open .dropdown-menu > li > a:hover,
+  .presets-navbar .navbar-nav .open .dropdown-menu > li > a:focus {
+    color: #c0c0c0;
+    background-color: transparent;
+  }
+  .presets-navbar .navbar-nav .open .dropdown-menu > .active > a,
+  .presets-navbar .navbar-nav .open .dropdown-menu > .active > a:hover,
+  .presets-navbar .navbar-nav .open .dropdown-menu > .active > a:focus {
+    color: #c0c0c0;
+    background-color: #024566;
+  }
+  .presets-navbar .navbar-nav .open .dropdown-menu > .disabled > a,
+  .presets-navbar .navbar-nav .open .dropdown-menu > .disabled > a:hover,
+  .presets-navbar .navbar-nav .open .dropdown-menu > .disabled > a:focus {
+    color: #cccccc;
+    background-color: transparent;
+  }
+}
+.presets-navbar .navbar-link {
+  color: #ffffff;
+}
+.presets-navbar .navbar-link:hover {
+  color: #c0c0c0;
+}
+
+.presets-full-height {
+  height: 100%;
+  padding: 3px;
+}
+
+.presets-container {
+  position: relative;
+  height: 100%;
+}
+
+.presets-panels-overlay {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  background-color: #bbc4d0;
+}
+
+.presets-panels-overlay .panel-overlay {
+  position: absolute;
+  padding: 3px;
+}
+
+.presets-panels-overlay .panel-overlay .content {
+  width: 100%;
+  height: 100%;
+  background-color: #dbdbdb;
+}
+
+.presets-panels-container {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+}
+
+.presets-panel {
+  position: absolute;
+  z-index: 2;
+}
+
+.presets-panel .resize {
+  width: 100%;
+  height: 100%;
+  padding: 3px;
+  overflow: auto;
+  position: absolute;
+  pointer-events: none;
+}
+
+.presets-panel .content {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.presets-selector {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  background-color: #141414;
+  opacity: 0.4;
+}
+
+.presets-optional {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  background-color: #008855;
+  opacity: 0.4;
+}
+
+.presets-error {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  background-color: #dd4444;
+  opacity: 0.4;
+}
