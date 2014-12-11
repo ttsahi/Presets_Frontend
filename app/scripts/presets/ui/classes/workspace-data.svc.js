@@ -6,19 +6,20 @@
 
   'use strict';
 
-  app.factory('WorkspaceData', ['Tile',
-    function(Tile){
+  app.factory('WorkspaceData', ['$q', 'CRUDResult', 'Tile',
+    function($q, CRUDResult, Tile){
 
       function DeveloperError(message){
         this.message = message;
       }
 
-      function WorkspaceData(presets, rows, cols, tiles){
+      function WorkspaceData(preset, rows, cols, tiles){
         this._cols = cols;
         this._rows = rows;
+        this._tilesMap = {};
         this._tiles = [];
         this._panels = [];
-        this._presets = presets;
+        this._preset = preset;
         this._initTiles = tiles || [];
 
         //this._enterEditMode = function(){};
@@ -26,11 +27,20 @@
         this._enterAddMode = function(){};
         this._enterUpdateMode = function(){};
         this._enterPresentationMode = function(){};
-
-        this._onadd = function(){ return true; };
-        this._onremove = function(){ return true; };
-        this._onupdate = function(){ return true; };
       }
+
+      WorkspaceData.prototype.init = function(){
+
+        var tilesCount = this._rows * this._cols;
+
+        for(var i = 0; i < tilesCount; i++){
+          this._tiles[i] = null;
+        }
+
+        while(this._initTiles.length !== 0){
+          this.addTileAsync(this._initTiles.pop());
+        }
+      };
 
       Object.defineProperties(WorkspaceData.prototype,{
         rows: {
@@ -46,7 +56,7 @@
           get: function(){ return this._panels; }
         },
         presets: {
-          get: function(){ return this._presets; }
+          get: function(){ return this._preset; }
         }
       });
 
@@ -65,39 +75,6 @@
         }
       });
 
-      Object.defineProperties(WorkspaceData.prototype,{
-        onadd: {
-          set: function(val) {
-            if(typeof val !== 'function'){
-              throw new DeveloperError('on add must be function!');
-            }
-
-            this._onadd = val;
-          },
-          get: function() { return this._onadd; }
-        },
-        onremove: {
-          set: function(val) {
-            if(typeof val !== 'function'){
-              throw new DeveloperError('on remove must be function!');
-            }
-
-            this._onaremove = val;
-          },
-          get: function() { return this._onremove; }
-        },
-        onupdate: {
-          set: function(val) {
-            if(typeof val !== 'function'){
-              throw new DeveloperError('on update must be function!');
-            }
-
-            this._onupdate = val;
-          },
-          get: function() { return this._onupdate; }
-        }
-      });
-
       function isNullOrUndefined(value){
         return value === null || value === undefined;
       }
@@ -107,42 +84,72 @@
       }
 
       function validateTile(tile){
-        if(!tile instanceof Tile){
-          throw new DeveloperError('tile must be instance of Tile!');
+        if(typeof tile !== 'object') {
+          throw new DeveloperError('invalid tile!');
         }
+
+        if(!tile instanceof Tile){
+          var temp = new Tile();
+          temp.init(tile);
+          tile = temp;
+        }
+
         if(isNullEmptyOrWhiteSpaces(tile.id)){
           throw new DeveloperError('tile id must be non empty string!');
         }
+
         if(typeof this._panels[tile.position - 1] === 'undefined' || this._panels[tile.position - 1].inUse){
           throw new DeveloperError('invalid tile position!');
         }
-        if(isNullEmptyOrWhiteSpaces(tile.type) || isNullOrUndefined(this._presets.types[tile.type])){
+
+        if(isNullEmptyOrWhiteSpaces(tile.type) || isNullOrUndefined(this._preset.types[tile.type])){
           throw new DeveloperError('invalid tile type!');
         }
+
+        tile.id = tile.id.trim();
+        return tile;
       }
 
-      WorkspaceData.prototype.init = function(){
+      WorkspaceData.prototype.addTileAsync = function(tile, confirm){
+        tile = validateTile(tile);
+        var self = this;
+        var deferred = $q.defer();
 
-        var tilesCount = this._rows * this._cols;
-
-        for(var i = 0; i < tilesCount; i++){
-          this._tiles[i] = null;
+        if(this._preset.types[tile.type] === undefined){
+          deferred.reject(new CRUDResult(false, {}, ['tile type: ' + tile.type + 'not found!']));
+          return deferred.promise;
         }
 
-        while(this._initTiles.length !== 0){
-          this.addTile(this._initTiles.pop());
-        }
+        var type = this._preset.types[tile.type];
+
+        $q.when(confirm === true ? type.confirmAdd(tile) : new CRUDResult(true)).then(
+          function resolveSuccess(result){
+
+            if(!result instanceof CRUDResult){
+              throw new DeveloperError('confirm add must return CRUDResult!');
+            }
+
+            if(result.succeeded === true){
+              if(self._tilesMap[tile.id] !== undefined){
+                deferred.reject(new CRUDResult(false, {}, ['tile id: ' + tile.id + ' already exist!']));
+              }
+
+              self._tiles[tile.position -1] = angular.copy(validateTile(tile));
+              self._tilesMap[tile.id] = (tile.position -1);
+              self._panels[tile.position - 1].inUse = true;
+              deferred.resolve(new CRUDResult(true, tile));
+            }else{
+              deferred.reject(result);
+            }
+
+          },function resolveError(reason){
+            deferred.reject(new CRUDResult(false, reason, ["can't add tile!"]));
+          });
+
+        return deferred.promise;
       };
 
-      WorkspaceData.prototype.addTile = function(tile){
-        validateTile(tile);
-        tile.id = tile.id.trim();
-        tile.creationInfo = this._presets.types[tile.type].creationInfo;
-        this._panels[tile.position - 1].inUse = true;
-        this.tiles[tile.position - 1] = tile;
-      };
-
-      WorkspaceData.prototype.removeTileById = function(id){
+      WorkspaceData.prototype.removeTileByIdAsync = function(id, confirm){
 
         for(var i = 0; i < this._tiles.length; i++){
           if(this._tiles[i].id === id){
@@ -155,7 +162,7 @@
         return false;
       };
 
-      WorkspaceData.prototype.removeTileByPosition = function(position){
+      WorkspaceData.prototype.removeTileByPositionAsync = function(position, confirm){
 
         if(!isNullOrUndefined(this._tiles[position -1])){
           this._panels[position -1].inUse = false;
@@ -166,7 +173,7 @@
         return false;
       };
 
-      WorkspaceData.prototype.updateTileById = function(id, model){
+      WorkspaceData.prototype.updateTileByIdAsync = function(id, model, confirm){
 
         if(!angular.isObject(model)){
           throw new DeveloperError('model must be object!');
@@ -182,7 +189,7 @@
         return false;
       };
 
-      WorkspaceData.prototype.updateTileByPosition = function(position, model){
+      WorkspaceData.prototype.updateTileByPositionAsync = function(position, model, confirm){
 
         if(!angular.isObject(model)){
           throw new DeveloperError('model must be object!');

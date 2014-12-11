@@ -51,9 +51,9 @@
             this._currentWorkspace = null;
 
             this._loadTiles = function(workspace){ return new CRUDResult(true); };
-            this._confirmAdd = function(workspaceInfo){ return new CRUDResult(true); };
-            this._confirmRemove = function(workspaceInfo){ return new CRUDResult(true); };
-            this._confirmUpdate = function(workspaceInfo){ return new CRUDResult(true); };
+            this._confirmAdd = function(workspace){ return new CRUDResult(true); };
+            this._confirmRemove = function(workspace){ return new CRUDResult(true); };
+            this._confirmUpdate = function(workspace){ return new CRUDResult(true); };
 
             this.construct(workspaces);
           }
@@ -72,8 +72,13 @@
             value: _templatesDir
           });
 
-          Object.defineProperty(Preset.prototype, 'id', {
-            get: function(){ return this._id; }
+          Object.defineProperties(Preset.prototype, {
+            id: {
+              get: function(){ return this._id; }
+            },
+            types: {
+              get: function(){ return this._types; }
+            }
           });
 
           Object.defineProperties(Preset.prototype, {
@@ -131,7 +136,7 @@
             }
 
             if(isNullEmptyOrWhiteSpaces(workspace.id)){
-              throw new DeveloperError('invalid workspace id!');
+              throw new DeveloperError('workspace id must be non empty string!');
             }
 
             if(isNullEmptyOrWhiteSpaces(workspace.name)){
@@ -205,8 +210,7 @@
                     deferred.reject(new CRUDResult(false, {}, ['workspace id: ' + workspace.id + ' already exist!']));
                   }
 
-                  var newWorkspace = angular.copy(validateWorkspace(workspace));
-                  self._workspaces[newWorkspace.id] = newWorkspace;
+                  self._workspaces[workspace.id] = angular.copy(validateWorkspace(workspace));
                   deferred.resolve(new CRUDResult(true, workspace));
                 }else{
                   deferred.reject(result);
@@ -295,8 +299,11 @@
                 }
 
                 if(result.succeeded === true){
-                  var newWorkspace = angular.copy(validateWorkspace(workspace));
-                  self._workspaces[newWorkspace.id] = newWorkspace;
+                  if(self._workspaces[workspace.id] !== undefined){
+                    deferred.reject(new CRUDResult(false, {}, ['workspace id: ' + workspace.id + ' already exist!']));
+                  }
+
+                  self._workspaces[workspace.id] = angular.copy(validateWorkspace(workspace));
                   deferred.resolve(new CRUDResult(true, workspace));
                 }else{
                   deferred.reject(result);
