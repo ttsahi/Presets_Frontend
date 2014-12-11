@@ -31,7 +31,7 @@
         return promisesArr;
       }
 
-      function create(scope, creationInfo, model){
+      function create(scope, creationInfo, model, newScope, isolate, compile){
 
         var creationDeferred = $q.defer();
 
@@ -48,13 +48,23 @@
 
         templateAndResolvePromise.then(function resolveSuccess(tplAndVars) {
 
-          var newScope = scope.$new();
+          var childScope = null;
+
+          if(newScope === true) {
+            if (isolate === true) {
+              childScope = scope.$new(true);
+            } else {
+              childScope = scope.$new();
+            }
+          }else{
+            childScope = scope;
+          }
 
           var dataModel = model;
 
           if(angular.isObject(dataModel)){
             angular.forEach(dataModel, function(value, property){
-              newScope[property] = value;
+              childScope[property] = value;
             });
           }
 
@@ -63,21 +73,27 @@
           var resolveIter = 1;
 
           if (creationInfo.controller) {
-            controllerLocals.$scope = newScope;
+            controllerLocals.$scope = childScope;
             angular.forEach(creationInfo.resolve, function (value, key) {
               controllerLocals[key] = tplAndVars[resolveIter++];
             });
 
             controllerInstance = $controller(creationInfo.controller, controllerLocals);
             if (creationInfo.controllerAs) {
-              newScope[creationInfo.controllerAs] = controllerInstance;
+              childScope[creationInfo.controllerAs] = controllerInstance;
             }
           }
 
-          var element = $compile(tplAndVars[0])(newScope);
+          var element = null;
+
+          if(compile === false){
+            element = angular.element(tplAndVars[0]);
+          }else{
+            element = $compile(tplAndVars[0])(childScope);
+          }
 
           creationDeferred.resolve({
-            scope: newScope,
+            scope: childScope,
             element: element
           });
 

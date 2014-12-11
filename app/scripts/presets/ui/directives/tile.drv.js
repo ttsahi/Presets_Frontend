@@ -6,45 +6,64 @@
 
   'use strict';
 
-  function DeveloperError(message){
-    this.message = message;
-  }
-
   app.directive('tile', ['MVC',
     function(MVC){
 
       return {
         restrict: 'EA',
         replace: true,
-        //require: '^workspace',
         template: '<div class="presets-tile"></div>',
         scope:{
-          tile: '=',
-          model: '='
+          tile: '='
         },
         link: function(scope, element){
 
-          var creationInfo = scope.tile;
-          var model = scope.model;
-          var tile = null;
+          var tileInstance = null;
 
-          var create = function(){
+          scope.$watch('tile', function(tile){
 
-            MVC.create(scope, creationInfo, model).then(
-              function(instance){
-                tile = instance;
-                console.log(tile);
-                element.append(tile.element);
-              },
-              function(failed){
-                console.log(failed);
+            if(!angular.isObject(tile)){
+              if(tileInstance !== null){
+                tileInstance.element.remove();
+                tileInstance.scope.$destroy();
+                tileInstance = null;
               }
-            );
-          };
+            }
+          });
 
-          if(angular.isObject(creationInfo)){
-            create();
-          }
+          scope.$watch('tile.creationInfo', function(creationInfo){
+
+            if(angular.isObject(creationInfo)){
+
+              if(tileInstance !== null){
+                tileInstance.element.remove();
+                tileInstance.scope.$destroy();
+                tileInstance = null;
+              }
+
+              MVC.create(scope, creationInfo, scope.tile.model, true, true).then(
+                function(instance){
+                  tileInstance = instance;
+                  console.log(tileInstance);
+                  element.append(tileInstance.element);
+                },
+                function(failed){
+                  console.log('Tail creation failed, info: ' + failed);
+                }
+              );
+            }
+
+          }, true);
+
+          scope.$watch('tile.model', function(model){
+
+            if(tileInstance !== null && angular.isObject(model)){
+              angular.forEach(model, function(value, property){
+                tileInstance.scope[property] = value;
+              });
+            }
+
+          }, true);
         }
       };
     }

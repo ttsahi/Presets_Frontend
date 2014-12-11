@@ -13,7 +13,8 @@
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/presets.css">
+    <link rel="stylesheet" href="scripts/presets/ui/styles/presets-main.css">
+    <link rel="stylesheet" href="scripts/presets/ui/styles/presets-animations.css">
     <!-- endbuild -->
     <style>
       @import url(Cesium/Build/Cesium/Widgets/widgets.css);
@@ -84,8 +85,14 @@
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/config.js"></script>
+        <script src="scripts/presets/ui/classes/crud-result.svc.js"></script>
+        <script src="scripts/presets/ui/classes/tile.svc.js"></script>
+        <script src="scripts/presets/ui/classes/tile-type.svc.js"></script>
+        <script src="scripts/presets/ui/classes/workspace.svc.js"></script>
+        <script src="scripts/presets/ui/classes/workspace-data.svc.js"></script>
+        <script src="scripts/presets/ui/classes/presets.prv.js"></script>
         <script src="scripts/presets/ui/services/mvc-generator.svc.js"></script>
-        <script src="scripts/presets/ui/directives/presets.drv.js"></script>
+        <script src="scripts/presets/ui/directives/preset.drv.js"></script>
         <script src="scripts/presets/ui/directives/workspace.drv.js"></script>
         <script src="scripts/presets/ui/directives/tile.drv.js"></script>
         <script src="scripts/controllers/cesium.ctrl.js"></script>

@@ -123,7 +123,32 @@
   height: 100%;
 }
 
-.presets-panels-overlay {
+.presets-workspace-container {
+  height: 90%;
+  padding: 3px;
+}
+
+.presets-workspace-panels-container {
+  position: relative;
+  height: 100%;
+}
+
+.presets-workspace-add-edit-container {
+  position: relative;
+  height: 100%;
+}
+
+.presets-workspace-add-container {
+  position: relative;
+  height: 100%;
+}
+
+.presets-workspace-edit-container {
+  position: relative;
+  height: 100%;
+}
+
+.presets-workspace-panels-overlay {
   position: absolute;
   top: 0%;
   left: 0%;
@@ -132,56 +157,27 @@
   background-color: #bbc4d0;
 }
 
-.presets-panels-overlay .panel-overlay {
+.presets-workspace-panels-overlay .panel-overlay {
   position: absolute;
   padding: 3px;
 }
 
-.presets-panels-overlay .panel-overlay .content {
+.presets-workspace-panels-overlay .panel-overlay .content {
   width: 100%;
   height: 100%;
+  overflow: auto;
   background-color: #dbdbdb;
 }
 
-.presets-panels-container {
+.presets-workspace-panels-overlay .panel-overlay .content .icon {
+  width: 30%;
+  height: 40%;
   position: absolute;
-  top: 0%;
-  left: 0%;
-  width: 100%;
-  height: 100%;
+  top: 30%;
+  left: 35%;
 }
 
-.presets-panel {
-  position: absolute;
-  z-index: 2;
-}
-
-.presets-panel .resize {
-  width: 100%;
-  height: 100%;
-  padding: 3px;
-  overflow: auto;
-  position: absolute;
-  pointer-events: none;
-}
-
-.presets-panel .content {
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-}
-
-.presets-selector {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  height: 100%;
-  width: 100%;
-  background-color: #141414;
-  opacity: 0.4;
-}
-
-.presets-optional {
+.presets-workspace-panels-overlay .panel-overlay .optional {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -191,7 +187,55 @@
   opacity: 0.4;
 }
 
-.presets-error {
+.presets-workspace-panels-container {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+}
+
+.presets-workspace-panel {
+  position: absolute;
+  z-index: 2;
+}
+
+.presets-workspace-panel .resize {
+  width: 100%;
+  height: 100%;
+  padding: 3px;
+  overflow: auto;
+  position: absolute;
+
+}
+
+.presets-workspace-panel .content {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.presets-workspace-panel .selector {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  background-color: #141414;
+  opacity: 0.4;
+}
+
+.presets-workspace-panel .optional {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  background-color: #008855;
+  opacity: 0.4;
+}
+
+.presets-workspace-panel .error {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -205,4 +249,5 @@
   width: 100%;
   height: 100%;
   overflow: auto;
+  //background-color: #dbdbdb;
 }

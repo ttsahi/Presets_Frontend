@@ -6,21 +6,9 @@
 
   'use strict'
 
-  app.controller('presetsController', ['$scope',
-    function($scope){
+  app.controller('presetsController', ['$scope', 'Preset',
+    function($scope, Preset){
 
-      $scope.tileExampModel = {
-        name: 'TTT'
-      };
-
-      $scope.tileExamp = {
-        template: '<div><h1>{{name}}</h1></div>',
-        controller: ['$scope',
-          function($scope){
-            //$scope.name = 'Tsahi';
-          }
-        ]
-      };
     }
   ]);
 
