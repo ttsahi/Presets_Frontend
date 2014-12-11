@@ -198,6 +198,8 @@
             var self = this;
             var deferred = $q.defer();
 
+            var clonedWorkspace = angular.copy(workspace);
+
             $q.when(confirm === true ? this.confirmAdd(workspace) : new CRUDResult(true)).then(
               function resolveSuccess(result){
 
@@ -206,12 +208,8 @@
                 }
 
                 if(result.succeeded === true){
-                  if(self._workspaces[workspace.id] !== undefined){
-                    deferred.reject(new CRUDResult(false, {}, ['workspace id: ' + workspace.id + ' already exist!']));
-                  }
-
-                  self._workspaces[workspace.id] = angular.copy(validateWorkspace(workspace));
-                  deferred.resolve(new CRUDResult(true, workspace));
+                  self._workspaces[clonedWorkspace.id] = clonedWorkspace
+                  deferred.resolve(new CRUDResult(true, angular.copy(clonedWorkspace)));
                 }else{
                   deferred.reject(result);
                 }
@@ -233,8 +231,9 @@
             }
 
             var workspace = this._workspaces[id];
+            var clonedWorkspace = angular.copy(workspace);
 
-            $q.when(confirm === true ? this.confirmRemove(workspace) : new CRUDResult(true)).then(
+            $q.when(confirm === true ? this.confirmRemove(clonedWorkspace) : new CRUDResult(true)).then(
               function resolveSuccess(result){
 
                 if(!result instanceof CRUDResult){
@@ -242,6 +241,7 @@
                 }
 
                 if(result.succeeded === true){
+                  workspace = self._workspaces[id];
                   delete self._workspaces[workspace.id];
                   deferred.resolve(new CRUDResult(true, workspace));
                 }else{
@@ -290,8 +290,9 @@
             }
 
             workspace = validateWorkspace(workspace);
+            var clonedWorkspace = angular.copy(workspace);
 
-            $q.when(confirm === true ? this.confirmUpdate(workspace) : new CRUDResult(true)).then(
+            $q.when(confirm === true ? this.confirmUpdate(clonedWorkspace) : new CRUDResult(true)).then(
               function resolveSuccess(result){
 
                 if(!result instanceof CRUDResult){
@@ -299,12 +300,8 @@
                 }
 
                 if(result.succeeded === true){
-                  if(self._workspaces[workspace.id] !== undefined){
-                    deferred.reject(new CRUDResult(false, {}, ['workspace id: ' + workspace.id + ' already exist!']));
-                  }
-
-                  self._workspaces[workspace.id] = angular.copy(validateWorkspace(workspace));
-                  deferred.resolve(new CRUDResult(true, workspace));
+                  self._workspaces[workspace.id] = workspace;
+                  deferred.resolve(new CRUDResult(true, clonedWorkspace));
                 }else{
                   deferred.reject(result);
                 }

@@ -120,6 +120,7 @@
           return deferred.promise;
         }
 
+        var clonedTile = angular.copy(tile);
         var type = this._preset.types[tile.type];
 
         $q.when(confirm === true ? type.confirmAdd(tile) : new CRUDResult(true)).then(
@@ -130,13 +131,10 @@
             }
 
             if(result.succeeded === true){
-              if(self._tilesMap[tile.id] !== undefined){
-                deferred.reject(new CRUDResult(false, {}, ['tile id: ' + tile.id + ' already exist!']));
-              }
-
-              self._tiles[tile.position -1] = angular.copy(validateTile(tile));
-              self._tilesMap[tile.id] = (tile.position -1);
-              self._panels[tile.position - 1].inUse = true;
+              clonedTile.creationInfo = type.creationInfo;
+              self._tiles[clonedTile.position -1] = clonedTile;
+              self._tilesMap[clonedTile.id] = (clonedTile.position -1);
+              self._panels[clonedTile.position - 1].inUse = true;
               deferred.resolve(new CRUDResult(true, tile));
             }else{
               deferred.reject(result);
@@ -150,57 +148,157 @@
       };
 
       WorkspaceData.prototype.removeTileByIdAsync = function(id, confirm){
+        var self = this;
+        var deferred = $q.defer();
 
-        for(var i = 0; i < this._tiles.length; i++){
-          if(this._tiles[i].id === id){
-            this._panels[this._tiles[i].position - 1].inUse = false;
-            this._tiles[i] = null;
-            return true;
-          }
+        if(this._tilesMap[id] === undefined){
+          deferred.reject(new CRUDResult(false, {}, ['tile id: ' + id + 'not found!']));
+          return deferred.promise;
         }
 
-        return false;
+        var tile = this._tiles[this._tilesMap[id]];
+        var clonedTile = angular.copy(tile);
+        var type = this._preset.types[tile.type];
+
+        $q.when(confirm === true ? type.confirmRemove(clonedTile) : new CRUDResult(true)).then(
+          function resolveSuccess(result){
+
+            if(!result instanceof CRUDResult){
+              throw new DeveloperError('confirm remove must return CRUDResult!');
+            }
+
+            if(result.succeeded === true){
+              tile = self._tiles[self._tilesMap[id]];
+              self._tiles[tile.position - 1] = null;
+              delete self._tilesMap[tile.id];
+              deferred.resolve(new CRUDResult(true, tile));
+            }else{
+              deferred.reject(result);
+            }
+
+          },function resolveError(reason){
+            deferred.reject(new CRUDResult(false, reason, ["can't remove tile!"]));
+          });
+
+        return deferred.promise;
       };
 
       WorkspaceData.prototype.removeTileByPositionAsync = function(position, confirm){
+        var self = this;
+        var deferred = $q.defer();
 
-        if(!isNullOrUndefined(this._tiles[position -1])){
-          this._panels[position -1].inUse = false;
-          this._tiles[position -1] = null;
-          return true;
+        if(this._tiles[position - 1] === null){
+          deferred.reject(new CRUDResult(false, {}, ['tile already removed!']));
+          return deferred.promise;
         }
 
-        return false;
+        var tile = this._tiles[position -1];
+        var clonedTile = angular.copy(tile);
+        var type = this._preset.types[tile.type];
+
+        $q.when(confirm === true ? type.confirmRemove(clonedTile) : new CRUDResult(true)).then(
+          function resolveSuccess(result){
+
+            if(!result instanceof CRUDResult){
+              throw new DeveloperError('confirm remove must return CRUDResult!');
+            }
+
+            if(result.succeeded === true){
+              tile = self._tiles[position - 1];
+              self._tiles[tile.position - 1] = null;
+              delete self._tilesMap[tile.id];
+              deferred.resolve(new CRUDResult(true, tile));
+            }else{
+              deferred.reject(result);
+            }
+
+          },function resolveError(reason){
+            deferred.reject(new CRUDResult(false, reason, ["can't remove tile!"]));
+          });
+
+        return deferred.promise;
       };
 
       WorkspaceData.prototype.updateTileByIdAsync = function(id, model, confirm){
+        var self = this;
+        var deferred = $q.defer();
 
-        if(!angular.isObject(model)){
-          throw new DeveloperError('model must be object!');
+        if(this._tilesMap[id] === undefined){
+          deferred.reject(new CRUDResult(false, {}, ['tile id: ' + id + 'not found!']));
+          return deferred.promise;
         }
 
-        for(var i = 0; i < this._tiles.length; i++){
-          if(this._tiles[i].id === id){
-            this._tiles[i].model = model;
-            return true;
-          }
+        var tile = angular.copy(this._tiles[this._tilesMap[id]]);
+
+        if(typeof model !== 'object'){
+          deferred.reject(new CRUDResult(false, tile, ['nothing to update!']));
+          return deferred.promise;
         }
 
-        return false;
+        tile.model = model;
+        var clonedTile = angular.copy(tile);
+        var type = this._preset.types[tile.type];
+
+        $q.when(confirm === true ? type.confirmUpdate(clonedTile) : new CRUDResult(true)).then(
+          function resolveSuccess(result){
+
+            if(!result instanceof CRUDResult){
+              throw new DeveloperError('confirm update must return CRUDResult!');
+            }
+
+            if(result.succeeded === true){
+              self._tiles[tile.position - 1].model = tile.model;
+              deferred.resolve(new CRUDResult(true, angular.copy(tile)));
+            }else{
+              deferred.reject(result);
+            }
+
+          },function resolveError(reason){
+            deferred.reject(new CRUDResult(false, reason, ["can't update tile!"]));
+          });
+
+        return deferred.promise;
       };
 
       WorkspaceData.prototype.updateTileByPositionAsync = function(position, model, confirm){
+        var self = this;
+        var deferred = $q.defer();
 
-        if(!angular.isObject(model)){
-          throw new DeveloperError('model must be object!');
+        if(this._tiles[position - 1] === null){
+          deferred.reject(new CRUDResult(false, {}, ['tile not found!']));
+          return deferred.promise;
         }
 
-        if(!isNullOrUndefined(this._tiles[position -1])){
-          this._tiles[position -1].model = model;
-          return true;
+        var tile = angular.copy(this._tiles[position - 1]);
+
+        if(typeof model !== 'object'){
+          deferred.reject(new CRUDResult(false, tile, ['nothing to update!']));
+          return deferred.promise;
         }
 
-        return false;
+        tile.model = model;
+        var clonedTile = angular.copy(tile);
+        var type = this._preset.types[tile.type];
+
+        $q.when(confirm === true ? type.confirmUpdate(clonedTile) : new CRUDResult(true)).then(
+          function resolveSuccess(result){
+
+            if(!result instanceof CRUDResult){
+              throw new DeveloperError('confirm update must return CRUDResult!');
+            }
+
+            if(result.succeeded === true){
+              self._tiles[tile.position - 1].model = tile.model;
+              deferred.resolve(new CRUDResult(true, angular.copy(tile)));
+            }else{
+              deferred.reject(result);
+            }
+
+          },function resolveError(reason){
+            deferred.reject(new CRUDResult(false, reason, ["can't update tile!"]));
+          });
+
+        return deferred.promise;
       };
 
       return WorkspaceData;
