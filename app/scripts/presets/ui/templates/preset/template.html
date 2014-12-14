@@ -32,14 +32,14 @@
           <button type="button" class="btn btn-default" ng-click="enterAddMode()">
             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
           </button>
-          <button type="button" class="btn btn-default" ng-click="changeWorkspace()">
-            <span>New</span>
-          </button>
         </form>
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
   </nav>
-  <div class="presets-workspace-container">
-    <div workspace="workspaceData" class="presets-full-height"></div>
+  <div class="presets-workspace-container presets-flipper-flip-container" ng-class="flipTrigger">
+    <div class="presets-full-height presets-flipper-flipper">
+      <div workspace="workspaceData" class="presets-full-height presets-flipper-front"></div>
+      <div ng-include="addWorkspaceUrl" class="presets-full-height presets-flipper-back" style="background-color: #5c7590"></div>
+    </div>
   </div>
 </div>

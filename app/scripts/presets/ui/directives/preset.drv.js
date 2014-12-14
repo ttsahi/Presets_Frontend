@@ -6,50 +6,46 @@
 
   'use strict';
 
-  app.directive('preset', ['Preset', 'TileType',
-    function(Preset, TileType){
+  app.directive('preset', ['Preset', 'Workspace', 'TileType',
+    function(Preset, Workspace, TileType){
+
+      function DeveloperError(message){
+        this.message = message;
+      }
+
       return {
         restrict: 'EA',
         replace: true,
         templateUrl: Preset.templatesDir + 'templates/preset/template.html',
+        scope: {
+          preset: '='
+        },
         controller: ['$scope', 'WorkspaceData',
           function($scope, WorkspaceData){
 
-            $scope.workspaceData = new WorkspaceData(null, 4, 5);
+            if(!($scope.preset instanceof Preset)){
+              throw new DeveloperError('preset must be instance of preset!');
+            }
 
-            $scope.changeWorkspace = function(){
-              $scope.workspaceData = new WorkspaceData(null, 20, 20);
-              console.log('change workspace data!');
-            };
+            $scope.addWorkspaceUrl =  Preset.templatesDir + 'templates/preset/add-workspace.html';
 
-            $scope.isPresentation = true;
+            var preset = $scope.preset;
 
-            var isAddMode = false;
-            var isUpdateMode = false;
+            if(preset.workspacesCount === 0){
+              $scope.flipTrigger = 'flip';
+            }else{
+              $scope.flipTrigger = '';
+            }
 
             $scope.enterAddMode = function(){
-              if(!isAddMode) {
-                $scope.workspaceData.enterAddMode();
-                isAddMode = true;
-                isUpdateMode = false;
+              if($scope.flipTrigger === ''){
+                $scope.flipTrigger = 'flip';
               }else{
-                $scope.workspaceData.enterPresentationMode();
-                isAddMode = false;
-                isUpdateMode = false;
+                $scope.flipTrigger = '';
               }
             };
 
-            $scope.enterUpdateMode = function(){
-              if(!isUpdateMode) {
-                $scope.workspaceData.enterUpdateMode();
-                isUpdateMode = true;
-                isAddMode = false;
-              }else{
-                $scope.workspaceData.enterPresentationMode();
-                isUpdateMode = false;
-                isAddMode = false;
-              }
-            };
+            $scope.workspaceData = new WorkspaceData(null, new Workspace(null, null, null, null, 4, 5));
           }
         ]
       };

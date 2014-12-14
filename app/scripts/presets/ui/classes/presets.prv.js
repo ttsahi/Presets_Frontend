@@ -59,7 +59,7 @@
           }
 
           Preset.prototype.construct = function(workspaces){
-            if (!workspaces instanceof Array) {
+            if (!(workspaces instanceof Array)) {
               return;
             }
 
@@ -78,6 +78,9 @@
             },
             types: {
               get: function(){ return this._types; }
+            },
+            workspacesCount: {
+              get: function(){ return Object.keys(this._workspaces).length; }
             }
           });
 
@@ -123,6 +126,10 @@
               }
             }
           });
+
+          Preset.prototype.getWorkspace = function(id){
+            return angular.copy(this._workspaces[id]);
+          };
 
           function validateWorkspace(workspace) {
             if(typeof workspace !== 'object') {
