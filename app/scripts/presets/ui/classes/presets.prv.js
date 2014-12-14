@@ -308,7 +308,7 @@
                 }
 
               },function resolveError(reason){
-                deferred.reject(new CRUDResult(false, reason, ["can't add workspace!"]));
+                deferred.reject(new CRUDResult(false, reason, ["can't update workspace!"]));
               });
 
             return deferred.promise;

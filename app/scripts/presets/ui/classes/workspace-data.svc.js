@@ -103,7 +103,7 @@
           throw new DeveloperError('invalid tile position!');
         }
 
-        if(isNullEmptyOrWhiteSpaces(tile.type) || isNullOrUndefined(this._preset.types[tile.type])){
+        if(isNullEmptyOrWhiteSpaces(tile.type)){
           throw new DeveloperError('invalid tile type!');
         }
 
@@ -121,10 +121,10 @@
           return deferred.promise;
         }
 
-        var clonedTile = angular.copy(tile);
+        var clonedWorkspace = angular.copy(this._workspace);
         var type = this._preset.types[tile.type];
 
-        $q.when(confirm === true ? type.confirmAdd(tile) : new CRUDResult(true)).then(
+        $q.when(confirm === true ? type.confirmAdd(clonedWorkspace, tile) : new CRUDResult(true)).then(
           function resolveSuccess(result){
 
             if(!result instanceof CRUDResult){
@@ -132,10 +132,17 @@
             }
 
             if(result.succeeded === true){
-              clonedTile.creationInfo = type.creationInfo;
-              self._tiles[clonedTile.position -1] = clonedTile;
-              self._tilesMap[clonedTile.id] = (clonedTile.position -1);
-              self._panels[clonedTile.position - 1].inUse = true;
+              tile = validateTile(tile);
+
+              if(tile.type !== type.name){
+                deferred.reject(new CRUDResult(false, {}, ['invalid tile type!']));
+                return deferred.promise;
+              }
+
+              tile.creationInfo = type.creationInfo;
+              self._tiles[tile.position -1] = angular.copy(tile);
+              self._tilesMap[tile.id] = (tile.position -1);
+              self._panels[tile.position - 1].inUse = true;
               deferred.resolve(new CRUDResult(true, tile));
             }else{
               deferred.reject(result);
@@ -158,10 +165,9 @@
         }
 
         var tile = this._tiles[this._tilesMap[id]];
-        var clonedTile = angular.copy(tile);
         var type = this._preset.types[tile.type];
 
-        $q.when(confirm === true ? type.confirmRemove(clonedTile) : new CRUDResult(true)).then(
+        $q.when(confirm === true ? type.confirmRemove(angular.copy(tile)) : new CRUDResult(true)).then(
           function resolveSuccess(result){
 
             if(!result instanceof CRUDResult){
@@ -169,9 +175,9 @@
             }
 
             if(result.succeeded === true){
-              tile = self._tiles[self._tilesMap[id]];
               self._tiles[tile.position - 1] = null;
               delete self._tilesMap[tile.id];
+              delete tile.creationInfo;
               deferred.resolve(new CRUDResult(true, tile));
             }else{
               deferred.reject(result);
@@ -194,10 +200,9 @@
         }
 
         var tile = this._tiles[position -1];
-        var clonedTile = angular.copy(tile);
         var type = this._preset.types[tile.type];
 
-        $q.when(confirm === true ? type.confirmRemove(clonedTile) : new CRUDResult(true)).then(
+        $q.when(confirm === true ? type.confirmRemove(angular.copy(tile)) : new CRUDResult(true)).then(
           function resolveSuccess(result){
 
             if(!result instanceof CRUDResult){
@@ -205,9 +210,9 @@
             }
 
             if(result.succeeded === true){
-              tile = self._tiles[position - 1];
               self._tiles[tile.position - 1] = null;
               delete self._tilesMap[tile.id];
+              delete tile.creationInfo;
               deferred.resolve(new CRUDResult(true, tile));
             }else{
               deferred.reject(result);
@@ -229,18 +234,19 @@
           return deferred.promise;
         }
 
-        var tile = angular.copy(this._tiles[this._tilesMap[id]]);
+        var tile = this._tiles[this._tilesMap[id]];
+        var clonedTile = angular.copy(tile);
 
         if(typeof model !== 'object'){
-          deferred.reject(new CRUDResult(false, tile, ['nothing to update!']));
+          deferred.reject(new CRUDResult(false, clonedTile, ['nothing to update!']));
           return deferred.promise;
         }
 
-        tile.model = model;
-        var clonedTile = angular.copy(tile);
+        clonedTile.model = model;
+        var clonedWorkspace = angular.copy(this._workspace);
         var type = this._preset.types[tile.type];
 
-        $q.when(confirm === true ? type.confirmUpdate(clonedTile) : new CRUDResult(true)).then(
+        $q.when(confirm === true ? type.confirmUpdate(clonedWorkspace, clonedTile) : new CRUDResult(true)).then(
           function resolveSuccess(result){
 
             if(!result instanceof CRUDResult){
@@ -248,8 +254,8 @@
             }
 
             if(result.succeeded === true){
-              self._tiles[tile.position - 1].model = tile.model;
-              deferred.resolve(new CRUDResult(true, angular.copy(tile)));
+              tile.model = angular.copy(model);
+              deferred.resolve(new CRUDResult(true, clonedTile));
             }else{
               deferred.reject(result);
             }
@@ -270,18 +276,19 @@
           return deferred.promise;
         }
 
-        var tile = angular.copy(this._tiles[position - 1]);
+        var tile = this._tiles[position - 1];
+        var clonedTile = angular.copy(tile);
 
         if(typeof model !== 'object'){
-          deferred.reject(new CRUDResult(false, tile, ['nothing to update!']));
+          deferred.reject(new CRUDResult(false, clonedTile, ['nothing to update!']));
           return deferred.promise;
         }
 
-        tile.model = model;
-        var clonedTile = angular.copy(tile);
+        clonedTile.model = model;
+        var clonedWorkspace = angular.copy(this._workspace);
         var type = this._preset.types[tile.type];
 
-        $q.when(confirm === true ? type.confirmUpdate(clonedTile) : new CRUDResult(true)).then(
+        $q.when(confirm === true ? type.confirmUpdate(clonedWorkspace, clonedTile) : new CRUDResult(true)).then(
           function resolveSuccess(result){
 
             if(!result instanceof CRUDResult){
@@ -289,8 +296,8 @@
             }
 
             if(result.succeeded === true){
-              self._tiles[tile.position - 1].model = tile.model;
-              deferred.resolve(new CRUDResult(true, angular.copy(tile)));
+              tile.model = angular.copy(model);
+              deferred.resolve(new CRUDResult(true, clonedTile));
             }else{
               deferred.reject(result);
             }
