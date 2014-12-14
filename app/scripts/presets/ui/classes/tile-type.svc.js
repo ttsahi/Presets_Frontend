@@ -22,9 +22,9 @@
         this._confirmRemove = null;
         this._confirmUpdate = null;
 
-        this.confirmAdd = confirmAdd || function(workspaceInfo, tileInfo){ return new CRUDResult(true); };
-        this.confirmRemove = confirmRemove || function(workspaceInfo, tileInfo){ return new CRUDResult(true); };
-        this.confirmUpdate = confirmUpdate || function(workspaceInfo, tileInfo){ return new CRUDResult(true); };
+        this.confirmAdd = confirmAdd || function(workspace, tile){ return new CRUDResult(true); };
+        this.confirmRemove = confirmRemove || function(workspace, tile){ return new CRUDResult(true); };
+        this.confirmUpdate = confirmUpdate || function(workspace, tile){ return new CRUDResult(true); };
       }
 
       TileType.prototype.init = function(args){
@@ -32,9 +32,9 @@
         this._name = args.name;
         this._creationInfo = args.creationInfo;
         this._presentationInfo = args.presentationInfo;
-        this.confirmAdd = args.confirmAdd || function(workspaceInfo, tileInfo){ return new CRUDResult(true); };
-        this.confirmRemove = args.confirmRemove || function(workspaceInfo, tileInfo){ return new CRUDResult(true); };
-        this.confirmUpdate = args.confirmUpdate || function(workspaceInfo, tileInfo){ return new CRUDResult(true); };
+        this.confirmAdd = args.confirmAdd || function(workspace, tile){ return new CRUDResult(true); };
+        this.confirmRemove = args.confirmRemove || function(workspace, tile){ return new CRUDResult(true); };
+        this.confirmUpdate = args.confirmUpdate || function(workspace, tile){ return new CRUDResult(true); };
       };
 
       Object.defineProperties(TileType.prototype, {

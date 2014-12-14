@@ -198,8 +198,6 @@
             var self = this;
             var deferred = $q.defer();
 
-            var clonedWorkspace = angular.copy(workspace);
-
             $q.when(confirm === true ? this.confirmAdd(workspace) : new CRUDResult(true)).then(
               function resolveSuccess(result){
 
@@ -208,8 +206,8 @@
                 }
 
                 if(result.succeeded === true){
-                  self._workspaces[clonedWorkspace.id] = clonedWorkspace
-                  deferred.resolve(new CRUDResult(true, angular.copy(clonedWorkspace)));
+                  self._workspaces[workspace.id] = validateWorkspace(angular.copy(workspace));
+                  deferred.resolve(new CRUDResult(true, angular.copy(workspace)));
                 }else{
                   deferred.reject(result);
                 }
@@ -231,9 +229,8 @@
             }
 
             var workspace = this._workspaces[id];
-            var clonedWorkspace = angular.copy(workspace);
 
-            $q.when(confirm === true ? this.confirmRemove(clonedWorkspace) : new CRUDResult(true)).then(
+            $q.when(confirm === true ? this.confirmRemove(angular.copy(workspace)) : new CRUDResult(true)).then(
               function resolveSuccess(result){
 
                 if(!result instanceof CRUDResult){
@@ -241,7 +238,6 @@
                 }
 
                 if(result.succeeded === true){
-                  workspace = self._workspaces[id];
                   delete self._workspaces[workspace.id];
                   deferred.resolve(new CRUDResult(true, workspace));
                 }else{
@@ -264,7 +260,7 @@
               return deferred.promise;
             }
 
-            var workspace = angular.copy(this._workspaces[id]);
+            var clonedWorkspace = angular.copy(this._workspaces[id]);
 
             if(typeof data !== 'object'){
               deferred.reject(new CRUDResult(false, workspace, ['nothing to update!']));
@@ -273,13 +269,13 @@
 
             var isUpdated = false;
             angular.forEach(data, function(value, property){
-              if(property === 'id'){
+              if(property === 'id' && value !== id){
                 deferred.reject(new CRUDResult(false, workspace, ["can't change id property!"]));
                 return deferred.promise;
               }
 
-              if(workspace[property] !== undefined){
-                workspace[property] = value;
+              if(clonedWorkspace[property] !== undefined){
+                clonedWorkspace[property] = value;
                 isUpdated = true;
               }
             });
@@ -289,8 +285,7 @@
               return deferred.promise;
             }
 
-            workspace = validateWorkspace(workspace);
-            var clonedWorkspace = angular.copy(workspace);
+            clonedWorkspace = validateWorkspace(clonedWorkspace);
 
             $q.when(confirm === true ? this.confirmUpdate(clonedWorkspace) : new CRUDResult(true)).then(
               function resolveSuccess(result){
@@ -300,7 +295,13 @@
                 }
 
                 if(result.succeeded === true){
-                  self._workspaces[workspace.id] = workspace;
+
+                  if(clonedWorkspace.id !== id){
+                    deferred.reject(new CRUDResult(false, clonedWorkspace, ["can't change id property!"]));
+                    return deferred.promise;
+                  }
+
+                  self._workspaces[clonedWorkspace.id] = validateWorkspace(angular.copy(clonedWorkspace));
                   deferred.resolve(new CRUDResult(true, clonedWorkspace));
                 }else{
                   deferred.reject(result);

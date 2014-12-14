@@ -13,13 +13,14 @@
         this.message = message;
       }
 
-      function WorkspaceData(preset, rows, cols, tiles){
-        this._cols = cols;
-        this._rows = rows;
+      function WorkspaceData(preset, workspace, tiles){
         this._tilesMap = {};
         this._tiles = [];
         this._panels = [];
         this._preset = preset;
+        this._workspace = workspace;
+        this._cols = workspace.cols;
+        this._rows = workspace.rows;
         this._initTiles = tiles || [];
 
         //this._enterEditMode = function(){};
