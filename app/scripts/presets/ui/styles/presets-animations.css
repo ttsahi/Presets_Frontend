@@ -38,3 +38,16 @@
 .presets-flipper-back {
   transform: rotateY(180deg);
 }
+
+.presets-errors-animation {
+  -webkit-animation: shake 1.0s;
+  animation: shake 1.0s;
+}
+.presets-errors-animation.ng-active {
+  -webkit-animation: shake 1.0s;
+  animation: shake 1.0s;
+}
+.presets-errors-animation.ng-inactive {
+  -webkit-animation: shake 1.0s;
+  animation: shake 1.0s;
+}

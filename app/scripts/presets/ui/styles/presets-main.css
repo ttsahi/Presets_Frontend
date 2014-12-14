@@ -251,3 +251,16 @@
   overflow: auto;
   //background-color: #dbdbdb;
 }
+
+.presets-create-workspace-form{
+  width: 40%;
+  height: 70%;
+  position: absolute;
+  top: 15%;
+  left: 30%;
+}
+
+.presets-errors {
+  color: #dd4444;
+  padding: 5px;
+}

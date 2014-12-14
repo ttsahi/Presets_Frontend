@@ -31,7 +31,48 @@
 
             var preset = $scope.preset;
 
+            $scope.workspace = {
+              name: null,
+              description: null,
+              expiration: new Date()
+            };
+
+            $scope.datepicker = {
+              minDate: new Date(),
+              format: 'dd-MM-yyyy',
+              dateOptions: {
+                formatYear: 'yy',
+                startingDay: 1
+              }
+            };
+
+            $scope.today = function() {
+              $scope.workspace.expiration = new Date();
+            };
+
+            $scope.clear = function () {
+              $scope.workspace.expiration = null;
+            };
+
+            $scope.open = function($event) {
+              $event.preventDefault();
+              $event.stopPropagation();
+
+              $scope.datepicker.opened = true;
+            };
+
+            function initCreation(){
+              $scope.firstCreate = true;
+              $scope.workspace = {
+                name: null,
+                description: null,
+                expiration: new Date()
+              };
+              $scope.today();
+            }
+
             if(preset.workspacesCount === 0){
+              initCreation();
               $scope.flipTrigger = 'flip';
             }else{
               $scope.flipTrigger = '';
@@ -39,9 +80,22 @@
 
             $scope.enterAddMode = function(){
               if($scope.flipTrigger === ''){
+                initCreation();
                 $scope.flipTrigger = 'flip';
               }else{
-                $scope.flipTrigger = '';
+                if(preset.workspacesCount === 0) {
+                  initCreation();
+                }else{
+                  $scope.flipTrigger = '';
+                }
+              }
+            };
+
+            $scope.createWorkspace = function(){
+              $scope.firstCreate = false;
+
+              if($scope.createWorkspaceForm.$valid){
+                console.log('valid data!');
               }
             };
 

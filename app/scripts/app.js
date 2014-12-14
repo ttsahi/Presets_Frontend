@@ -14,7 +14,9 @@
         .module('presetsApp', [
             'ngAnimate',
             'ngSanitize',
+            'ngMessages',
             'ui.router',
+            'ui.bootstrap',
             'restangular',
             'annapolis-data',
             'annapolis-map',
