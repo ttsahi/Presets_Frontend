@@ -1,5 +1,5 @@
 <div class="container">
-  <form class="presets-create-workspace-form" role="form" name="updateWorkspaceForm" novalidate>
+  <form class="presets-create-update-workspace-form" role="form" name="updateWorkspaceForm" novalidate>
     <fieldset>
       <legend>Update Workspace</legend>
       <div class="form-group" ng-class="firstUpdate ? '' : updateWorkspaceForm.name.$invalid ? 'has-error' : ''">
@@ -32,6 +32,7 @@
         <div ng-repeat="error in formErrors">{{error}}</div>
       </div>
       <button type="button" class="btn btn-primary" ng-click="updateWorkspace(updateWorkspaceForm, workspace)">Update</button>
+      <button type="button" class="btn btn-danger" ng-click="delete(workspace)">Delete</button>
       <button type="button" class="btn btn-danger" ng-click="cancel()">Cancel</button>
     </fieldset>
   </form>

@@ -143,6 +143,7 @@
               self._tiles[tile.position -1] = angular.copy(tile);
               self._tilesMap[tile.id] = (tile.position -1);
               self._panels[tile.position - 1].inUse = true;
+              delete tile.creationInfo;
               deferred.resolve(new CRUDResult(true, tile));
             }else{
               deferred.reject(result);
@@ -255,6 +256,7 @@
 
             if(result.succeeded === true){
               tile.model = angular.copy(model);
+              delete clonedTile.creationInfo;
               deferred.resolve(new CRUDResult(true, clonedTile));
             }else{
               deferred.reject(result);
@@ -297,6 +299,7 @@
 
             if(result.succeeded === true){
               tile.model = angular.copy(model);
+              delete clonedTile.creationInfo;
               deferred.resolve(new CRUDResult(true, clonedTile));
             }else{
               deferred.reject(result);

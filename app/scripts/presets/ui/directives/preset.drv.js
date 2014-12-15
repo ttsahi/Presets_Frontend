@@ -52,15 +52,23 @@
               $scope.selectedWorkspace = value;
             };
 
+            function resetTriggers(){
+              if(!angular.isObject($scope.selectedWorkspace) && preset.workspacesCount !== 0){
+                $scope.selectedWorkspace = preset.workspacesArr[preset.workspacesArr.length - 1];
+              }
+
+              isInAddMode = false;
+              isInUpdateMode = false;
+              $scope.mainFlipTrigger = '';
+              $scope.addUpdateflipTrigger = '';
+            }
+
             $scope.enterAddMode = function(){
               if(isInAddMode){
                 if(preset.workspacesCount === 0) {
                   $scope.$broadcast('initCreation');
                 }else{
-                  isInAddMode = false;
-                  isInUpdateMode = false;
-                  $scope.mainFlipTrigger = '';
-                  $scope.addUpdateflipTrigger = '';
+                  resetTriggers();
                 }
               }else{
                 $scope.$broadcast('initCreation');
@@ -77,10 +85,15 @@
 
             $scope.enterUpdateMode = function(){
               if(isInUpdateMode){
-                isInUpdateMode = false;
-                isInAddMode = false;
-                $scope.mainFlipTrigger = '';
-                $scope.addUpdateflipTrigger = '';
+                if(preset.workspacesCount === 0) {
+                  $scope.$broadcast('initCreation');
+                  isInAddMode = true;
+                  isInUpdateMode = false;
+                  $scope.mainFlipTrigger = 'flip';
+                  $scope.addUpdateflipTrigger = '';
+                }else {
+                  resetTriggers();
+                }
               }else{
                 $scope.$broadcast('initUpdate', $scope.selectedWorkspace);
                 if(isInAddMode || $scope.addUpdateflipTrigger === ''){

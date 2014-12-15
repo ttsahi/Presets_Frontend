@@ -44,22 +44,32 @@
       this.$get = ['$q', 'CRUDResult', 'Workspace', 'Tile', 'TileType',
         function($q, CRUDResult, Workspace, Tile, TileType) {
 
-          function Preset(workspaces) {
+          function Preset(workspaces, options) {
             this._id = guid();
             this._types = [];
             this._workspaces = {};
             this._workspacesArr = [];
             this._currentWorkspace = null;
 
+            this._useCache = false;
+            this._lifetime = null;
+
             this._loadTiles = function(workspace){ return new CRUDResult(true); };
             this._confirmAdd = function(workspace){ return new CRUDResult(true); };
             this._confirmRemove = function(workspace){ return new CRUDResult(true); };
             this._confirmUpdate = function(workspace){ return new CRUDResult(true); };
 
-            this.construct(workspaces);
+            this.construct(workspaces, options);
           }
 
-          Preset.prototype.construct = function(workspaces){
+          Preset.prototype.construct = function(workspaces, options){
+
+            if(angular.isObject(options)){
+              if(options.cache === true && angular.isNumber(options.lifetime)){
+                this._useCache = true;
+                this._lifetime = Math.abs(Math.round(options.lifetime));
+              }
+            }
 
             this._confirmAdd = function(workspace){
               workspace.id = guid();

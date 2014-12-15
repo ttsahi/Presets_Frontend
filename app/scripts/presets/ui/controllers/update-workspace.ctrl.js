@@ -68,11 +68,11 @@
         $scope.formErrors = [];
       });
 
-      $scope.updateWorkspace = function(form, worksapce){
+      $scope.updateWorkspace = function(form, workspace){
         $scope.firstUpdate = false;
 
         if(form.$valid){
-          preset.updateWorkspaceAsync(worksapce.id, worksapce, true).then(
+          preset.updateWorkspaceAsync(workspace.id, workspace, true).then(
             function success(){
               $scope.firstUpdate = true;
               $scope.setSelectedWorkspace(preset.workspacesArr[selectedWorkspacePos]);
@@ -83,6 +83,19 @@
             }
           );
         }
+      };
+
+      $scope.delete = function(workspace){
+        preset.removeWorkspaceAsync(workspace.id, true).then(
+          function success(){
+            $scope.firstUpdate = true;
+            $scope.setSelectedWorkspace(null);
+            $scope.enterUpdateMode();
+          }, function error(result){
+            console.log(result);
+            $scope.formErrors = result.errors;
+          }
+        );
       };
 
       $scope.cancel = function(){

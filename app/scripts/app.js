@@ -18,6 +18,7 @@
             'ui.router',
             'ui.bootstrap',
             'restangular',
+            'ngStorage',
             'annapolis-data',
             'annapolis-map',
             'annapolis-ui'
