@@ -1,21 +1,30 @@
 /* entire container, keeps perspective */
-.presets-flipper-flip-container {
+.presets-flipper-flip-main-container {
   perspective: 1000;
 }
+
+.presets-flipper-flip-add-update-container {
+  perspective: 1000;
+}
+
 /* flip the pane when hovered */
-.presets-flipper-flip-container.flip .presets-flipper-flipper {
+.presets-flipper-flip-main-container.flip .presets-flipper-main-flipper {
   transform: rotateY(180deg);
 }
 
-.presets-flipper-back {
-  position: absolute;
-  width: 100%;
-  top: 0;
-  left: 0;
+.presets-flipper-flip-add-update-container.flip .presets-flipper-add-update-flipper {
+  transform: rotateY(180deg);
 }
 
 /* flip speed goes here */
-.presets-flipper-flipper {
+.presets-flipper-main-flipper {
+  transition: 1.5s;
+  transform-style: preserve-3d;
+
+  position: relative;
+}
+
+.presets-flipper-add-update-flipper {
   transition: 1.5s;
   transform-style: preserve-3d;
 
@@ -25,6 +34,13 @@
 /* hide back of pane during swap */
 .presets-flipper-front, .presets-flipper-back {
   backface-visibility: hidden;
+}
+
+.presets-flipper-back {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
 }
 
 /* front pane, placed above back */

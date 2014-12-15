@@ -18,15 +18,14 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <form class="navbar-form navbar-left" role="select">
-          <select class="form-control" id="sel1">
-            <option>all maps</option>
-            <option>some guzii</option>
-            <option>3</option>
-            <option>4</option>
+          <select class="form-control" id="sel1"  ng-model="selectedWorkspace" ng-options="workspace.name for workspace in preset.workspacesArr">
           </select>
+          <button type="button" class="btn btn-default" ng-click="enterUpdateMode()" ng-show="selectedWorkspace">
+            <span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span>
+          </button>
         </form>
         <form class="navbar-form navbar-right" role="edit">
-          <button type="button" class="btn btn-default" ng-click="enterUpdateMode()">
+          <button type="button" class="btn btn-default" ng-click="">
             <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
           </button>
           <button type="button" class="btn btn-default" ng-click="enterAddMode()">
@@ -36,10 +35,21 @@
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
   </nav>
-  <div class="presets-workspace-container presets-flipper-flip-container" ng-class="flipTrigger">
-    <div class="presets-full-height presets-flipper-flipper">
+  <div class="presets-workspace-container presets-flipper-flip-main-container" ng-class="mainFlipTrigger">
+    <div class="presets-full-height presets-flipper-main-flipper">
       <div workspace="workspaceData" class="presets-full-height presets-flipper-front"></div>
-      <div ng-include="addWorkspaceUrl" class="presets-full-height presets-flipper-back"></div>
+      <div class="presets-full-height presets-flipper-back">
+        <div class="presets-workspace-container presets-flipper-flip-add-update-container" ng-class="addUpdateflipTrigger">
+          <div class="presets-full-height presets-flipper-add-update-flipper">
+            <div class="presets-full-height presets-flipper-front">
+              <div ng-include="addWorkspaceUrl" ng-controller="addWorkspaceController"></div>
+            </div>
+            <div class="presets-full-height presets-flipper-back">
+              <div ng-include="updateWorkspaceUrl" ng-controller="updateWorkspaceController"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

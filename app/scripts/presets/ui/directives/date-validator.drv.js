@@ -13,14 +13,14 @@
 
         //For DOM -> model validation
         ngModel.$parsers.unshift(function(value) {
-          var valid = (value instanceof Date);
+          var valid = (value instanceof Date) || ((new Date(value)) instanceof Date);
           ngModel.$setValidity('date', valid);
           return valid ? value : undefined;
         });
 
         //For model -> DOM validation
         ngModel.$formatters.unshift(function(value) {
-          ngModel.$setValidity('date', (value instanceof Date));
+          ngModel.$setValidity('date', (value instanceof Date) || ((new Date(value)) instanceof Date));
           return value;
         });
       }

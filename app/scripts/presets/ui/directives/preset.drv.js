@@ -28,74 +28,69 @@
             }
 
             $scope.addWorkspaceUrl =  Preset.templatesDir + 'templates/preset/add-workspace.html';
+            $scope.updateWorkspaceUrl =  Preset.templatesDir + 'templates/preset/update-workspace.html';
+
+            $scope.mainFlipTrigger = '';
+            $scope.addUpdateflipTrigger = '';
+
+            var isInAddMode = false;
+            var isInUpdateMode = false;
 
             var preset = $scope.preset;
 
-            $scope.workspace = {
-              name: null,
-              description: null,
-              expiration: new Date()
-            };
-
-            $scope.datepicker = {
-              minDate: new Date(),
-              format: 'dd-MM-yyyy',
-              dateOptions: {
-                formatYear: 'yy',
-                startingDay: 1
-              }
-            };
-
-            $scope.today = function() {
-              $scope.workspace.expiration = new Date();
-            };
-
-            $scope.clear = function () {
-              $scope.workspace.expiration = null;
-            };
-
-            $scope.open = function($event) {
-              $event.preventDefault();
-              $event.stopPropagation();
-
-              $scope.datepicker.opened = true;
-            };
-
-            function initCreation(){
-              $scope.firstCreate = true;
-              $scope.workspace = {
-                name: null,
-                description: null,
-                expiration: new Date()
-              };
-              $scope.today();
-            }
+            $scope.selectedWorkspace = null;
 
             if(preset.workspacesCount === 0){
-              initCreation();
-              $scope.flipTrigger = 'flip';
+              isInAddMode = true;
+              $scope.$broadcast('initCreation');
+              $scope.mainFlipTrigger = 'flip';
             }else{
-              $scope.flipTrigger = '';
+              $scope.mainFlipTrigger = '';
             }
 
+            $scope.setSelectedWorkspace = function(value){
+              $scope.selectedWorkspace = value;
+            };
+
             $scope.enterAddMode = function(){
-              if($scope.flipTrigger === ''){
-                initCreation();
-                $scope.flipTrigger = 'flip';
-              }else{
+              if(isInAddMode){
                 if(preset.workspacesCount === 0) {
-                  initCreation();
+                  $scope.$broadcast('initCreation');
                 }else{
-                  $scope.flipTrigger = '';
+                  isInAddMode = false;
+                  isInUpdateMode = false;
+                  $scope.mainFlipTrigger = '';
+                  $scope.addUpdateflipTrigger = '';
                 }
+              }else{
+                $scope.$broadcast('initCreation');
+                if(isInUpdateMode || $scope.addUpdateflipTrigger === 'flip'){
+                  $scope.addUpdateflipTrigger = '';
+                  isInUpdateMode = false;
+                }
+                if($scope.mainFlipTrigger === ''){
+                  $scope.mainFlipTrigger = 'flip';
+                }
+                isInAddMode = true;
               }
             };
 
-            $scope.createWorkspace = function(){
-              $scope.firstCreate = false;
-
-              if($scope.createWorkspaceForm.$valid){
-                console.log('valid data!');
+            $scope.enterUpdateMode = function(){
+              if(isInUpdateMode){
+                isInUpdateMode = false;
+                isInAddMode = false;
+                $scope.mainFlipTrigger = '';
+                $scope.addUpdateflipTrigger = '';
+              }else{
+                $scope.$broadcast('initUpdate', $scope.selectedWorkspace);
+                if(isInAddMode || $scope.addUpdateflipTrigger === ''){
+                  $scope.addUpdateflipTrigger = 'flip';
+                  isInAddMode = false;
+                }
+                if($scope.mainFlipTrigger === ''){
+                  $scope.mainFlipTrigger = 'flip';
+                }
+                isInUpdateMode = true;
               }
             };
 

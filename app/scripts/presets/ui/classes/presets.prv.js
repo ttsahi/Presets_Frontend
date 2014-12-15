@@ -48,6 +48,7 @@
             this._id = guid();
             this._types = [];
             this._workspaces = {};
+            this._workspacesArr = [];
             this._currentWorkspace = null;
 
             this._loadTiles = function(workspace){ return new CRUDResult(true); };
@@ -59,6 +60,12 @@
           }
 
           Preset.prototype.construct = function(workspaces){
+
+            this._confirmAdd = function(workspace){
+              workspace.id = guid();
+              return new CRUDResult(true);
+            };
+
             if (!(workspaces instanceof Array)) {
               return;
             }
@@ -79,8 +86,14 @@
             types: {
               get: function(){ return this._types; }
             },
+            workspaces: {
+              get: function(){ return this._workspaces; }
+            },
             workspacesCount: {
               get: function(){ return Object.keys(this._workspaces).length; }
+            },
+            workspacesArr: {
+              get: function(){ return this._workspacesArr; }
             }
           });
 
@@ -129,6 +142,17 @@
 
           Preset.prototype.getWorkspace = function(id){
             return angular.copy(this._workspaces[id]);
+          };
+
+          Preset.prototype.refreshWorkspacesArr = function(){
+
+            while(this._workspacesArr.length !== 0){
+              this._workspacesArr.pop();
+            }
+
+            for(var id in this._workspaces){
+              this._workspacesArr.push(angular.copy(this._workspaces[id]));
+            }
           };
 
           function validateWorkspace(workspace) {
@@ -214,6 +238,7 @@
 
                 if(result.succeeded === true){
                   self._workspaces[workspace.id] = validateWorkspace(angular.copy(workspace));
+                  self.refreshWorkspacesArr();
                   deferred.resolve(new CRUDResult(true, angular.copy(workspace)));
                 }else{
                   deferred.reject(result);
@@ -246,6 +271,7 @@
 
                 if(result.succeeded === true){
                   delete self._workspaces[workspace.id];
+                  self.refreshWorkspacesArr();
                   deferred.resolve(new CRUDResult(true, workspace));
                 }else{
                   deferred.reject(result);
@@ -309,6 +335,7 @@
                   }
 
                   self._workspaces[clonedWorkspace.id] = validateWorkspace(angular.copy(clonedWorkspace));
+                  self.refreshWorkspacesArr();
                   deferred.resolve(new CRUDResult(true, clonedWorkspace));
                 }else{
                   deferred.reject(result);
