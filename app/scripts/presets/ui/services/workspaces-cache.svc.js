@@ -6,22 +6,27 @@
 
   'use strict';
 
-  app.factory('WorkspacesCache', ['$localStorage',
-    function($localStorage){
+  app.factory('WorkspacesCache', ['$q', '$localStorage',
+    function($q, $localStorage){
 
       function Storage(){
-        this.created = new Date();
+        this.created = new Date().valueOf();
         this.workspaces = {};
       }
 
-      function Item(workspace, tiles){
-        this.created = new Date();
+      function Item(workspace){
+        this.created = new Date().valueOf();
         this.workspace = workspace;
-        this.tiles = tiles || [];
       }
 
-      function WorkspacesCache(presetId, lifetime){
+      function GetResult(fresh, worksspace){
+        this.fresh = fresh;
+        this.workspace = worksspace;
+      }
+
+      function WorkspacesCache(presetId, lifetime, refreshCallback){
         this._lifetime = lifetime;
+        this._refreshCallback = refreshCallback;
         $localStorage[presetId] = new Storage();
         this._storage = $localStorage[presetId];
       }
@@ -31,26 +36,63 @@
           get: function(){ return this._lifetime; }
         },
         count: {
-          get: function(){ return Object.keys(this._workspaces).length; }
+          get: function(){ return Object.keys(this._storage.workspaces).length; }
         }
       });
 
-      WorkspacesCache.prototype.put = function(workspaceId, workspace, tiles){
-        this._storage.workspaces[workspaceId] = new Item(workspace, tiles);
+      WorkspacesCache.prototype.getAsync = function(workspaceId){
+        var deferred = $q.defer();
+        var self = this;
+
+        if(!angular.isDefined(this._storage[workspaceId])){
+          this._refreshCallback(workspaceId).then(
+            function success(worksapce){
+              self._storage.workspaces[workspaceId] = new Item(workspace);
+              deferred.resolve(new GetResult(true, worksapce));
+            }, function error(reason){
+              deferred.reject(reason);
+            }
+          );
+        }else{
+          var item  = this._storage[workspaceId];
+
+          if((new Date().valueOf() - item.created) / 1000 > this._lifetime){
+            this._refreshCallback(workspaceId).then(
+              function success(worksapce){
+                self._storage.workspaces[workspaceId] = new Item(workspace);
+                deferred.resolve(new GetResult(true, worksapce));
+              }, function error(reason){
+                deferred.reject(reason);
+              }
+            );
+          }else{
+            deferred.resolve(new GetResult(false, item.workspace));
+          }
+        }
+
+        return deferred.promise;
+      };
+
+      WorkspacesCache.prototype.put = function(workspaceId, workspace){
+        this._storage.workspaces[workspaceId] = new Item(workspace);
       };
 
       WorkspacesCache.prototype.delete = function(workspaceId){
         delete this._storage.workspaces[workspaceId];
       };
 
+      WorkspacesCache.prototype.update = function(workspaceId, workspace){
+        this._storage.workspaces[workspaceId] = new Item(workspace);
+      };
+
       WorkspacesCache.prototype.addTile = function(workspaceId, tile){
-        this._storage.workspaces[workspaceId].tiles.push(tile);
+        this._storage.workspaces[workspaceId].workspace.tiles.push(tile);
       };
 
       WorkspacesCache.prototype.removeTile = function(workspaceId, tileId){
-        for(var i = 0; i < this._storage.workspaces[workspaceId].tiles.length; i++){
-          if(this._storage.workspaces[workspaceId].tiles[i].id === tileId){
-            delete this._storage.workspaces[workspaceId].tiles[i];
+        for(var i = 0; i < this._storage.workspaces[workspaceId].workspace.tiles.length; i++){
+          if(this._storage.workspaces[workspaceId].workspace.tiles[i].id === tileId){
+            this._storage.workspaces[workspaceId].workspace.tiles.splice(i,1);
             return;
           }
         }

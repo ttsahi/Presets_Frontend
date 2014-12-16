@@ -6,14 +6,14 @@
 
   'use strict';
 
-  app.factory('WorkspaceData', ['$q', 'CRUDResult', 'Tile',
-    function($q, CRUDResult, Tile){
+  app.factory('WorkspaceData', ['$q', 'presetValidators', 'CRUDResult',
+    function($q, presetValidators, CRUDResult){
 
       function DeveloperError(message){
         this.message = message;
       }
 
-      function WorkspaceData(preset, workspace, tiles){
+      function WorkspaceData(preset, workspace){
         this._tilesMap = {};
         this._tiles = [];
         this._panels = [];
@@ -21,7 +21,7 @@
         this._workspace = workspace;
         this._cols = workspace.cols;
         this._rows = workspace.rows;
-        this._initTiles = tiles || [];
+        this._initTiles = workspace.tiles;
 
         //this._enterEditMode = function(){};
 
@@ -76,43 +76,10 @@
         }
       });
 
-      function isNullOrUndefined(value){
-        return value === null || value === undefined;
-      }
-
-      function isNullEmptyOrWhiteSpaces(str){
-        return typeof str !== 'string' || str.trim() === '';
-      }
-
-      function validateTile(tile){
-        if(typeof tile !== 'object') {
-          throw new DeveloperError('invalid tile!');
-        }
-
-        if(!tile instanceof Tile){
-          var temp = new Tile();
-          temp.init(tile);
-          tile = temp;
-        }
-
-        if(isNullEmptyOrWhiteSpaces(tile.id)){
-          throw new DeveloperError('tile id must be non empty string!');
-        }
-
-        if(typeof this._panels[tile.position - 1] === 'undefined' || this._panels[tile.position - 1].inUse){
-          throw new DeveloperError('invalid tile position!');
-        }
-
-        if(isNullEmptyOrWhiteSpaces(tile.type)){
-          throw new DeveloperError('invalid tile type!');
-        }
-
-        tile.id = tile.id.trim();
-        return tile;
-      }
+      var validateTile = presetValidators.validateTileByWorkspaceData;
 
       WorkspaceData.prototype.addTileAsync = function(tile, confirm){
-        tile = validateTile(tile);
+        tile = validateTile(tile, this);
         var self = this;
         var deferred = $q.defer();
 
@@ -132,7 +99,7 @@
             }
 
             if(result.succeeded === true){
-              tile = validateTile(tile);
+              tile = validateTile(tile, this);
 
               if(tile.type !== type.name){
                 deferred.reject(new CRUDResult(false, {}, ['invalid tile type!']));

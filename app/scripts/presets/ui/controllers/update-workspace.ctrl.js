@@ -14,7 +14,7 @@
       $scope.workspace = {
         name: null,
         description: null,
-        expiration: new Date()
+        expires: new Date()
       };
 
       $scope.datepicker = {
@@ -31,15 +31,15 @@
       var selectedWorkspacePos = null;
 
       $scope.today = function() {
-        $scope.workspace.expiration = new Date();
+        $scope.workspace.expires = new Date();
       };
 
       $scope.nextWeek = function(){
-        $scope.workspace.expiration = new Date((new Date().getTime() + 1000 * 60 * 60 * 24 * 7));
+        $scope.workspace.expires = new Date((new Date().getTime() + 1000 * 60 * 60 * 24 * 7));
       };
 
       $scope.clear = function () {
-        $scope.workspace.expiration = null;
+        $scope.workspace.expires = null;
       };
 
       $scope.open = function($event) {
@@ -63,7 +63,7 @@
           id: selectedWorkspace.id,
           name: selectedWorkspace.name,
           description: selectedWorkspace.description,
-          expiration: selectedWorkspace.expiration
+          expires: selectedWorkspace.expires
         };
         $scope.formErrors = [];
       });

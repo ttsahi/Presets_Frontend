@@ -7,13 +7,14 @@
   app.factory('Workspace', [
     function(){
 
-      function Workspace(id, name, modified, expires, rows, cols){
+      function Workspace(id, name, modified, expires, rows, cols, tiles){
         this._id = id;
         this._name = name;
         this._modified = modified;
         this._expires = expires;
         this._rows = rows;
         this._cols = cols;
+        this._tiles = tiles || [];
       }
 
       Workspace.prototype.init = function(args){
@@ -24,6 +25,7 @@
         this._expires = args.expires;
         this._rows = args.rows;
         this._cols = args.cols;
+        this._tiles = args.tiles || [];
       };
 
       Object.defineProperties(Workspace.prototype, {
@@ -50,6 +52,10 @@
         cols: {
           get: function(){ return this._cols; },
           set: function(val) { this._cols = val; }
+        },
+        tiles: {
+          get: function(){ return this._tiles; },
+          set: function(val) { this._tiles = val; }
         }
       });
 

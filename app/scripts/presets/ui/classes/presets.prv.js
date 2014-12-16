@@ -29,20 +29,12 @@
         };
       })();
 
-      function isNullOrUndefined(value){
-        return value === null || value === undefined;
-      }
-
-      function isNullEmptyOrWhiteSpaces(str){
-        return typeof str !== 'string' || str.trim() === '';
-      }
-
       function DeveloperError(message){
         this.message = message;
       }
 
-      this.$get = ['$q', 'CRUDResult', 'Workspace', 'Tile', 'TileType',
-        function($q, CRUDResult, Workspace, Tile, TileType) {
+      this.$get = ['$q', 'presetValidators', 'CRUDResult',
+        function($q, presetValidators, CRUDResult) {
 
           function Preset(workspaces, options) {
             this._id = guid();
@@ -54,6 +46,7 @@
             this._useCache = false;
             this._lifetime = null;
 
+            this._loadWorkspace = function(workspace){ return new CRUDResult(true); };
             this._loadTiles = function(workspace){ return new CRUDResult(true); };
             this._confirmAdd = function(workspace){ return new CRUDResult(true); };
             this._confirmRemove = function(workspace){ return new CRUDResult(true); };
@@ -108,6 +101,16 @@
           });
 
           Object.defineProperties(Preset.prototype, {
+            loadWorkspace: {
+              get: function(){ return this._loadWorkspace; },
+              set: function(val){
+                if (typeof val !== 'function') {
+                  throw new DeveloperError('load tiles must be function!');
+                }
+
+                this._loadWorkspace = val;
+              }
+            },
             loadTiles: {
               get: function(){ return this._loadTiles; },
               set: function(val){
@@ -165,74 +168,8 @@
             }
           };
 
-          function validateWorkspace(workspace) {
-            if(typeof workspace !== 'object') {
-              throw new DeveloperError('invalid workspace!');
-            }
-
-            if(!workspace instanceof Workspace){
-              var temp = new Workspace();
-              temp.init(workspace);
-              workspace = temp;
-            }
-
-            if(isNullEmptyOrWhiteSpaces(workspace.id)){
-              throw new DeveloperError('workspace id must be non empty string!');
-            }
-
-            if(isNullEmptyOrWhiteSpaces(workspace.name)){
-              throw new DeveloperError('invalid workspace name!');
-            }
-
-            if(!isNullOrUndefined(workspace.modified) && !workspace.modified instanceof Date){
-              throw new DeveloperError('invalid workspace modified value!');
-            }
-
-            if(!isNullOrUndefined(workspace.expires) && !workspace.expires instanceof Date){
-              throw new DeveloperError('invalid workspace expires value!');
-            }
-
-            if(typeof workspace.rows !== 'number' || workspace.rows <= 0){
-              throw new DeveloperError('invalid workspace rows value!');
-            }
-
-            if(typeof workspace.cols !== 'number' || workspace.cols <= 0){
-              throw new DeveloperError('invalid workspace cols value!');
-            }
-
-            workspace.id = workspace.id.trim();
-            workspace.name = workspace.name.trim();
-            workspace.rows = Math.round(workspace.rows);
-            workspace.cols = Math.round(workspace.cols);
-            return workspace;
-          }
-
-          function validateTileType(tileType){
-            if(typeof tileType !== 'object') {
-              throw new DeveloperError('invalid tile type!');
-            }
-
-            if(!tileType instanceof TileType){
-              var temp = new TileType();
-              temp.init(tileType);
-              tileType = temp;
-            }
-
-            if(isNullEmptyOrWhiteSpaces(tileType.name)){
-              throw new DeveloperError('invalid tile type name!');
-            }
-
-            if(typeof tileType.creationInfo !== 'object'){
-              throw new DeveloperError('invalid tile type creation info!');
-            }
-
-            if(typeof tileType.presentationInfo !== 'object'){
-              throw new DeveloperError('invalid tile type presentation info!');
-            }
-
-            tileType.name = tileType.name.trim();
-            return tileType;
-          }
+          var validateWorkspace = presetValidators.validateWorkspace;
+          var validateTileType = presetValidators.validateTileType;
 
           Preset.prototype.addWorkspaceAsync = function(workspace, confirm){
             workspace = validateWorkspace(workspace);
