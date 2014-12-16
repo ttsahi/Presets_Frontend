@@ -49,21 +49,21 @@
         $scope.datepicker.opened = true;
       };
 
-      $scope.$on('initUpdate', function(event, selectedWorkspace){
+      $scope.$on('initUpdate', function(event, currentWorkspace){
         $scope.firstUpdate = true;
 
-        for(var i = 0; i < preset.workspacesArr.length; i++){
-          if(preset.workspacesArr[i].id === selectedWorkspace.id){
+        for(var i = 0; i < preset.workspacesList.length; i++){
+          if(preset.workspacesList[i].id === currentWorkspace.id){
             selectedWorkspacePos = i;
             break;
           }
         }
 
         $scope.workspace = {
-          id: selectedWorkspace.id,
-          name: selectedWorkspace.name,
-          description: selectedWorkspace.description,
-          expires: selectedWorkspace.expires
+          id: currentWorkspace.id,
+          name: currentWorkspace.name,
+          description: currentWorkspace.description,
+          expires: currentWorkspace.expires
         };
         $scope.formErrors = [];
       });
@@ -75,7 +75,7 @@
           preset.updateWorkspaceAsync(workspace.id, workspace, true).then(
             function success(){
               $scope.firstUpdate = true;
-              $scope.setSelectedWorkspace(preset.workspacesArr[selectedWorkspacePos]);
+              $scope.setSelectedWorkspace(preset.workspacesList[selectedWorkspacePos]);
               $scope.enterUpdateMode();
             }, function error(result){
               console.log(result);

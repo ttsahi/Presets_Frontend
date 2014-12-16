@@ -28,6 +28,10 @@
         this._enterAddMode = function(){};
         this._enterUpdateMode = function(){};
         this._enterPresentationMode = function(){};
+
+        this._onadddListener = function(){};
+        this._onremoveListener = function(){};
+        this._onupdateListener = function(){};
       }
 
       WorkspaceData.prototype.init = function(){
@@ -76,6 +80,21 @@
         }
       });
 
+      Object.defineProperties(WorkspaceData.prototype,{
+        onadd: {
+          set: function(val) { this._onadddListener = val; },
+          get: function() { return this._onadddListener; }
+        },
+        onremove: {
+          set: function(val) { this._onremoveListener = val; },
+          get: function() { return this._onremoveListener; }
+        },
+        onupdate: {
+          set: function(val) { this._onupdateListener = val; },
+          get: function() { return this._onupdateListener; }
+        }
+      });
+
       var validateTile = presetValidators.validateTileByWorkspaceData;
 
       WorkspaceData.prototype.addTileAsync = function(tile, confirm){
@@ -111,6 +130,7 @@
               self._tilesMap[tile.id] = (tile.position -1);
               self._panels[tile.position - 1].inUse = true;
               delete tile.creationInfo;
+              this._onadddListener(tile);
               deferred.resolve(new CRUDResult(true, tile));
             }else{
               deferred.reject(result);
@@ -146,6 +166,7 @@
               self._tiles[tile.position - 1] = null;
               delete self._tilesMap[tile.id];
               delete tile.creationInfo;
+              this._onremoveListener(tile);
               deferred.resolve(new CRUDResult(true, tile));
             }else{
               deferred.reject(result);
@@ -181,6 +202,7 @@
               self._tiles[tile.position - 1] = null;
               delete self._tilesMap[tile.id];
               delete tile.creationInfo;
+              this._onremoveListener(tile);
               deferred.resolve(new CRUDResult(true, tile));
             }else{
               deferred.reject(result);
@@ -224,6 +246,7 @@
             if(result.succeeded === true){
               tile.model = angular.copy(model);
               delete clonedTile.creationInfo;
+              this._onremoveListener(clonedTile);
               deferred.resolve(new CRUDResult(true, clonedTile));
             }else{
               deferred.reject(result);
@@ -267,6 +290,7 @@
             if(result.succeeded === true){
               tile.model = angular.copy(model);
               delete clonedTile.creationInfo;
+              this._onremoveListener(clonedTile);
               deferred.resolve(new CRUDResult(true, clonedTile));
             }else{
               deferred.reject(result);

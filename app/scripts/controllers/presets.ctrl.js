@@ -8,7 +8,11 @@
 
   app.controller('presetsController', ['$scope', 'Preset',
     function($scope, Preset){
-      $scope.preset = new Preset();
+
+      $scope.preset = new Preset({
+        cache: true,
+        lifetime: Number.MAX_VALUE
+      });
 
     }
   ]);

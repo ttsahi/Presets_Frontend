@@ -6,8 +6,8 @@
 
   'use strict';
 
-  app.directive('preset', ['Preset', 'Workspace', 'TileType',
-    function(Preset, Workspace, TileType){
+  app.directive('preset', ['Preset',
+    function(Preset){
 
       function DeveloperError(message){
         this.message = message;
@@ -20,8 +20,8 @@
         scope: {
           preset: '='
         },
-        controller: ['$scope', 'WorkspaceData',
-          function($scope, WorkspaceData){
+        controller: ['$scope', 'Preset', 'Workspace', 'ReducedWorkspace', 'WorkspaceData',
+          function($scope, Preset, Workspace, ReducedWorkspace, WorkspaceData){
 
             if(!($scope.preset instanceof Preset)){
               throw new DeveloperError('preset must be instance of preset!');
@@ -39,6 +39,7 @@
             var preset = $scope.preset;
 
             $scope.selectedWorkspace = null;
+            $scope.currentWorkspace = null;
 
             if(preset.workspacesCount === 0){
               isInAddMode = true;
@@ -54,7 +55,7 @@
 
             function resetTriggers(){
               if(!angular.isObject($scope.selectedWorkspace) && preset.workspacesCount !== 0){
-                $scope.selectedWorkspace = preset.workspacesArr[preset.workspacesArr.length - 1];
+                $scope.selectedWorkspace = preset.workspacesList[preset.workspacesList.length - 1];
               }
 
               isInAddMode = false;
@@ -95,7 +96,7 @@
                   resetTriggers();
                 }
               }else{
-                $scope.$broadcast('initUpdate', $scope.selectedWorkspace);
+                $scope.$broadcast('initUpdate', $scope.currentWorkspace);
                 if(isInAddMode || $scope.addUpdateflipTrigger === ''){
                   $scope.addUpdateflipTrigger = 'flip';
                   isInAddMode = false;
@@ -107,7 +108,24 @@
               }
             };
 
-            $scope.workspaceData = new WorkspaceData(null, new Workspace(null, null, null, null, 4, 5));
+            function setCurrentWorkspace(selectedWorkspace){
+              if(selectedWorkspace instanceof ReducedWorkspace){
+                $scope.currentWorkspace = null;
+                preset.getWorkspaceAsync(selectedWorkspace.id).then(
+                  function resolveSuccess(result){
+                    resetTriggers();
+                    $scope.currentWorkspace = result.data;
+                  }, function resolveError(reason){
+                    console.log('error while loading workspace id: ' + selectedWorkspace.id);
+                  });
+              }
+            }
+
+            $scope.$watch('selectedWorkspace',function(newValue){
+              setCurrentWorkspace(newValue);
+            });
+
+            $scope.workspaceData = new WorkspaceData(null, new Workspace(null, null, null, null, null, 4, 5));
           }
         ]
       };

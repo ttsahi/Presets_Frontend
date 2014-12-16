@@ -6,8 +6,8 @@
 
   'use strict';
 
-  app.factory('presetValidators', ['Workspace', 'Tile',
-    function(Workspace, Tile){
+  app.factory('presetValidators', ['ReducedWorkspace', 'Workspace', 'Tile', 'TileType',
+    function(ReducedWorkspace, Workspace, Tile, TileType){
 
       function DeveloperError(message){
         this.message = message;
@@ -89,6 +89,49 @@
         return tile;
       }
 
+      function validateReducedWorkspace(reducedWorkspace){
+        if(typeof reducedWorkspace !== 'object') {
+          throw new DeveloperError('invalid reduced workspace!');
+        }
+
+        if(!(reducedWorkspace instanceof ReducedWorkspace)){
+          var temp = new ReducedWorkspace();
+          temp.init(reducedWorkspace);
+          reducedWorkspace = temp;
+        }
+
+        if(isNullEmptyOrWhiteSpaces(reducedWorkspace.id)){
+          throw new DeveloperError('reduced workspace id must be non empty string!');
+        }
+
+        if(isNullEmptyOrWhiteSpaces(reducedWorkspace.name)){
+          throw new DeveloperError('invalid reduced workspace name!');
+        }
+
+        reducedWorkspace.id = reducedWorkspace.id.trim();
+        reducedWorkspace.name = reducedWorkspace.name.trim();
+        return reducedWorkspace;
+      }
+
+      function validateWorkspacesList(list){
+        if(!(list instanceof Array)){
+          throw new DeveloperError('workspaces list must be instance of array!');
+        }
+
+        var idsMap = {};
+
+        for(var i = 0; i < list.length; i++){
+          var reducedWorkspace = validateReducedWorkspace(list[i]);
+          if(angular.isDefined(idsMap[reducedWorkspace.id])){
+            throw new DeveloperError('workspace item id: ' + reducedWorkspace.id + ' already exist!');
+          }
+          idsMap[reducedWorkspace.id] = true;
+          list[i] = reducedWorkspace;
+        }
+
+        return list;
+      }
+
       function validateWorkspace(workspace) {
         if(typeof workspace !== 'object') {
           throw new DeveloperError('invalid workspace!');
@@ -108,12 +151,16 @@
           throw new DeveloperError('invalid workspace name!');
         }
 
-        if(!isNullOrUndefined(workspace.modified) && !workspace.modified instanceof Date){
+        if(!isNullOrUndefined(workspace.modified) && !(workspace.modified instanceof Date)){
           throw new DeveloperError('invalid workspace modified value!');
         }
 
-        if(!isNullOrUndefined(workspace.expires) && !workspace.expires instanceof Date){
+        if(!isNullOrUndefined(workspace.expires) && !(workspace.expires instanceof Date)){
           throw new DeveloperError('invalid workspace expires value!');
+        }
+
+        if(!isNullOrUndefined(workspace.description) && typeof workspace.description !== 'string'){
+          throw new DeveloperError('invalid workspace description value!');
         }
 
         if(typeof workspace.rows !== 'number' || workspace.rows <= 0){
@@ -171,6 +218,8 @@
         isNullEmptyOrWhiteSpaces: isNullEmptyOrWhiteSpaces,
         validateTileByWorkspace: validateTileByWorkspace,
         validateTileByWorkspaceData: validateTileByWorkspaceData,
+        validateReducedWorkspace: validateReducedWorkspace,
+        validateWorkspacesList: validateWorkspacesList,
         validateWorkspace: validateWorkspace,
         validateTileType: validateTileType
       }

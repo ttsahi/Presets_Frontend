@@ -7,11 +7,12 @@
   app.factory('Workspace', [
     function(){
 
-      function Workspace(id, name, modified, expires, rows, cols, tiles){
+      function Workspace(id, name, modified, expires, description, rows, cols, tiles){
         this._id = id;
         this._name = name;
         this._modified = modified;
         this._expires = expires;
+        this._description = description;
         this._rows = rows;
         this._cols = cols;
         this._tiles = tiles || [];
@@ -23,6 +24,7 @@
         this._name = args.name;
         this._modified = args.modified;
         this._expires = args.expires;
+        this._description = args.description;
         this._rows = args.rows;
         this._cols = args.cols;
         this._tiles = args.tiles || [];
@@ -44,6 +46,10 @@
         expires: {
           get: function(){ return this._expires; },
           set: function(val) { this._expires = val; }
+        },
+        description: {
+          get: function(){ return this._description; },
+          set: function(val) { this._description = val; }
         },
         rows: {
           get: function(){ return this._rows; },

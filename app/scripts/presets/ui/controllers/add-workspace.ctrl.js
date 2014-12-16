@@ -70,7 +70,7 @@
 
           preset.addWorkspaceAsync(worksapce, true).then(
             function success(){
-              $scope.setSelectedWorkspace(preset.workspacesArr[preset.workspacesArr.length - 1]);
+              $scope.setSelectedWorkspace(preset.workspacesList[preset.workspacesList.length - 1]);
               $scope.firstCreate = true;
               $scope.enterAddMode();
             }, function error(result){

@@ -33,34 +33,36 @@
         this.message = message;
       }
 
-      this.$get = ['$q', 'presetValidators', 'CRUDResult',
-        function($q, presetValidators, CRUDResult) {
+      this.$get = ['$q', 'presetValidators', 'CRUDResult', 'ReducedWorkspace', 'WorkspacesCache',
+        function($q, presetValidators, CRUDResult, ReducedWorkspace, WorkspacesCache) {
 
-          function Preset(workspaces, options) {
+          function Preset(options) {
             this._id = guid();
             this._types = [];
-            this._workspaces = {};
-            this._workspacesArr = [];
+            this._workspacesList = {};
+            this._workspacesListArr = [];
             this._currentWorkspace = null;
+            this._workspacesCache = null;
 
             this._useCache = false;
             this._lifetime = null;
 
-            this._loadWorkspace = function(workspace){ return new CRUDResult(true); };
-            this._loadTiles = function(workspace){ return new CRUDResult(true); };
+            this._loadWorkspacesList = function(){ return new CRUDResult(true); };
+            this._loadWorkspace = function(workspaceId, includeTiles){ return new CRUDResult(true); };
             this._confirmAdd = function(workspace){ return new CRUDResult(true); };
             this._confirmRemove = function(workspace){ return new CRUDResult(true); };
             this._confirmUpdate = function(workspace){ return new CRUDResult(true); };
 
-            this.construct(workspaces, options);
+            this.construct(options);
           }
 
-          Preset.prototype.construct = function(workspaces, options){
+          Preset.prototype.construct = function(options){
 
             if(angular.isObject(options)){
               if(options.cache === true && angular.isNumber(options.lifetime)){
                 this._useCache = true;
                 this._lifetime = Math.abs(Math.round(options.lifetime));
+                this._workspacesCache = new WorkspacesCache(this._id, this._lifetime, this._wrappedLoadWorkspace);
               }
             }
 
@@ -69,13 +71,7 @@
               return new CRUDResult(true);
             };
 
-            if (!(workspaces instanceof Array)) {
-              return;
-            }
-
-            for(var i = 0; i < workspaces.length; i++){
-              this.addWorkspaceAsync(workspaces[i]);
-            }
+            this.loadWorkspacesList();
           };
 
           Object.defineProperty(Preset, 'templatesDir', {
@@ -89,36 +85,33 @@
             types: {
               get: function(){ return this._types; }
             },
-            workspaces: {
-              get: function(){ return this._workspaces; }
-            },
             workspacesCount: {
-              get: function(){ return Object.keys(this._workspaces).length; }
+              get: function(){ return Object.keys(this._workspacesList).length; }
             },
-            workspacesArr: {
-              get: function(){ return this._workspacesArr; }
+            workspacesList: {
+              get: function(){ return this._workspacesListArr; }
             }
           });
 
           Object.defineProperties(Preset.prototype, {
+            loadWorkspacesList: {
+              get: function(){ return this._loadWorkspacesList; },
+              set: function(val){
+                if (typeof val !== 'function') {
+                  throw new DeveloperError('load workspaces list must be function!');
+                }
+
+                this._loadWorkspacesList = val;
+              }
+            },
             loadWorkspace: {
               get: function(){ return this._loadWorkspace; },
               set: function(val){
                 if (typeof val !== 'function') {
-                  throw new DeveloperError('load tiles must be function!');
+                  throw new DeveloperError('load workspace must be function!');
                 }
 
                 this._loadWorkspace = val;
-              }
-            },
-            loadTiles: {
-              get: function(){ return this._loadTiles; },
-              set: function(val){
-                if (typeof val !== 'function') {
-                  throw new DeveloperError('load tiles must be function!');
-                }
-
-                this._loadTiles = val;
               }
             },
             confirmAdd: {
@@ -153,23 +146,109 @@
             }
           });
 
-          Preset.prototype.getWorkspace = function(id){
-            return angular.copy(this._workspaces[id]);
-          };
-
-          Preset.prototype.refreshWorkspacesArr = function(){
-
-            while(this._workspacesArr.length !== 0){
-              this._workspacesArr.pop();
-            }
-
-            for(var id in this._workspaces){
-              this._workspacesArr.push(angular.copy(this._workspaces[id]));
-            }
-          };
-
+          var validateWorkspacesList = presetValidators.validateWorkspacesList;
           var validateWorkspace = presetValidators.validateWorkspace;
           var validateTileType = presetValidators.validateTileType;
+
+          Preset.prototype._wrappedLoadWorkspace = function(workspaceId, includeTiles){
+            var deferred = $q.defer();
+
+            $q.when(this._loadWorkspace(workspaceId, includeTiles)).then(
+              function resolveSuccess(result){
+
+                if(!result instanceof CRUDResult){
+                  throw new DeveloperError('load workspace must return CRUDResult!');
+                }
+
+                if(result.succeeded === true){
+                  result.data = validateWorkspace(result.data);
+                  deferred.resolve(result);
+                }else{
+                  deferred.reject(result);
+                }
+
+              },function resolveError(reason){
+                deferred.reject(new CRUDResult(false, reason, ["can't load workspace id: " + workspaceId]));
+              });
+
+            return deferred.promise;
+          };
+
+          Preset.prototype.loadWorkspacesList = function(){
+            var self = this;
+
+            $q.when(this._loadWorkspacesList()).then(
+              function resolveSuccess(result){
+
+                if(!result instanceof CRUDResult){
+                  throw new DeveloperError('load workspaces list must return CRUDResult!');
+                }
+
+                if(result.succeeded === true){
+
+                  if(result.data instanceof Array){
+                    var list = validateWorkspacesList(angular.copy(result.data));
+
+                    for(var i = 0; i < list.length; i++){
+                      self._workspacesList[list[i].id] = list[i];
+                    }
+
+                    if(this._useCache === true){
+                      var keys = self._workspacesCache.info().keys;
+
+                      for(i = 0; i < keys.length; i++){
+                        if(self._workspacesList[keys[i]] === undefined){
+                          self._workspacesCache.delete(keys[i]);
+                        }
+                      }
+                    }
+
+                    this.refreshWorkspacesListArr();
+                  }
+
+                }else{
+                  console.log('error while loading workspaces list!');
+                }
+
+              },function resolveError(reason){
+                throw new DeveloperError('error while loading workspaces list!');
+              });
+          };
+
+          Preset.prototype.refreshWorkspacesListArr = function(){
+
+            while(this._workspacesListArr.length !== 0){
+              this._workspacesListArr.pop();
+            }
+
+            for(var id in this._workspacesList){
+              this._workspacesListArr.push(angular.copy(this._workspacesList[id]));
+            }
+          };
+
+          Preset.prototype.getWorkspaceAsync = function(workspaceId, includeTiles, fresh){
+            includeTiles = typeof includeTiles === 'boolean' ? includeTiles : false;
+            fresh = typeof fresh === 'boolean' ? fresh : false;
+            var deferred = $q.defer();
+
+            if(this._useCache === true){
+              this._workspacesCache.getAsync(workspaceId, includeTiles, fresh).then(
+                function resolveSuccess(result){
+                  deferred.resolve(new CRUDResult(true, result.workspace));
+                },function resolveError(reason){
+                  deferred.reject(reason);
+                });
+            }else{
+              this._wrappedLoadWorkspace(workspaceId, includeTiles).then(
+                function resolveSuccess(result){
+                  deferred.resolve(result);
+                },function resolveError(reason){
+                  deferred.reject(reason);
+                });
+            }
+
+            return deferred.promise;
+          };
 
           Preset.prototype.addWorkspaceAsync = function(workspace, confirm){
             workspace = validateWorkspace(workspace);
@@ -184,8 +263,12 @@
                 }
 
                 if(result.succeeded === true){
-                  self._workspaces[workspace.id] = validateWorkspace(angular.copy(workspace));
-                  self.refreshWorkspacesArr();
+                  var cloned = validateWorkspace(angular.copy(workspace));
+                  if(self._useCache === true){
+                    self._workspacesCache.put(cloned);
+                  }
+                  self._workspacesList[workspace.id] = new ReducedWorkspace(cloned.id, cloned.name);
+                  self.refreshWorkspacesListArr();
                   deferred.resolve(new CRUDResult(true, angular.copy(workspace)));
                 }else{
                   deferred.reject(result);
@@ -202,31 +285,47 @@
             var self = this;
             var deferred = $q.defer();
 
-            if(this._workspaces[id] === undefined){
+            if(this._workspacesList[id] === undefined){
               deferred.reject(new CRUDResult(false, {}, ['workspace id: ' + id + 'not found!']));
               return deferred.promise;
             }
 
-            var workspace = this._workspaces[id];
+            this.getWorkspaceAsync(id).then(
+              function resolveSuccess(result) {
+                if(result.succeeded === true) {
 
-            $q.when(confirm === true ? this.confirmRemove(angular.copy(workspace)) : new CRUDResult(true)).then(
-              function resolveSuccess(result){
+                  var workspace = result.data;
 
-                if(!result instanceof CRUDResult){
-                  throw new DeveloperError('confirm remove must return CRUDResult!');
-                }
+                  $q.when(confirm === true ? self.confirmRemove(angular.copy(workspace)) : new CRUDResult(true)).then(
+                    function resolveSuccess(result){
 
-                if(result.succeeded === true){
-                  delete self._workspaces[workspace.id];
-                  self.refreshWorkspacesArr();
-                  deferred.resolve(new CRUDResult(true, workspace));
+                      if(!result instanceof CRUDResult){
+                        throw new DeveloperError('confirm remove must return CRUDResult!');
+                      }
+
+                      if(result.succeeded === true){
+                        delete self._workspacesList[workspace.id];
+                        if(self._useCache === true){
+                          self._workspacesCache.delete(workspace.id);
+                        }
+                        self.refreshWorkspacesListArr();
+                        deferred.resolve(new CRUDResult(true, workspace));
+                      }else{
+                        deferred.reject(result);
+                      }
+
+                    },function resolveError(reason){
+                      deferred.reject(new CRUDResult(false, reason, ["can't remove workspace!"]));
+                    });
+
                 }else{
+                  result.errors.push("can't remove workspace!");
                   deferred.reject(result);
                 }
 
               },function resolveError(reason){
-                deferred.reject(new CRUDResult(false, reason, ["can't remove workspace!"]));
-              });
+              deferred.reject(reason);
+            });
 
             return deferred.promise;
           };
@@ -235,61 +334,84 @@
             var self = this;
             var deferred = $q.defer();
 
-            if(this._workspaces[id] === undefined){
+            if(this._workspacesList[id] === undefined){
               deferred.reject(new CRUDResult(false, {}, ['workspace id: ' + id + 'not found!']));
               return deferred.promise;
             }
 
-            var clonedWorkspace = angular.copy(this._workspaces[id]);
+            this.getWorkspaceAsync(id).then(
+              function resolveSuccess(result) {
+                if(result.succeeded === true) {
 
-            if(typeof data !== 'object'){
-              deferred.reject(new CRUDResult(false, workspace, ['nothing to update!']));
-              return deferred.promise;
-            }
+                  var clonedWorkspace = angular.copy(result.data);
 
-            var isUpdated = false;
-            angular.forEach(data, function(value, property){
-              if(property === 'id' && value !== id){
-                deferred.reject(new CRUDResult(false, workspace, ["can't change id property!"]));
-                return deferred.promise;
-              }
-
-              if(clonedWorkspace[property] !== undefined){
-                clonedWorkspace[property] = value;
-                isUpdated = true;
-              }
-            });
-
-            if(isUpdated === false){
-              deferred.reject(new CRUDResult(false, workspace, ['nothing to update!']));
-              return deferred.promise;
-            }
-
-            clonedWorkspace = validateWorkspace(clonedWorkspace);
-
-            $q.when(confirm === true ? this.confirmUpdate(clonedWorkspace) : new CRUDResult(true)).then(
-              function resolveSuccess(result){
-
-                if(!result instanceof CRUDResult){
-                  throw new DeveloperError('confirm update must return CRUDResult!');
-                }
-
-                if(result.succeeded === true){
-
-                  if(clonedWorkspace.id !== id){
-                    deferred.reject(new CRUDResult(false, clonedWorkspace, ["can't change id property!"]));
+                  if(typeof data !== 'object'){
+                    deferred.reject(new CRUDResult(false, workspace, ['nothing to update!']));
                     return deferred.promise;
                   }
 
-                  self._workspaces[clonedWorkspace.id] = validateWorkspace(angular.copy(clonedWorkspace));
-                  self.refreshWorkspacesArr();
-                  deferred.resolve(new CRUDResult(true, clonedWorkspace));
+                  var isUpdated = false;
+                  angular.forEach(data, function(value, property){
+                    if(property === 'id' && value !== id){
+                      deferred.reject(new CRUDResult(false, workspace, ["can't change id property!"]));
+                      return deferred.promise;
+                    }
+
+                    if(property === 'tiles'){
+                      deferred.reject(new CRUDResult(false, workspace, ["can't change tiles property!"]));
+                      return deferred.promise;
+                    }
+
+                    if(clonedWorkspace[property] !== undefined){
+                      clonedWorkspace[property] = value;
+                      isUpdated = true;
+                    }
+                  });
+
+                  if(isUpdated === false){
+                    deferred.reject(new CRUDResult(false, workspace, ['nothing to update!']));
+                    return deferred.promise;
+                  }
+
+                  clonedWorkspace = validateWorkspace(clonedWorkspace);
+
+                  $q.when(confirm === true ? self.confirmUpdate(clonedWorkspace) : new CRUDResult(true)).then(
+                    function resolveSuccess(result){
+
+                      if(!result instanceof CRUDResult){
+                        throw new DeveloperError('confirm update must return CRUDResult!');
+                      }
+
+                      if(result.succeeded === true){
+
+                        if(clonedWorkspace.id !== id){
+                          deferred.reject(new CRUDResult(false, clonedWorkspace, ["can't change id property!"]));
+                          return deferred.promise;
+                        }
+
+                        clonedWorkspace.tiles = [];
+                        var cloned = validateWorkspace(angular.copy(clonedWorkspace));
+                        self._workspacesList[clonedWorkspace.id].name = cloned.name;
+                        if(self._useCache === true){
+                          self._workspacesCache.update(cloned);
+                        }
+                        self.refreshWorkspacesListArr();
+                        deferred.resolve(new CRUDResult(true, clonedWorkspace));
+                      }else{
+                        deferred.reject(result);
+                      }
+
+                    },function resolveError(reason){
+                      deferred.reject(new CRUDResult(false, reason, ["can't update workspace!"]));
+                    });
+
                 }else{
+                  result.errors.push("can't update workspace!");
                   deferred.reject(result);
                 }
 
               },function resolveError(reason){
-                deferred.reject(new CRUDResult(false, reason, ["can't update workspace!"]));
+                deferred.reject(reason);
               });
 
             return deferred.promise;

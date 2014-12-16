@@ -18,11 +18,15 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="{{preset.id}}">
         <form class="navbar-form navbar-left" role="select">
-          <select class="form-control" ng-model="selectedWorkspace" ng-options="workspace.name for workspace in preset.workspacesArr">
+          <select class="form-control" ng-model="selectedWorkspace" ng-options="workspace.name for workspace in preset.workspacesList">
           </select>
-          <button type="button" class="btn btn-default" ng-click="enterUpdateMode()" ng-show="selectedWorkspace">
+          <button type="button" class="btn btn-default" ng-click="enterUpdateMode()" ng-show="currentWorkspace">
             <span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span>
           </button>
+          <div class="form-group" ng-show="currentWorkspace">
+            <input type="text" class="form-control" ng-model="currentWorkspace.modified" ng-disabled="true">
+            <input type="text" class="form-control" ng-model="currentWorkspace.expires" ng-disabled="true">
+          </div>
         </form>
         <form class="navbar-form navbar-right" role="edit">
           <button type="button" class="btn btn-default" ng-click="">
