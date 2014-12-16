@@ -44,23 +44,23 @@
         var deferred = $q.defer();
         var self = this;
 
-        if(!angular.isDefined(this._storage[workspaceId])){
-          this._refreshCallback(workspaceId).then(
-            function success(worksapce){
+        if(!angular.isDefined(this._storage.workspaces[workspaceId])){
+          $q.when(this._refreshCallback(workspaceId)).then(
+            function success(workspace){
               self._storage.workspaces[workspaceId] = new Item(workspace);
-              deferred.resolve(new GetResult(true, worksapce));
+              deferred.resolve(new GetResult(true, workspace));
             }, function error(reason){
               deferred.reject(reason);
             }
           );
         }else{
-          var item  = this._storage[workspaceId];
+          var item  = this._storage.workspaces[workspaceId];
 
           if((new Date().valueOf() - item.created) / 1000 > this._lifetime){
-            this._refreshCallback(workspaceId).then(
-              function success(worksapce){
+            $q.when(this._refreshCallback(workspaceId)).then(
+              function success(workspace){
                 self._storage.workspaces[workspaceId] = new Item(workspace);
-                deferred.resolve(new GetResult(true, worksapce));
+                deferred.resolve(new GetResult(true, workspace));
               }, function error(reason){
                 deferred.reject(reason);
               }
@@ -73,16 +73,16 @@
         return deferred.promise;
       };
 
-      WorkspacesCache.prototype.put = function(workspaceId, workspace){
-        this._storage.workspaces[workspaceId] = new Item(workspace);
+      WorkspacesCache.prototype.put = function(workspace){
+        this._storage.workspaces[workspace.id] = new Item(workspace);
       };
 
       WorkspacesCache.prototype.delete = function(workspaceId){
         delete this._storage.workspaces[workspaceId];
       };
 
-      WorkspacesCache.prototype.update = function(workspaceId, workspace){
-        this._storage.workspaces[workspaceId] = new Item(workspace);
+      WorkspacesCache.prototype.update = function(workspace){
+        this._storage.workspaces[workspace.id] = new Item(workspace);
       };
 
       WorkspacesCache.prototype.addTile = function(workspaceId, tile){
@@ -98,9 +98,9 @@
         }
       };
 
-      WorkspacesCache.prototype.updateTile = function(workspaceId, tileId, tile){
+      WorkspacesCache.prototype.updateTile = function(workspaceId, tile){
         for(var i = 0; i < this._storage.workspaces[workspaceId].tiles.length; i++){
-          if(this._storage.workspaces[workspaceId].tiles[i].id === tileId){
+          if(this._storage.workspaces[workspaceId].tiles[i].id === tile.id){
             this._storage.workspaces[workspaceId].tiles[i] = tile;
             return;
           }
