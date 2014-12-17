@@ -113,7 +113,6 @@
                 $scope.currentWorkspace = null;
                 preset.getWorkspaceAsync(selectedWorkspace.id, true).then(
                   function resolveSuccess(result){
-                    console.log(result);
                     resetTriggers();
                     $scope.currentWorkspace = result.data;
                   }, function resolveError(reason){
@@ -121,6 +120,10 @@
                   });
               }
             }
+
+            $scope.refresh = function(){
+              setCurrentWorkspace($scope.selectedWorkspace);
+            };
 
             $scope.$watch('selectedWorkspace',function(newValue){
               setCurrentWorkspace(newValue);

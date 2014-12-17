@@ -68,6 +68,11 @@
                   this._wrappedLoadWorkspace,
                   this._wrappedLoadTile
                 );
+
+                this._workspacesCache.onrefresh = function(workspace){
+                  console.log('on refresh');
+                  console.log(workspace);
+                };
               }
             }
 
