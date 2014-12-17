@@ -44,14 +44,6 @@
             $scope.selectedWorkspace = null;
             $scope.currentWorkspace = null;
 
-            if(preset.workspacesCount === 0){
-              isInAddMode = true;
-              $scope.$broadcast('initCreation');
-              $scope.mainFlipTrigger = 'flip';
-            }else{
-              $scope.mainFlipTrigger = '';
-            }
-
             $scope.setSelectedWorkspace = function(value){
               $scope.selectedWorkspace = value;
             };
@@ -65,6 +57,15 @@
               isInUpdateMode = false;
               $scope.mainFlipTrigger = '';
               $scope.addUpdateflipTrigger = '';
+
+
+              if(preset.workspacesCount === 0){
+                isInAddMode = true;
+                $scope.$broadcast('initCreation');
+                $scope.mainFlipTrigger = 'flip';
+              }else{
+                $scope.mainFlipTrigger = '';
+              }
             }
 
             $scope.enterAddMode = function(){
@@ -112,8 +113,10 @@
             };
 
             function setCurrentWorkspace(selectedWorkspace){
+
+              $scope.currentWorkspace = null;
+
               if(selectedWorkspace instanceof ReducedWorkspace){
-                $scope.currentWorkspace = null;
                 preset.getWorkspaceAsync(selectedWorkspace.id, true).then(
                   function resolveSuccess(result){
 
@@ -145,6 +148,8 @@
                   }, function resolveError(reason){
                     console.log('error while loading workspace id: ' + selectedWorkspace.id);
                   });
+              }else{
+                resetTriggers();
               }
             }
 

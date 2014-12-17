@@ -38,6 +38,10 @@
       };
 
       Object.defineProperties(TileType.prototype, {
+        name:{
+          get: function(){ return this._name; },
+          set: function(val){ this._name = val; }
+        },
         creationInfo: {
           get: function(){ return this._creationInfo;}
         },

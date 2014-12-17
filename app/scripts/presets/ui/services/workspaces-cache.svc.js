@@ -27,11 +27,10 @@
         this.workspace = worksspace;
       }
 
-      function WorkspacesCache(presetId, lifetime, loadWorkspaceCallback, loadTileCallback, localOnly){
+      function WorkspacesCache(presetId, lifetime, loadWorkspaceCallback, localOnly){
         this._presetId = presetId;
         this._lifetime = lifetime;
         this._loadWorkspaceCallback = loadWorkspaceCallback;
-        this._loadTileCallback = loadTileCallback;
         this._localOnly = localOnly;
 
         $localStorage[presetId] = new Storage();
@@ -145,7 +144,7 @@
         }
       };
 
-      function findTile(workspaceId, tileId){
+      WorkspacesCache.prototype.findTile = function(workspaceId, tileId){
         var tiles  = this._storage.workspaces[workspaceId].tiles;
 
         for(var i = 0; i < tiles.length; i++){
@@ -166,7 +165,7 @@
             function success(result){
               self.put(angular.copy(result.data));
               self._onadd(angular.copy(result.data));
-              var freshTile = findTile(workspaceId, tileId);
+              var freshTile = self.findTile(workspaceId, tileId);
               if(freshTile === null){
                 deferred.reject(new CRUDResult(false, {}, ['tile id: ' + tileId + ' not longer exist!']));
               }else{
@@ -178,7 +177,7 @@
           );
         }else{
           var item  = this._storage.workspaces[workspaceId];
-          var tile = findTile(workspaceId, tileId);
+          var tile = this.findTile(workspaceId, tileId);
 
           if((tile === null && this._localOnly === true) || (tile === null && fresh !== true)){
             deferred.reject(new CRUDResult(false, {}, ['tile id: ' + tileId + ' not exist!']));
@@ -189,7 +188,7 @@
               function success(result){
                 self.update(angular.copy(result.data));
                 self._onrefresh(angular.copy(result.data));
-                var freshTile = findTile(workspaceId, tileId);
+                var freshTile = self.findTile(workspaceId, tileId);
                 if(freshTile === null){
                   deferred.reject(new CRUDResult(false, {}, ['tile id: ' + tileId + ' not longer exist!']));
                 }else{
@@ -214,7 +213,7 @@
           return false;
         }
 
-        return findTile(workspaceId, tileId) !== null;
+        return this.findTile(workspaceId, tileId) !== null;
       };
 
       WorkspacesCache.prototype.addTile = function(workspaceId, tile){

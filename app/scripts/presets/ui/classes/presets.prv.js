@@ -69,7 +69,6 @@
               this._id,
               this._lifetime,
               this._wrappedLoadWorkspace,
-              this._wrappedLoadTile,
               true //set cache local only by default
             );
 
@@ -568,7 +567,7 @@
 
             }else {
 
-              if(this._useCache && this._cache.tileExist(workspaceId, tile.id)){
+              if(this._useCache && this._workspacesCache.tileExist(workspaceId, tile.id)){
                 deferred.reject(new CRUDResult(false, {}, ["can't add tile, tile id: " + tile.id + "already exist"]));
                 return deferred.promise;
               }
@@ -591,7 +590,7 @@
                         if(result.succeeded === true){
                           if(self._useCache){
                             var cloned = angular.copy(validateTileByWorkspace(tile, workspace));
-                            self._cache.addTile(workspaceId, cloned);
+                            self._workspacesCache.addTile(workspaceId, cloned);
                           }
                           deferred.resolve(new CRUDResult(true, tile));
                         }else{
@@ -605,7 +604,7 @@
                   }else{
                     if(self._useCache){
                       var cloned = angular.copy(validateTileByWorkspace(tile, workspace));
-                      self._cache.addTile(workspaceId, cloned);
+                      self._workspacesCache.addTile(workspaceId, cloned);
                       deferred.resolve(new CRUDResult(true, tile));
                     }else{
                       deferred.reject(new CRUDResult(true, tile, ['no workspace storage to add to!']));
@@ -636,7 +635,7 @@
 
             }else {
 
-              if(this._useCache && !this._cache.tileExist(workspaceId, tileId)){
+              if(this._useCache && !this._workspacesCache.tileExist(workspaceId, tileId)){
                 deferred.reject(new CRUDResult(false, {}, ["can't remove tile, tile not found!"]));
                 return deferred.promise;
               }
@@ -644,9 +643,9 @@
               $q.all([this.getWorkspaceAsync(workspaceId), this.getTileAsync(workspaceId, tileId)]).then(
                 function resolveSuccess(workspaceAndTile){
 
-                  var workspace = workspaceAndTile[0];
-                  var tile = workspaceAndTile[1];
-                  var type = this._types[tile.type];
+                  var workspace = workspaceAndTile[0].data;
+                  var tile = workspaceAndTile[1].data;
+                  var type = self._types[tile.type];
 
                   if(confirm === true){
                     $q.when(type.confirmRemove(angular.copy(workspace), angular.copy(tile))).then(
@@ -658,7 +657,7 @@
 
                         if(result.succeeded === true){
                           if(self._useCache){
-                            self._cache.removeTile(workspaceId, tileId);
+                            self._workspacesCache.removeTile(workspaceId, tileId);
                           }
                           deferred.resolve(new CRUDResult(true, tile));
                         }else{
@@ -671,7 +670,7 @@
                     );
                   }else {
                     if(self._useCache) {
-                      self._cache.removeTile(workspaceId, tileId);
+                      self._workspacesCache.removeTile(workspaceId, tileId);
                       deferred.resolve(new CRUDResult(true, tile));
                     } else {
                       deferred.reject(new CRUDResult(true, tile, ['no workspace storage to remove from!']));
@@ -703,7 +702,7 @@
 
             }else {
 
-              if(this._useCache && !this._cache.tileExist(workspaceId, tileId)){
+              if(this._useCache && !this._workspacesCache.tileExist(workspaceId, tileId)){
                 deferred.reject(new CRUDResult(false, {}, ["can't update tile, tile not found!"]));
                 return deferred.promise;
               }
@@ -711,11 +710,11 @@
               $q.all([this.getWorkspaceAsync(workspaceId), this.getTileAsync(workspaceId, tileId)]).then(
                 function resolveSuccess(workspaceAndTile){
 
-                  var workspace = workspaceAndTile[0];
-                  var tile = workspaceAndTile[1];
+                  var workspace = workspaceAndTile[0].data;
+                  var tile = workspaceAndTile[1].data;
                   tile.model = model;
                   var clonedTile = angular.copy(tile);
-                  var type = this._types[tile.type];
+                  var type = self._types[tile.type];
 
                   if(confirm === true){
                     $q.when(type.confirmUpdate(angular.copy(workspace), clonedTile)).then(
@@ -727,7 +726,7 @@
 
                         if(result.succeeded === true){
                           if(self._useCache){
-                            self._cache.updateTile(workspaceId, tile);
+                            self._workspacesCache.updateTile(workspaceId, tile);
                           }
                           deferred.resolve(new CRUDResult(true, clonedTile));
                         }else{
@@ -740,7 +739,7 @@
                     );
                   }else {
                     if(self._useCache){
-                      self._cache.updateTile(workspaceId, tile);
+                      self._workspacesCache.updateTile(workspaceId, tile);
                       deferred.resolve(new CRUDResult(true, clonedTile));
                     } else {
                       deferred.reject(new CRUDResult(true, tile, ['no workspace storage to update into!']));
@@ -765,6 +764,19 @@
             }
 
             this._types[tileType.name] = tileType;
+            return true;
+          };
+
+          Preset.prototype.registerTypes = function(types){
+            if(!(types instanceof Array)){
+              console.log('no types to register!');
+              return false;
+            }
+
+            for(var i = 0; i < types.length; i++){
+              this.registerType(types[i]);
+            }
+
             return true;
           };
 
