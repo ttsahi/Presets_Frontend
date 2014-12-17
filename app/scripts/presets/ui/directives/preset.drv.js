@@ -38,6 +38,9 @@
 
             var preset = $scope.preset;
 
+            preset.onAddToCache = function(workspace){ console.log('add to cache!'); };
+            preset.onRefreshCache = function(workspace){ console.log('refresh cache!'); };
+
             $scope.selectedWorkspace = null;
             $scope.currentWorkspace = null;
 
@@ -113,8 +116,32 @@
                 $scope.currentWorkspace = null;
                 preset.getWorkspaceAsync(selectedWorkspace.id, true).then(
                   function resolveSuccess(result){
+
+                    var workspace = result.data;
+                    preset.currentWorkspace = workspace;
+                    var workspaceData = new WorkspaceData(preset, workspace);
+
+                    if(preset.useCache === true){
+                      workspaceData.onadd = function(tile){
+                        preset._cache.addTile(workspace.id, tile);
+                      };
+
+                      workspaceData.onremove = function(tile){
+                        preset._cache.removeTile(workspace.id, tile.id);
+                      };
+
+                      workspaceData.onupdate = function(tile){
+                        preset._cache.updateTile(workspace.id, tile);
+                      };
+                    }
+
+                    preset._currentWorkspaceData = workspaceData;
+
                     resetTriggers();
-                    $scope.currentWorkspace = result.data;
+
+                    $scope.currentWorkspace = workspace;
+                    $scope.workspaceData = workspaceData;
+
                   }, function resolveError(reason){
                     console.log('error while loading workspace id: ' + selectedWorkspace.id);
                   });
@@ -128,8 +155,6 @@
             $scope.$watch('selectedWorkspace',function(newValue){
               setCurrentWorkspace(newValue);
             });
-
-            $scope.workspaceData = new WorkspaceData(null, new Workspace(null, null, null, null, null, 4, 5));
           }
         ]
       };

@@ -43,7 +43,15 @@
         }
 
         while(this._initTiles.length !== 0){
-          this.addTileAsync(this._initTiles.pop());
+          var tile = this._initTiles.pop();
+          tile = validateTile(tile, this);
+
+          var type = this._preset.types[tile.type];
+
+          tile.creationInfo = type.creationInfo;
+          this._tiles[tile.position -1] = angular.copy(tile);
+          this._tilesMap[tile.id] = (tile.position -1);
+          this._panels[tile.position - 1].inUse = true;
         }
       };
 
@@ -62,6 +70,9 @@
         },
         presets: {
           get: function(){ return this._preset; }
+        },
+        workspaceId: {
+          get: function(){ return this._workspace.id; }
         }
       });
 
@@ -82,16 +93,13 @@
 
       Object.defineProperties(WorkspaceData.prototype,{
         onadd: {
-          set: function(val) { this._onadddListener = val; },
-          get: function() { return this._onadddListener; }
+          set: function(val) { this._onadddListener = val; }
         },
         onremove: {
-          set: function(val) { this._onremoveListener = val; },
-          get: function() { return this._onremoveListener; }
+          set: function(val) { this._onremoveListener = val; }
         },
         onupdate: {
-          set: function(val) { this._onupdateListener = val; },
-          get: function() { return this._onupdateListener; }
+          set: function(val) { this._onupdateListener = val; }
         }
       });
 
@@ -153,9 +161,10 @@
         }
 
         var tile = this._tiles[this._tilesMap[id]];
+        var clonedWorkspace = angular.copy(this._workspace);
         var type = this._preset.types[tile.type];
 
-        $q.when(confirm === true ? type.confirmRemove(angular.copy(tile)) : new CRUDResult(true)).then(
+        $q.when(confirm === true ? type.confirmRemove(clonedWorkspace, angular.copy(tile)) : new CRUDResult(true)).then(
           function resolveSuccess(result){
 
             if(!result instanceof CRUDResult){
@@ -189,9 +198,10 @@
         }
 
         var tile = this._tiles[position -1];
+        var clonedWorkspace = angular.copy(this._workspace);
         var type = this._preset.types[tile.type];
 
-        $q.when(confirm === true ? type.confirmRemove(angular.copy(tile)) : new CRUDResult(true)).then(
+        $q.when(confirm === true ? type.confirmRemove(clonedWorkspace, angular.copy(tile)) : new CRUDResult(true)).then(
           function resolveSuccess(result){
 
             if(!result instanceof CRUDResult){
@@ -246,7 +256,7 @@
             if(result.succeeded === true){
               tile.model = angular.copy(model);
               delete clonedTile.creationInfo;
-              this._onremoveListener(clonedTile);
+              this._onupdateListener(clonedTile);
               deferred.resolve(new CRUDResult(true, clonedTile));
             }else{
               deferred.reject(result);
@@ -290,7 +300,7 @@
             if(result.succeeded === true){
               tile.model = angular.copy(model);
               delete clonedTile.creationInfo;
-              this._onremoveListener(clonedTile);
+              this._onupdateListener(clonedTile);
               deferred.resolve(new CRUDResult(true, clonedTile));
             }else{
               deferred.reject(result);

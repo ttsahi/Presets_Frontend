@@ -2221,6 +2221,10 @@
 
           scope.$watch('workspaceData', function(workspaceData){
 
+            if(!(workspaceData instanceof WorkspaceData)){
+              return;
+            }
+
             var addHtmlPromise = getTemplatePromise(Preset.templatesDir + 'templates/workspace/add-template.html');
             var editHtmlPromise = getTemplatePromise(Preset.templatesDir + 'templates/workspace/update-template.html');
 

@@ -42,37 +42,61 @@
             this._workspacesList = {};
             this._workspacesListArr = [];
             this._currentWorkspace = null;
+            this._currentWorkspaceData = null;
             this._workspacesCache = null;
 
-            this._useCache = false;
-            this._lifetime = null;
+            this._useCache = true;
+            this._lifetime = Number.MAX_VALUE;
 
             this._loadWorkspacesList = function(){ return new CRUDResult(true); };
             this._loadWorkspace = function(workspaceId, includeTiles){ return new CRUDResult(true); };
             this._loadTile = function(workspaceId, tileId){ return new CRUDResult(true); };
+
             this._confirmAdd = function(workspace){ return new CRUDResult(true); };
             this._confirmRemove = function(workspace){ return new CRUDResult(true); };
             this._confirmUpdate = function(workspace){ return new CRUDResult(true); };
+
+            this._onAddToCacheListeners = [];
+            this._onRefreshCacheListeners = [];
 
             this.construct(options);
           }
 
           Preset.prototype.construct = function(options){
 
+            //set cache on by default
+            this._workspacesCache = new WorkspacesCache(
+              this._id,
+              this._lifetime,
+              this._wrappedLoadWorkspace,
+              this._wrappedLoadTile,
+              true //set cache local only by default
+            );
+
+            var self = this;
+
+            this._workspacesCache.onadd = function(workspace){
+              for(var i = 0; i < self._onAddToCacheListeners.length; i++){
+                self._onAddToCacheListeners[i](workspace);
+              }
+            };
+
+            this._workspacesCache.onrefresh = function(workspace){
+              for(var i = 0; i < self._onRefreshCacheListeners.length; i++){
+                self._onRefreshCacheListeners[i](workspace);
+              }
+            };
+
             if(angular.isObject(options)){
               if(options.cache === true && angular.isNumber(options.lifetime)){
                 this._useCache = true;
                 this._lifetime = Math.abs(Math.round(options.lifetime));
-                this._workspacesCache = new WorkspacesCache(
-                  this._id, this._lifetime,
-                  this._wrappedLoadWorkspace,
-                  this._wrappedLoadTile
-                );
 
-                this._workspacesCache.onrefresh = function(workspace){
-                  console.log('on refresh');
-                  console.log(workspace);
-                };
+                this._workspacesCache.lifetime = this._lifetime;
+              }
+
+              if(options.cache === false){
+                this._useCache = false;
               }
             }
 
@@ -94,6 +118,13 @@
             },
             types: {
               get: function(){ return this._types; }
+            },
+            useCache: {
+              get: function(){ return this._useCache; }
+            },
+            currentWorkspace: {
+              get: function(){ return angular.copy(this._currentWorkspace); },
+              set: function(val){ this._currentWorkspace = val; }
             },
             workspacesCount: {
               get: function(){ return Object.keys(this._workspacesList).length; }
@@ -163,12 +194,31 @@
 
                 this._confirmUpdate = val;
               }
+            },
+            onAddToCache: {
+              set: function(val){
+                if (typeof val !== 'function') {
+                  throw new DeveloperError('on add to cache must be function!');
+                }
+
+                this._onAddToCacheListeners.push(val);
+              }
+            },
+            onRefreshCache: {
+              set: function(val){
+                if (typeof val !== 'function') {
+                  throw new DeveloperError('on refresh cache must be function!');
+                }
+
+                this._onRefreshCacheListeners.push(val);
+              }
             }
           });
 
           var validateWorkspacesList = presetValidators.validateWorkspacesList;
           var validateWorkspace = presetValidators.validateWorkspace;
           var validateTileType = presetValidators.validateTileType;
+          var validateTileByWorkspace = presetValidators.validateTileByWorkspace;
           var validateTile = presetValidators.validateTile;
 
           Preset.prototype._wrappedLoadWorkspace = function(workspaceId, includeTiles){
@@ -406,7 +456,7 @@
             return deferred.promise;
           };
 
-          Preset.prototype.updateWorkspaceAsync = function(id, data){
+          Preset.prototype.updateWorkspaceAsync = function(id, data, confirm){
             var self = this;
             var deferred = $q.defer();
 
@@ -490,6 +540,219 @@
               },function resolveError(reason){
                 deferred.reject(reason);
               });
+
+            return deferred.promise;
+          };
+
+          Preset.prototype.addTileAsync = function(workspaceId, tile, confirm){
+            var deferred = $q.defer();
+            var self = this;
+
+            tile = validateTile(tile);
+
+            if(!angular.isDefined(this._types[tile.type])){
+              deferred.reject(new CRUDResult(false, {}, ["can't add tile, invalid tile type!"]));
+              return deferred.promise;
+            }
+
+            if(!angular.isDefined(this._workspacesList[workspaceId])){
+              deferred.reject(new CRUDResult(false, {}, ["can't add tile workspace id: " + workspaceId + " not found!"]));
+              return deferred.promise;
+            }
+
+            var type = this._types[tile.type];
+
+            if(this._currentWorkspaceData !== null && workspaceId === this._currentWorkspaceData.workspaceId){
+
+               return this._currentWorkspaceData.addTileAsync(tile, confirm);
+
+            }else {
+
+              if(this._useCache && this._cache.tileExist(workspaceId, tile.id)){
+                deferred.reject(new CRUDResult(false, {}, ["can't add tile, tile id: " + tile.id + "already exist"]));
+                return deferred.promise;
+              }
+
+              this.getWorkspaceAsync(workspaceId, true).then(
+                function resolveSuccess(result){
+
+                  var workspace = result.data;
+                  var clonedWorkspace = angular.copy(workspace);
+                  clonedWorkspace.tiles = [];
+
+                  if(confirm === true){
+                    $q.when(type.confirmAdd(clonedWorkspace, tile)).then(
+                      function resolveSuccess(result){
+
+                        if(!result instanceof CRUDResult){
+                          throw new DeveloperError('confirm add must return CRUDResult!');
+                        }
+
+                        if(result.succeeded === true){
+                          if(self._useCache){
+                            var cloned = angular.copy(validateTileByWorkspace(tile, workspace));
+                            self._cache.addTile(workspaceId, cloned);
+                          }
+                          deferred.resolve(new CRUDResult(true, tile));
+                        }else{
+                          deferred.reject(result);
+                        }
+
+                      }, function resolveError(reason){
+                        deferred.reject(new CRUDResult(false, reason, ["can't add tile!"]));
+                      }
+                    );
+                  }else{
+                    if(self._useCache){
+                      var cloned = angular.copy(validateTileByWorkspace(tile, workspace));
+                      self._cache.addTile(workspaceId, cloned);
+                      deferred.resolve(new CRUDResult(true, tile));
+                    }else{
+                      deferred.reject(new CRUDResult(true, tile, ['no workspace storage to add to!']));
+                    }
+                  }
+                }, function resolveError(reason){
+                  deferred.reject(reason);
+                }
+              );
+
+            }
+
+            return deferred.promise;
+          };
+
+          Preset.prototype.removeTileAsync = function(workspaceId, tileId, confirm){
+            var deferred = $q.defer();
+            var self = this;
+
+            if(!angular.isDefined(this._workspacesList[workspaceId])){
+              deferred.reject(new CRUDResult(false, {}, ["can't remove tile workspace id: " + workspaceId + " not found!"]));
+              return deferred.promise;
+            }
+
+            if(this._currentWorkspaceData !== null && workspaceId === this._currentWorkspaceData.workspaceId){
+
+              return this._currentWorkspaceData.removeTileByIdAsync(tileId, confirm);
+
+            }else {
+
+              if(this._useCache && !this._cache.tileExist(workspaceId, tileId)){
+                deferred.reject(new CRUDResult(false, {}, ["can't remove tile, tile not found!"]));
+                return deferred.promise;
+              }
+
+              $q.all([this.getWorkspaceAsync(workspaceId), this.getTileAsync(workspaceId, tileId)]).then(
+                function resolveSuccess(workspaceAndTile){
+
+                  var workspace = workspaceAndTile[0];
+                  var tile = workspaceAndTile[1];
+                  var type = this._types[tile.type];
+
+                  if(confirm === true){
+                    $q.when(type.confirmRemove(angular.copy(workspace), angular.copy(tile))).then(
+                      function resolveSuccess(result){
+
+                        if(!result instanceof CRUDResult){
+                          throw new DeveloperError('confirm remove must return CRUDResult!');
+                        }
+
+                        if(result.succeeded === true){
+                          if(self._useCache){
+                            self._cache.removeTile(workspaceId, tileId);
+                          }
+                          deferred.resolve(new CRUDResult(true, tile));
+                        }else{
+                          deferred.reject(result);
+                        }
+
+                      }, function resolveError(reason){
+                        deferred.reject(new CRUDResult(false, reason, ["can't remove tile!"]));
+                      }
+                    );
+                  }else {
+                    if(self._useCache) {
+                      self._cache.removeTile(workspaceId, tileId);
+                      deferred.resolve(new CRUDResult(true, tile));
+                    } else {
+                      deferred.reject(new CRUDResult(true, tile, ['no workspace storage to remove from!']));
+                    }
+                  }
+
+                }, function resolveError(reason){
+                  deferred.reject(new CRUDResult(false, reason, ["can't remove tile id: " + tileId]));
+                }
+              );
+
+            }
+
+            return deferred.promise;
+          };
+
+          Preset.prototype.updateTileAsync = function(workspaceId, tileId, model, confirm){
+            var deferred = $q.defer();
+            var self = this;
+
+            if(!angular.isDefined(this._workspacesList[workspaceId])){
+              deferred.reject(new CRUDResult(false, {}, ["can't update tile workspace id: " + workspaceId + " not found!"]));
+              return deferred.promise;
+            }
+
+            if(this._currentWorkspaceData !== null && workspaceId === this._currentWorkspaceData.workspaceId){
+
+              return this._currentWorkspaceData.updateTileByIdAsync(tileId, model, confirm);
+
+            }else {
+
+              if(this._useCache && !this._cache.tileExist(workspaceId, tileId)){
+                deferred.reject(new CRUDResult(false, {}, ["can't update tile, tile not found!"]));
+                return deferred.promise;
+              }
+
+              $q.all([this.getWorkspaceAsync(workspaceId), this.getTileAsync(workspaceId, tileId)]).then(
+                function resolveSuccess(workspaceAndTile){
+
+                  var workspace = workspaceAndTile[0];
+                  var tile = workspaceAndTile[1];
+                  tile.model = model;
+                  var clonedTile = angular.copy(tile);
+                  var type = this._types[tile.type];
+
+                  if(confirm === true){
+                    $q.when(type.confirmUpdate(angular.copy(workspace), clonedTile)).then(
+                      function resolveSuccess(result){
+
+                        if(!result instanceof CRUDResult){
+                          throw new DeveloperError('confirm update must return CRUDResult!');
+                        }
+
+                        if(result.succeeded === true){
+                          if(self._useCache){
+                            self._cache.updateTile(workspaceId, tile);
+                          }
+                          deferred.resolve(new CRUDResult(true, clonedTile));
+                        }else{
+                          deferred.reject(result);
+                        }
+
+                      }, function resolveError(reason){
+                        deferred.reject(new CRUDResult(false, reason, ["can't update tile!"]));
+                      }
+                    );
+                  }else {
+                    if(self._useCache){
+                      self._cache.updateTile(workspaceId, tile);
+                      deferred.resolve(new CRUDResult(true, clonedTile));
+                    } else {
+                      deferred.reject(new CRUDResult(true, tile, ['no workspace storage to update into!']));
+                    }
+                  }
+
+                }, function resolveError(reason){
+                  deferred.reject(new CRUDResult(false, reason, ["can't update tile id: " + tileId]));
+                }
+              );
+
+            }
 
             return deferred.promise;
           };
