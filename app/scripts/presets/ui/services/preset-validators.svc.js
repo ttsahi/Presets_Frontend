@@ -21,6 +21,34 @@
         return typeof str !== 'string' || str.trim() === '';
       }
 
+      function validateTile(tile){
+        if(typeof tile !== 'object') {
+          throw new DeveloperError('invalid tile!');
+        }
+
+        if(!(tile instanceof Tile)){
+          var temp = new Tile();
+          temp.init(tile);
+          tile = temp;
+        }
+
+        if(isNullEmptyOrWhiteSpaces(tile.id)){
+          throw new DeveloperError('tile id must be non empty string!');
+        }
+
+        if(typeof tile.position !== 'number' || tile.position < 1){
+          throw new DeveloperError('invalid tile position!');
+        }
+
+        if(isNullEmptyOrWhiteSpaces(tile.type)){
+          throw new DeveloperError('invalid tile type!');
+        }
+
+        tile.id = tile.id.trim();
+        tile.position = Math.round(tile.position);
+        return tile;
+      }
+
       function validateTileByWorkspaceData(tile, workspaceData){
         if(typeof tile !== 'object') {
           throw new DeveloperError('invalid tile!');
@@ -214,6 +242,7 @@
       }
 
       return {
+        validateTile: validateTile,
         isNullOrUndefined: isNullOrUndefined,
         isNullEmptyOrWhiteSpaces: isNullEmptyOrWhiteSpaces,
         validateTileByWorkspace: validateTileByWorkspace,

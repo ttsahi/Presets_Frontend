@@ -113,6 +113,14 @@
   color: #c0c0c0;
 }
 
+.presets-navbar .select-workspace {
+  border-radius: 4px !important;
+}
+
+.presets-navbar .edit-refresh {
+  margin-left: 1px;
+}
+
 .presets-full-height {
   height: 100%;
   padding: 3px;

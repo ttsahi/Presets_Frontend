@@ -49,6 +49,7 @@
 
             this._loadWorkspacesList = function(){ return new CRUDResult(true); };
             this._loadWorkspace = function(workspaceId, includeTiles){ return new CRUDResult(true); };
+            this._loadTile = function(workspaceId, tileId){ return new CRUDResult(true); };
             this._confirmAdd = function(workspace){ return new CRUDResult(true); };
             this._confirmRemove = function(workspace){ return new CRUDResult(true); };
             this._confirmUpdate = function(workspace){ return new CRUDResult(true); };
@@ -62,7 +63,11 @@
               if(options.cache === true && angular.isNumber(options.lifetime)){
                 this._useCache = true;
                 this._lifetime = Math.abs(Math.round(options.lifetime));
-                this._workspacesCache = new WorkspacesCache(this._id, this._lifetime, this._wrappedLoadWorkspace);
+                this._workspacesCache = new WorkspacesCache(
+                  this._id, this._lifetime,
+                  this._wrappedLoadWorkspace,
+                  this._wrappedLoadTile
+                );
               }
             }
 
@@ -114,6 +119,16 @@
                 this._loadWorkspace = val;
               }
             },
+            loadTile: {
+              get: function(){ return this._loadTile; },
+              set: function(val){
+                if (typeof val !== 'function') {
+                  throw new DeveloperError('load tile must be function!');
+                }
+
+                this._loadTile = val;
+              }
+            },
             confirmAdd: {
               get: function(){ return this._confirmAdd; },
               set: function(val){
@@ -149,6 +164,7 @@
           var validateWorkspacesList = presetValidators.validateWorkspacesList;
           var validateWorkspace = presetValidators.validateWorkspace;
           var validateTileType = presetValidators.validateTileType;
+          var validateTile = presetValidators.validateTile;
 
           Preset.prototype._wrappedLoadWorkspace = function(workspaceId, includeTiles){
             var deferred = $q.defer();
@@ -161,7 +177,11 @@
                 }
 
                 if(result.succeeded === true){
-                  result.data = validateWorkspace(result.data);
+                  try{
+                    result.data = validateWorkspace(result.data);
+                  }catch(exception){
+                    throw new DeveloperError('bad load workspace event implementation!');
+                  }
                   deferred.resolve(result);
                 }else{
                   deferred.reject(result);
@@ -169,6 +189,34 @@
 
               },function resolveError(reason){
                 deferred.reject(new CRUDResult(false, reason, ["can't load workspace id: " + workspaceId]));
+              });
+
+            return deferred.promise;
+          };
+
+          Preset.prototype._wrappedLoadTile = function(workspaceId, tileId){
+            var deferred = $q.defer();
+
+            $q.when(this._loadTile(workspaceId, tileId)).then(
+              function resolveSuccess(result){
+
+                if(!result instanceof CRUDResult){
+                  throw new DeveloperError('load tile must return CRUDResult!');
+                }
+
+                if(result.succeeded === true){
+                  try{
+                    result.data = validateTile(result.data);
+                  }catch(exception){
+                    throw new DeveloperError('bad load tile event implementation!');
+                  }
+                  deferred.resolve(result);
+                }else{
+                  deferred.reject(result);
+                }
+
+              },function resolveError(reason){
+                deferred.reject(new CRUDResult(false, reason, ["can't load tile id: " + tileId]));
               });
 
             return deferred.promise;
@@ -240,6 +288,29 @@
                 });
             }else{
               this._wrappedLoadWorkspace(workspaceId, includeTiles).then(
+                function resolveSuccess(result){
+                  deferred.resolve(result);
+                },function resolveError(reason){
+                  deferred.reject(reason);
+                });
+            }
+
+            return deferred.promise;
+          };
+
+          Preset.prototype.getTileAsync = function(workspaceId, tileId, fresh){
+            fresh = typeof fresh === 'boolean' ? fresh : false;
+            var deferred = $q.defer();
+
+            if(this._useCache === true){
+              this._workspacesCache.getTileAsync(workspaceId, tileId, fresh).then(
+                function resolveSuccess(result){
+                  deferred.resolve(new CRUDResult(true, result.workspace));
+                },function resolveError(reason){
+                  deferred.reject(reason);
+                });
+            }else{
+              this._wrappedLoadTile(workspaceId, tileId).then(
                 function resolveSuccess(result){
                   deferred.resolve(result);
                 },function resolveError(reason){
@@ -390,6 +461,7 @@
                         }
 
                         clonedWorkspace.tiles = [];
+                        clonedWorkspace.modified = new Date();
                         var cloned = validateWorkspace(angular.copy(clonedWorkspace));
                         self._workspacesList[clonedWorkspace.id].name = cloned.name;
                         if(self._useCache === true){

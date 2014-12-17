@@ -111,8 +111,9 @@
             function setCurrentWorkspace(selectedWorkspace){
               if(selectedWorkspace instanceof ReducedWorkspace){
                 $scope.currentWorkspace = null;
-                preset.getWorkspaceAsync(selectedWorkspace.id).then(
+                preset.getWorkspaceAsync(selectedWorkspace.id, true).then(
                   function resolveSuccess(result){
+                    console.log(result);
                     resetTriggers();
                     $scope.currentWorkspace = result.data;
                   }, function resolveError(reason){

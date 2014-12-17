@@ -6,8 +6,8 @@
 
   'use strict';
 
-  app.factory('WorkspacesCache', ['$q', '$localStorage',
-    function($q, $localStorage){
+  app.factory('WorkspacesCache', ['$q', '$localStorage', 'CRUDResult',
+    function($q, $localStorage, CRUDResult){
 
       $localStorage.$reset();
 
@@ -27,10 +27,11 @@
         this.workspace = worksspace;
       }
 
-      function WorkspacesCache(presetId, lifetime, refreshCallback){
+      function WorkspacesCache(presetId, lifetime, loadWorkspaceCallback, loadTileCallback){
         this._presetId = presetId;
         this._lifetime = lifetime;
-        this._refreshCallback = refreshCallback;
+        this._loadWorkspaceCallback = loadWorkspaceCallback;
+        this._loadTileCallback = loadTileCallback;
         $localStorage[presetId] = new Storage();
         this._storage = $localStorage[presetId];
       }
@@ -64,10 +65,10 @@
         var deferred = $q.defer();
         var self = this;
 
-        if(!angular.isDefined(this._storage.workspaces[workspaceId])){
-          $q.when(this._refreshCallback(workspaceId, true)).then(
+        if(!this.exist(workspaceId)){
+          $q.when(this._loadWorkspaceCallback(workspaceId, true)).then(
             function success(result){
-              self._storage.workspaces[workspaceId] = new Item(angular.copy(result.data));
+              self.put(angular.copy(result.data));
               if(includeTiles !== true){
                 result.data.tiles = [];
               }
@@ -80,9 +81,9 @@
           var item  = this._storage.workspaces[workspaceId];
 
           if(fresh === true || ((new Date().valueOf() - item.created) / 1000 > this._lifetime)){
-            $q.when(this._refreshCallback(workspaceId, true)).then(
+            $q.when(this._loadWorkspaceCallback(workspaceId, true)).then(
               function success(result){
-                self._storage.workspaces[workspaceId] = new Item(angular.copy(result.data));
+                self.update(angular.copy(result.data));
                 if(includeTiles !== true){
                   result.data.tiles = [];
                 }
@@ -103,6 +104,10 @@
         return deferred.promise;
       };
 
+      WorkspacesCache.prototype.exist = function(workspaceId){
+        return typeof this._storage.workspaces[workspaceId] !== 'undefined';
+      };
+
       WorkspacesCache.prototype.put = function(workspace){
         var tiles = workspace.tiles;
         workspace.tiles = [];
@@ -119,6 +124,71 @@
         }else{
           this._storage.workspaces[workspace.id].workspace = workspace;
         }
+      };
+
+      function findTile(workspaceId, tileId){
+        var tiles  = this._storage.workspaces[workspaceId].tiles;
+
+        for(var i = 0; i < tiles.length; i++){
+          if(tiles[i].id === tileId){
+            return tiles[i];
+          }
+        }
+
+        return null;
+      }
+
+      WorkspacesCache.prototype.getTileAsync = function(workspaceId, tileId, fresh){
+        var deferred = $q.defer();
+        var self = this;
+
+        if(!angular.isDefined(this._storage.workspaces[workspaceId])){
+          deferred.reject();
+          return;
+        }
+
+        var tile = null;
+
+        if((tile = findTile(workspaceId, tileId)) === null){
+          $q.when(this._loadTileCallback(workspaceId, tileId)).then(
+            function success(result){
+              self.updateTile(workspaceId, angular.copy(result.data));
+              deferred.resolve(new GetResult(true, result.data));
+            }, function error(reason){
+              deferred.reject(reason);
+            }
+          );
+        }else{
+          var item  = this._storage.workspaces[workspaceId];
+
+          if(fresh === true || ((new Date().valueOf() - item.created) / 1000 > this._lifetime)){
+            $q.when(this._loadWorkspaceCallback(workspaceId, true)).then(
+              function success(result){
+                self.update(angular.copy(result.data));
+                var freshTile = findTile(workspaceId, tileId);
+                if(freshTile === null){
+                  deferred.reject(new CRUDResult(false, {}, ['tile id: ' + tileId + ' not longer exist!']))
+                }else{
+                  deferred.resolve(new GetResult(true, angular.copy(freshTile)));
+                }
+              }, function error(reason){
+                deferred.reject(reason);
+              }
+            );
+          }else{
+            deferred.resolve(new GetResult(false, angular.copy(tile)));
+          }
+        }
+
+        return deferred.promise;
+      };
+
+      WorkspacesCache.prototype.tileExist = function(workspaceId, tileId){
+        if(!angular.isDefined(this._storage.workspaces[workspaceId])){
+          return false;
+        }
+
+        return findTile(workspaceId, tileId) !== null;
       };
 
       WorkspacesCache.prototype.addTile = function(workspaceId, tile){
