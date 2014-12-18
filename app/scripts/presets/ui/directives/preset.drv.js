@@ -118,6 +118,10 @@
               }
             };
 
+            $scope.enterEditMode = function(){
+              alert('edit mode available!');
+            };
+
             function setCurrentWorkspace(selectedWorkspace){
 
               var currentWorkspace = $scope.currentWorkspace;
@@ -168,6 +172,10 @@
 
                         $scope.currentWorkspace = workspace;
                         $scope.workspaceData = workspaceData;
+
+                        $scope.enterEditMode = function(){
+                          workspaceData.enterAddMode();
+                        };
 
                       }, function resolveError(reason){
                         console.log('error while loading workspace id: ' + selectedWorkspace.id);

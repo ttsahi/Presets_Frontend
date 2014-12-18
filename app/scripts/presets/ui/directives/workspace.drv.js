@@ -1629,16 +1629,6 @@
 
         resetPanel(originPanel);
 
-        /*
-        if(realPanel.content !== originPanel.content){
-          realPanel.container.element.append(originPanel.content);
-          originPanel.container.element.append(realPanel.content);
-          var tempContent = originPanel.content;
-          originPanel.content = realPanel.content;
-          realPanel.content = tempContent;
-        }
-        */
-
         if(realPanel.id !== originPanel.id){
           var tempTile = tiles[originPanel.id];
           tiles[originPanel.id] = tiles[realPanel.id];
@@ -1646,6 +1636,7 @@
         }
 
         //change tile position and size ///////////////////////////////////////////////////////////////////////////////////
+        console.log('change tile size here!!!!');
 
         if(newPanel.corners !== null) {
           realPanel.corners = newPanel.corners;
@@ -1919,12 +1910,10 @@
         this.overlay = overlay;
         this.container = new Container(container, 0, 0);
         this.content = content;
-        //this.tile = null;//////////////////////////////////////////////////////////////////////////////////////////////////
         this.inUse = false;
         this.referTo = null;
         this.children = [];
         this.corners = null;
-        //this.commonData = commonData; //////////////////////////////////////////////////////////////////////////////////////////
         this.eventsData = new EventData(this, commonData);
         this.inEdit = false;
       }
