@@ -238,6 +238,17 @@
         }
       };
 
+      WorkspacesCache.prototype.updateTileSize = function(workspaceId, tileId, resizeInfo){
+        for(var i = 0; i < this._storage.workspaces[workspaceId].tiles.length; i++){
+          if(this._storage.workspaces[workspaceId].tiles[i].id === tile.id){
+            this._storage.workspaces[workspaceId].tiles[i].position = resizeInfo.position;
+            this._storage.workspaces[workspaceId].tiles[i].size.width = resizeInfo.size.width;
+            this._storage.workspaces[workspaceId].tiles[i].size.height = resizeInfo.size.height;
+            return;
+          }
+        }
+      };
+
       return WorkspacesCache;
     }
   ]);

@@ -72,7 +72,7 @@
         $scope.firstUpdate = false;
 
         if(form.$valid){
-          preset.updateWorkspaceAsync(workspace.id, workspace, true).then(
+          preset.updateWorkspaceAsync(workspace.id, workspace, preset.useCache ? false : true).then(
             function success(){
               $scope.firstUpdate = true;
               $scope.setSelectedWorkspace(preset.workspacesList[selectedWorkspacePos]);
@@ -86,7 +86,7 @@
       };
 
       $scope.delete = function(workspace){
-        preset.removeWorkspaceAsync(workspace.id, true).then(
+        preset.removeWorkspaceAsync(workspace.id, preset.useCache ? false : true).then(
           function success(){
             $scope.firstUpdate = true;
             $scope.setSelectedWorkspace(null);

@@ -1599,6 +1599,8 @@
 
       }
 
+      //calculate new panel by size ///////////////////////////////////////////////////////////////////////////////////
+
       function resetPanel(panel){
         panel.overlay.css('z-index', '2');
 
@@ -1621,16 +1623,13 @@
         }
       }
 
-      function changePanelSizeAndPosition(newPanel, originPanel, panels){
-        console.log('new panel');
-        console.log(newPanel);
-        console.log('original panel');
-        console.log(originPanel);
+      function changePanelSizeAndPosition(newPanel, originPanel, tiles, panels){
 
         var realPanel = panels[newPanel.id];
 
         resetPanel(originPanel);
 
+        /*
         if(realPanel.content !== originPanel.content){
           realPanel.container.element.append(originPanel.content);
           originPanel.container.element.append(realPanel.content);
@@ -1638,6 +1637,15 @@
           originPanel.content = realPanel.content;
           realPanel.content = tempContent;
         }
+        */
+
+        if(realPanel.id !== originPanel.id){
+          var tempTile = tiles[originPanel.id];
+          tiles[originPanel.id] = tiles[realPanel.id];
+          tiles[realPanel.id] = tempTile;
+        }
+
+        //change tile position and size ///////////////////////////////////////////////////////////////////////////////////
 
         if(newPanel.corners !== null) {
           realPanel.corners = newPanel.corners;
@@ -1751,7 +1759,9 @@
 
           if(!event.data.common.extendCanceled) {
             if (event.data.panel !== event.data.common.panels[event.data.common.originId] && event.data.panel !== event.data.common.errorPanel) {
-              var panel = changePanelSizeAndPosition(event.data.common.newPanel, event.data.common.realPanel, event.data.common.panels);
+              var panel = changePanelSizeAndPosition(event.data.common.newPanel, event.data.common.realPanel, event.data.common.tiles, event.data.common.panels);
+              var resizeInfo = { position: panel.id + 1, size: { width: panel.container.width + 1, height: panel.container.height + 1 }};
+              event.data.common.onPanelSizeChanged(event.data.common.tiles[panel.id], resizeInfo);
             }
           }else{
             event.data.common.extendCanceled = false;
@@ -1877,6 +1887,7 @@
       function CommonData(){
         this.rows = 0;
         this.cols = 0;
+        this.tiles = [];
         this.panels = [];
         this.panelsOverlays = [];
         this.extendStart = false;
@@ -1898,6 +1909,7 @@
         this.currentPanel = null;
         this.nowOnPanel = null;
         this.optionalPanels = [];
+        this.onPanelSizeChanged = function(){};
       }
 
       function Panel(overlay, container, content, commonData){
@@ -1907,12 +1919,12 @@
         this.overlay = overlay;
         this.container = new Container(container, 0, 0);
         this.content = content;
-        this.tile = null;
+        //this.tile = null;//////////////////////////////////////////////////////////////////////////////////////////////////
         this.inUse = false;
         this.referTo = null;
         this.children = [];
         this.corners = null;
-        this.commonData = commonData;
+        //this.commonData = commonData; //////////////////////////////////////////////////////////////////////////////////////////
         this.eventsData = new EventData(this, commonData);
         this.inEdit = false;
       }
@@ -2086,6 +2098,7 @@
 
             commonData.rows = workspaceData.rows;
             commonData.cols = workspaceData.cols;
+            commonData.tiles = workspaceData.tiles;
             commonData.panels = workspaceData.panels;
             commonData.panelsOverlays = presetsScope.panelsOverlays;
             commonData.extendStart = false;
@@ -2105,6 +2118,7 @@
             commonData.errorContainer = null;
             commonData.currentPanel = null;
             commonData.optionalPanels = [];
+            commonData.onPanelSizeChanged = workspaceData.onTileSizeChanged;
 
             presetContainer = angular.element('<div class="presets-container"></div>');
 
@@ -2217,6 +2231,8 @@
 
               presetsScope.isAddUpdateMode = false;
             };
+
+            workspaceData.init();
 
             element.append(presetContainer);
 

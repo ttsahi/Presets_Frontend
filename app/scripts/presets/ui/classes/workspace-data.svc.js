@@ -32,6 +32,8 @@
         this._onadddListener = function(){};
         this._onremoveListener = function(){};
         this._onupdateListener = function(){};
+
+        this._onTileSizeChanged = function(){};
       }
 
       WorkspaceData.prototype.init = function(){
@@ -100,6 +102,10 @@
         },
         onupdate: {
           set: function(val) { this._onupdateListener = val; }
+        },
+        onTileSizeChanged: {
+          get: function(){ return this._onTileSizeChanged; },
+          set: function(val) { this._onTileSizeChanged = val; }
         }
       });
 

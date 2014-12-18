@@ -20,8 +20,8 @@
         scope: {
           preset: '='
         },
-        controller: ['$scope', 'Preset', 'Workspace', 'ReducedWorkspace', 'WorkspaceData',
-          function($scope, Preset, Workspace, ReducedWorkspace, WorkspaceData){
+        controller: ['$scope', '$q', 'Preset', 'Workspace', 'ReducedWorkspace', 'WorkspaceData',
+          function($scope, $q, Preset, Workspace, ReducedWorkspace, WorkspaceData){
 
             if(!($scope.preset instanceof Preset)){
               throw new DeveloperError('preset must be instance of preset!');
@@ -120,43 +120,66 @@
 
             function setCurrentWorkspace(selectedWorkspace){
 
+              var currentWorkspace = $scope.currentWorkspace;
               $scope.currentWorkspace = null;
 
-              if(selectedWorkspace instanceof ReducedWorkspace){
-                preset.getWorkspaceAsync(selectedWorkspace.id, true).then(
-                  function resolveSuccess(result){
+              $q.when((preset.useCache && (currentWorkspace instanceof Workspace)) ? preset.commitChanges(currentWorkspace) : true).then(
+                function resolveSuccess(){
 
-                    var workspace = result.data;
-                    preset.currentWorkspace = workspace;
-                    var workspaceData = new WorkspaceData(preset, workspace);
+                  if(selectedWorkspace instanceof ReducedWorkspace){
+                    preset.getWorkspaceAsync(selectedWorkspace.id, true).then(
+                      function resolveSuccess(result){
 
-                    if(preset.useCache === true){
-                      workspaceData.onadd = function(tile){
-                        preset._cache.addTile(workspace.id, tile);
-                      };
+                        var workspace = result.data;
+                        preset.currentWorkspace = workspace;
+                        var workspaceData = new WorkspaceData(preset, workspace);
 
-                      workspaceData.onremove = function(tile){
-                        preset._cache.removeTile(workspace.id, tile.id);
-                      };
+                        if(preset.useCache === true){
+                          workspaceData.onadd = function(tile){
+                            preset._cache.addTile(workspace.id, tile);
+                          };
 
-                      workspaceData.onupdate = function(tile){
-                        preset._cache.updateTile(workspace.id, tile);
-                      };
-                    }
+                          workspaceData.onremove = function(tile){
+                            preset._cache.removeTile(workspace.id, tile.id);
+                          };
 
-                    preset._currentWorkspaceData = workspaceData;
+                          workspaceData.onupdate = function(tile){
+                            preset._cache.updateTile(workspace.id, tile);
+                          };
 
+                          workspaceData.onTileSizeChanged = function(tile, resizeInfo){
+                            //preset._cache.updateTileSize(workspace.id, tile.id, resizeInfo);
+                            console.log('tile size/position changed use cache.')
+                            console.log(tile);
+                            console.log(resizeInfo);
+                          };
+                        }else{
+                          workspaceData.onTileSizeChanged = function(tile, resizeInfo){
+                            //preset.types[tile.type].confirmUpdate(angular.copy(workspace), angular.copy(tile));
+                            console.log('tile size/position changed no cache.')
+                            console.log(tile);
+                            console.log(resizeInfo);
+                          };
+                        }
+
+                        preset._currentWorkspaceData = workspaceData;
+
+                        resetTriggers();
+
+                        $scope.currentWorkspace = workspace;
+                        $scope.workspaceData = workspaceData;
+
+                      }, function resolveError(reason){
+                        console.log('error while loading workspace id: ' + selectedWorkspace.id);
+                      });
+                  }else{
                     resetTriggers();
+                  }
 
-                    $scope.currentWorkspace = workspace;
-                    $scope.workspaceData = workspaceData;
-
-                  }, function resolveError(reason){
-                    console.log('error while loading workspace id: ' + selectedWorkspace.id);
-                  });
-              }else{
-                resetTriggers();
-              }
+                }, function resolveError(reason){
+                  console.log('commit workspace changes failed!');
+                }
+              );
             }
 
             $scope.refresh = function(){

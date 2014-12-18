@@ -63,12 +63,12 @@
         $scope.firstCreate = false;
 
         if(form.$valid){
-          worksapce.id = 'default';
+          worksapce.id = preset.generateId();
           worksapce.modified = new Date();
           worksapce.rows = Preset.defaultRows;
           worksapce.cols = Preset.defaultCols;
 
-          preset.addWorkspaceAsync(worksapce, true).then(
+          preset.addWorkspaceAsync(worksapce, preset.useCache ? false : true).then(
             function success(){
               $scope.setSelectedWorkspace(preset.workspacesList[preset.workspacesList.length - 1]);
               $scope.firstCreate = true;

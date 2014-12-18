@@ -63,6 +63,7 @@
             this._confirmAdd = function(workspace){ return new CRUDResult(true); };
             this._confirmRemove = function(workspace){ return new CRUDResult(true); };
             this._confirmUpdate = function(workspace){ return new CRUDResult(true); };
+            this._commitChanges = function(workspace){ return new CRUDResult(true); };
 
             this._onAddToCacheListeners = [];
             this._onRefreshCacheListeners = [];
@@ -195,13 +196,23 @@
               }
             },
             confirmUpdate: {
-              get: function(){ return this._confirmUpdate;},
+              get: function(){ return this._confirmUpdate; },
               set: function(val){
                 if (typeof val !== 'function') {
                   throw new DeveloperError('confirm update must be function!');
                 }
 
                 this._confirmUpdate = val;
+              }
+            },
+            commitChanges: {
+              get: function(){ return this._commitChanges; },
+              set: function(val){
+                if (typeof val !== 'function') {
+                  throw new DeveloperError('commit changes must be function!');
+                }
+
+                this._commitChanges = val;
               }
             },
             onAddToCache: {
@@ -223,6 +234,10 @@
               }
             }
           });
+
+          Preset.prototype.generateId = function(){
+            return guid();
+          };
 
           var validateWorkspacesList = presetValidators.validateWorkspacesList;
           var validateWorkspace = presetValidators.validateWorkspace;

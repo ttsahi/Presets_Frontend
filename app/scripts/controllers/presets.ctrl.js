@@ -44,6 +44,7 @@
               $scope.preset.addTileAsync(result.data.id, {
                 id: 'dfsk4kdfdsf',
                 position: 1,
+                size: { width: 2, height: 2},
                 type: 'web',
                 model: { name: 'bar'}
               }).then(

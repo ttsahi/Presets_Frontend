@@ -9,9 +9,10 @@
   app.factory('Tile', [
     function(){
 
-      function Tile(id, position, type, model){
+      function Tile(id, position, size, type, model){
         this._id = id;
         this._position = position;
+        this._size = size;
         this._type = type;
         this._model = model;
       }
@@ -20,6 +21,7 @@
         if(typeof args !== 'object') return;
         this._id = args.id;
         this._position = args.position;
+        this._size = args.size;
         this._type = args.type;
         this._model = args.model;
       };
@@ -32,6 +34,10 @@
         position: {
           get: function(){ return this._position; },
           set: function(val){ this._position = val; }
+        },
+        size: {
+          get: function(){ return this._size; },
+          set: function(val){ this._size = val; }
         },
         type: {
           get: function(){ return this._type; },
