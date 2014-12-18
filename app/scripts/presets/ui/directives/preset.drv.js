@@ -36,13 +36,19 @@
             var isInAddMode = false;
             var isInUpdateMode = false;
 
+            $scope.selectedWorkspace = null;
+            $scope.currentWorkspace = null;
+
             var preset = $scope.preset;
 
             preset.onAddToCache = function(workspace){ console.log('add to cache!'); };
-            preset.onRefreshCache = function(workspace){ console.log('refresh cache!'); };
+            preset.onRefreshCache = function(workspace){
+              console.log('refresh cache!');
 
-            $scope.selectedWorkspace = null;
-            $scope.currentWorkspace = null;
+              if($scope.currentWorkspace !== null && workspace.id === $scope.currentWorkspace.id){
+                $scope.refresh();
+              }
+            };
 
             $scope.setSelectedWorkspace = function(value){
               $scope.selectedWorkspace = value;

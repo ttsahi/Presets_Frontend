@@ -1622,6 +1622,10 @@
       }
 
       function changePanelSizeAndPosition(newPanel, originPanel, panels){
+        console.log('new panel');
+        console.log(newPanel);
+        console.log('original panel');
+        console.log(originPanel);
 
         var realPanel = panels[newPanel.id];
 

@@ -10,10 +10,18 @@
     function(){
 
       var _templatesDir = 'scripts/presets/ui/';
+      var _defaultRows = 4;
+      var _defaultCols = 5;
 
-      Object.defineProperty(this, 'templatesDir', {
+      Object.defineProperties(this, {
         templatesDir: {
-          set: function(val) { _templatesDir = val; }
+          set: function(val){ _templatesDir = val; }
+        },
+        defaultRows: {
+          set: function(val){ _defaultRows = val; }
+        },
+        defaultCols: {
+          set: function(val){ _defaultCols = val; }
         }
       });
 
@@ -62,6 +70,12 @@
             this.construct(options);
           }
 
+          Object.defineProperties(Preset, {
+            templatesDir: { value: _templatesDir },
+            defaultRows: { value: _defaultRows },
+            defaultCols: { value: _defaultCols }
+          });
+
           Preset.prototype.construct = function(options){
 
             //set cache on by default
@@ -106,10 +120,6 @@
 
             this.loadWorkspacesList();
           };
-
-          Object.defineProperty(Preset, 'templatesDir', {
-            value: _templatesDir
-          });
 
           Object.defineProperties(Preset.prototype, {
             id: {

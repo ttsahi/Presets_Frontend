@@ -6,8 +6,8 @@
 
   'use strict';
 
-  app.controller('addWorkspaceController', ['$scope',
-    function($scope){
+  app.controller('addWorkspaceController', ['$scope', 'Preset',
+    function($scope, Preset){
 
       var preset = $scope.preset;
 
@@ -63,10 +63,10 @@
         $scope.firstCreate = false;
 
         if(form.$valid){
-          worksapce.id = 'xxx';
+          worksapce.id = 'default';
           worksapce.modified = new Date();
-          worksapce.rows = 4;
-          worksapce.cols = 5;
+          worksapce.rows = Preset.defaultRows;
+          worksapce.cols = Preset.defaultCols;
 
           preset.addWorkspaceAsync(worksapce, true).then(
             function success(){
