@@ -34,19 +34,22 @@
         this._localOnly = localOnly;
 
         $localStorage[presetId] = new Storage();
-        this._storage = $localStorage[presetId];
+        //this.storage = $localStorage[presetId];
 
         this._onadd = function(worksqapce){};
         this._onrefresh = function(worksqapce){};
       }
 
       Object.defineProperties(WorkspacesCache.prototype, {
+        storage: {
+          get: function(){ return $localStorage[this._presetId]; }
+        },
         lifetime: {
           get: function(){ return this._lifetime; },
           set: function(val){ this._lifetime = val; }
         },
         count: {
-          get: function(){ return Object.keys(this._storage.workspaces).length; }
+          get: function(){ return Object.keys(this.storage.workspaces).length; }
         }
       });
 
@@ -65,7 +68,7 @@
         var count = 0;
         var keys = [];
 
-        for(var workspaceId in this._storage.workspaces){
+        for(var workspaceId in this.storage.workspaces){
           keys.push(workspaceId);
           count++;
         }
@@ -95,7 +98,7 @@
             }
           );
         }else{
-          var item  = this._storage.workspaces[workspaceId];
+          var item  = this.storage.workspaces[workspaceId];
 
           if(this._localOnly === false && (fresh === true || ((new Date().valueOf() - item.created) / 1000 > this._lifetime))){
             $q.when(this._loadWorkspaceCallback(workspaceId, true)).then(
@@ -123,29 +126,29 @@
       };
 
       WorkspacesCache.prototype.exist = function(workspaceId){
-        return typeof this._storage.workspaces[workspaceId] !== 'undefined';
+        return typeof this.storage.workspaces[workspaceId] !== 'undefined';
       };
 
       WorkspacesCache.prototype.put = function(workspace){
         var tiles = workspace.tiles;
         workspace.tiles = [];
-        this._storage.workspaces[workspace.id] = new Item(workspace, tiles);
+        this.storage.workspaces[workspace.id] = new Item(workspace, tiles);
       };
 
       WorkspacesCache.prototype.delete = function(workspaceId){
-        delete this._storage.workspaces[workspaceId];
+        delete this.storage.workspaces[workspaceId];
       };
 
       WorkspacesCache.prototype.update = function(workspace){
         if(workspace.tiles.length !== 0){
           this.put(workspace);
         }else{
-          this._storage.workspaces[workspace.id].workspace = workspace;
+          this.storage.workspaces[workspace.id].workspace = workspace;
         }
       };
 
       WorkspacesCache.prototype.findTile = function(workspaceId, tileId){
-        var tiles  = this._storage.workspaces[workspaceId].tiles;
+        var tiles  = this.storage.workspaces[workspaceId].tiles;
 
         for(var i = 0; i < tiles.length; i++){
           if(tiles[i].id === tileId){
@@ -176,7 +179,7 @@
             }
           );
         }else{
-          var item  = this._storage.workspaces[workspaceId];
+          var item  = this.storage.workspaces[workspaceId];
           var tile = this.findTile(workspaceId, tileId);
 
           if((tile === null && this._localOnly === true) || (tile === null && fresh !== true)){
@@ -209,7 +212,7 @@
       };
 
       WorkspacesCache.prototype.tileExist = function(workspaceId, tileId){
-        if(!angular.isDefined(this._storage.workspaces[workspaceId])){
+        if(!angular.isDefined(this.storage.workspaces[workspaceId])){
           return false;
         }
 
@@ -217,33 +220,33 @@
       };
 
       WorkspacesCache.prototype.addTile = function(workspaceId, tile){
-        this._storage.workspaces[workspaceId].tiles.push(tile);
+        this.storage.workspaces[workspaceId].tiles.push(tile);
       };
 
       WorkspacesCache.prototype.removeTile = function(workspaceId, tileId){
-        for(var i = 0; i < this._storage.workspaces[workspaceId].tiles.length; i++){
-          if(this._storage.workspaces[workspaceId].tiles[i].id === tileId){
-            this._storage.workspaces[workspaceId].tiles.splice(i,1);
+        for(var i = 0; i < this.storage.workspaces[workspaceId].tiles.length; i++){
+          if(this.storage.workspaces[workspaceId].tiles[i].id === tileId){
+            this.storage.workspaces[workspaceId].tiles.splice(i,1);
             return;
           }
         }
       };
 
       WorkspacesCache.prototype.updateTile = function(workspaceId, tile){
-        for(var i = 0; i < this._storage.workspaces[workspaceId].tiles.length; i++){
-          if(this._storage.workspaces[workspaceId].tiles[i].id === tile.id){
-            this._storage.workspaces[workspaceId].tiles[i] = tile;
+        for(var i = 0; i < this.storage.workspaces[workspaceId].tiles.length; i++){
+          if(this.storage.workspaces[workspaceId].tiles[i].id === tile.id){
+            this.storage.workspaces[workspaceId].tiles[i] = tile;
             return;
           }
         }
       };
 
       WorkspacesCache.prototype.updateTileSize = function(workspaceId, tileId, resizeInfo){
-        for(var i = 0; i < this._storage.workspaces[workspaceId].tiles.length; i++){
-          if(this._storage.workspaces[workspaceId].tiles[i].id === tile.id){
-            this._storage.workspaces[workspaceId].tiles[i].position = resizeInfo.position;
-            this._storage.workspaces[workspaceId].tiles[i].size.width = resizeInfo.size.width;
-            this._storage.workspaces[workspaceId].tiles[i].size.height = resizeInfo.size.height;
+        for(var i = 0; i < this.storage.workspaces[workspaceId].tiles.length; i++){
+          if(this.storage.workspaces[workspaceId].tiles[i].id === tileId){
+            this.storage.workspaces[workspaceId].tiles[i].position = resizeInfo.position;
+            this.storage.workspaces[workspaceId].tiles[i].size.width = resizeInfo.size.width;
+            this.storage.workspaces[workspaceId].tiles[i].size.height = resizeInfo.size.height;
             return;
           }
         }

@@ -67,3 +67,50 @@
   -webkit-animation: shake 1.0s;
   animation: shake 1.0s;
 }
+
+.presets-add-update-container-animation {}
+
+.presets-add-update-container-animation.ng-hide-add {
+  -webkit-animation-duration: 1.0s;
+  animation-duration: 1.0s;
+}
+
+.presets-add-update-animation {}
+
+.presets-add-update-animation.ng-hide-add {
+  -webkit-animation: bounceOutUp 1.0s;
+  animation: bounceOutUp 1.0s;
+}
+
+.presets-add-update-animation.ng-hide-remove {
+  -webkit-animation: bounceInDown 1.0s;
+  animation: bounceInDown 1.0s;
+}
+
+.presets-add-edit-overlay-animation {
+  opacity: 0.6;
+}
+
+.presets-add-update-overlay-animation.ng-hide-add.ng-hide-add-active,
+.presets-add-update-overlay-animation.ng-hide-remove.ng-hide-remove-active {
+  -webkit-transition: all linear 1.0s;
+  transition: all linear 1.0s;
+}
+
+.presets-add-update-overlay-animation.ng-hide {
+  opacity: 0;
+}
+
+.preset-edit-mode-animation {}
+
+.preset-edit-mode-animation.ng-hide-add {
+  -webkit-animation: zoomOut 1.0s;
+  animation: zoomOut 1.0s;
+}
+
+.preset-edit-mode-animation.ng-hide-remove {
+  -webkit-animation: zoomIn 1.0s;
+  animation: zoomIn 1.0s;
+}
+
+

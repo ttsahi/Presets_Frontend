@@ -139,21 +139,42 @@
 .presets-workspace-panels-container {
   position: relative;
   height: 100%;
+  z-index: 2;
 }
 
-.presets-workspace-add-edit-container {
+.presets-workspace-add-update-container {
   position: relative;
   height: 100%;
+  z-index: 5;
+}
+
+.presets-workspace-add-update-container .overlay {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  opacity: 0.6;
 }
 
 .presets-workspace-add-container {
-  position: relative;
-  height: 100%;
+  position: absolute;
+  top: 10%;
+  left: 20%;
+  width: 60%;
+  background-color: #ffffff;
+  border-radius: 4px;
+  padding: 5px;
 }
 
-.presets-workspace-edit-container {
-  position: relative;
-  height: 100%;
+.presets-workspace-update-container {
+  position: absolute;
+  top: 10%;
+  left: 20%;
+  width: 60%;
+  background-color: #ffffff;
+  border-radius: 4px;
 }
 
 .presets-workspace-panels-overlay {

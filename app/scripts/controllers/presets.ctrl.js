@@ -11,6 +11,21 @@
 
       $scope.preset = new Preset();
 
+      $scope.preset.registerType({
+        name: 'person',
+        creationInfo: {
+          template: '<div><h1>Person creation template</h1></div>',
+          controller: ['$scope', function($scope){
+            $scope.model.latName = 'tal';
+          }]
+        },
+        presentationInfo: {
+          template: '<div><h1>Person presentation info</h1></div>' +
+                    '<div><h2>name: {{name}}</h2></div>' +
+                    '<div><h2>age: {{age}}</h2></div>'
+        }
+      });
+
       /*
       $scope.preset.registerType({
         name: 'web',

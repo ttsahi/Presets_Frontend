@@ -118,8 +118,8 @@
               }
             };
 
-            $scope.enterEditMode = function(){
-              alert('edit mode available!');
+            $scope.triggerEditMode = function(){
+              alert('edit mode not available!');
             };
 
             function setCurrentWorkspace(selectedWorkspace){
@@ -133,36 +133,29 @@
                   if(selectedWorkspace instanceof ReducedWorkspace){
                     preset.getWorkspaceAsync(selectedWorkspace.id, true).then(
                       function resolveSuccess(result){
-
                         var workspace = result.data;
                         preset.currentWorkspace = workspace;
                         var workspaceData = new WorkspaceData(preset, workspace);
 
                         if(preset.useCache === true){
                           workspaceData.onadd = function(tile){
-                            preset._cache.addTile(workspace.id, tile);
+                            preset._workspacesCache.addTile(workspace.id, tile);
                           };
 
                           workspaceData.onremove = function(tile){
-                            preset._cache.removeTile(workspace.id, tile.id);
+                            preset._workspacesCache.removeTile(workspace.id, tile.id);
                           };
 
                           workspaceData.onupdate = function(tile){
-                            preset._cache.updateTile(workspace.id, tile);
+                            preset._workspacesCache.updateTile(workspace.id, tile);
                           };
 
                           workspaceData.onTileSizeChanged = function(tile, resizeInfo){
-                            //preset._cache.updateTileSize(workspace.id, tile.id, resizeInfo);
-                            console.log('tile size/position changed use cache.')
-                            console.log(tile);
-                            console.log(resizeInfo);
+                            preset._workspacesCache.updateTileSize(workspace.id, tile.id, resizeInfo);
                           };
                         }else{
                           workspaceData.onTileSizeChanged = function(tile, resizeInfo){
-                            //preset.types[tile.type].confirmUpdate(angular.copy(workspace), angular.copy(tile));
-                            console.log('tile size/position changed no cache.')
-                            console.log(tile);
-                            console.log(resizeInfo);
+                            preset.types[tile.type].confirmUpdate(angular.copy(workspace), angular.copy(tile));
                           };
                         }
 
@@ -173,9 +166,7 @@
                         $scope.currentWorkspace = workspace;
                         $scope.workspaceData = workspaceData;
 
-                        $scope.enterEditMode = function(){
-                          workspaceData.enterAddMode();
-                        };
+                        $scope.triggerEditMode = function(){ workspaceData.triggerEditMode(); };
 
                       }, function resolveError(reason){
                         console.log('error while loading workspace id: ' + selectedWorkspace.id);

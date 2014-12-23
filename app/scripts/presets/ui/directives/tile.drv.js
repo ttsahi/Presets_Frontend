@@ -21,7 +21,6 @@
           var tileInstance = null;
 
           scope.$watch('tile', function(tile){
-
             if(!angular.isObject(tile)){
               if(tileInstance !== null){
                 tileInstance.element.remove();
@@ -31,8 +30,7 @@
             }
           });
 
-          scope.$watch('tile.creationInfo', function(creationInfo){
-
+          scope.$watch('tile.presentationInfo', function(creationInfo){
             if(angular.isObject(creationInfo)){
 
               if(tileInstance !== null){
@@ -44,7 +42,6 @@
               MVC.create(scope, creationInfo, scope.tile.model, true, true).then(
                 function(instance){
                   tileInstance = instance;
-                  console.log(tileInstance);
                   element.append(tileInstance.element);
                 },
                 function(failed){
@@ -56,7 +53,6 @@
           }, true);
 
           scope.$watch('tile.model', function(model){
-
             if(tileInstance !== null && angular.isObject(model)){
               angular.forEach(model, function(value, property){
                 tileInstance.scope[property] = value;

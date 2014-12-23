@@ -23,11 +23,15 @@
         this._rows = workspace.rows;
         this._initTiles = workspace.tiles;
 
-        //this._enterEditMode = function(){};
+        this._applyNewTile = function(){};
+        this._resetTile = function(){};
 
         this._enterAddMode = function(){};
         this._enterUpdateMode = function(){};
         this._enterPresentationMode = function(){};
+
+        this._enterEditMode = function(){};
+        this._triggerEditMode = function(){};
 
         this._onadddListener = function(){};
         this._onremoveListener = function(){};
@@ -47,13 +51,12 @@
         while(this._initTiles.length !== 0){
           var tile = this._initTiles.pop();
           tile = validateTile(tile, this);
-
           var type = this._preset.types[tile.type];
 
-          tile.creationInfo = type.creationInfo;
+          tile.presentationInfo = type.presentationInfo;
           this._tiles[tile.position -1] = angular.copy(tile);
           this._tilesMap[tile.id] = (tile.position -1);
-          this._panels[tile.position - 1].inUse = true;
+          this._applyNewTile(tile, this._rows, this._cols, this._panels);
         }
       };
 
@@ -70,7 +73,7 @@
         panels: {
           get: function(){ return this._panels; }
         },
-        presets: {
+        preset: {
           get: function(){ return this._preset; }
         },
         workspaceId: {
@@ -78,7 +81,27 @@
         }
       });
 
+      Object.defineProperty(WorkspaceData.prototype, 'tilesCount', {
+        get: function(){
+          var count = 0;
+          for(var i = 0; i < this._tiles.length; i++){
+            if(this._tiles[i] !== null){
+              count++;
+            }
+          }
+          return count;
+        }
+      });
+
       Object.defineProperties(WorkspaceData.prototype,{
+        applyNewTile: {
+          set: function(val) { this._applyNewTile = val; },
+          get: function() { return this._applyNewTile; }
+        },
+        resetTile: {
+          set: function(val) { this._resetTile = val; },
+          get: function() { return this._resetTile; }
+        },
         enterAddMode: {
           set: function(val) { this._enterAddMode = val; },
           get: function() { return this._enterAddMode; }
@@ -90,6 +113,14 @@
         enterPresentationMode: {
           set: function(val) { this._enterPresentationMode = val; },
           get: function() { return this._enterPresentationMode; }
+        },
+        enterEditMode: {
+          set: function(val) { this._enterEditMode = val; },
+          get: function() { return this._enterEditMode; }
+        },
+        triggerEditMode: {
+          set: function(val) { this._triggerEditMode = val; },
+          get: function() { return this._triggerEditMode; }
         }
       });
 
@@ -132,19 +163,19 @@
             }
 
             if(result.succeeded === true){
-              tile = validateTile(tile, this);
+              tile = validateTile(tile, self);
 
               if(tile.type !== type.name){
                 deferred.reject(new CRUDResult(false, {}, ['invalid tile type!']));
                 return deferred.promise;
               }
 
-              tile.creationInfo = type.creationInfo;
+              tile.presentationInfo = type.presentationInfo;
               self._tiles[tile.position -1] = angular.copy(tile);
               self._tilesMap[tile.id] = (tile.position -1);
-              self._panels[tile.position - 1].inUse = true;
-              delete tile.creationInfo;
-              this._onadddListener(tile);
+              self._applyNewTile(tile, self._rows, self._cols, self._panels);
+              delete tile.presentationInfo;
+              self._onadddListener(tile);
               deferred.resolve(new CRUDResult(true, tile));
             }else{
               deferred.reject(result);
@@ -181,6 +212,7 @@
               self._tiles[tile.position - 1] = null;
               delete self._tilesMap[tile.id];
               delete tile.creationInfo;
+              self._resetTile(tile);
               this._onremoveListener(tile);
               deferred.resolve(new CRUDResult(true, tile));
             }else{
@@ -218,6 +250,7 @@
               self._tiles[tile.position - 1] = null;
               delete self._tilesMap[tile.id];
               delete tile.creationInfo;
+              self._resetTile(tile);
               this._onremoveListener(tile);
               deferred.resolve(new CRUDResult(true, tile));
             }else{

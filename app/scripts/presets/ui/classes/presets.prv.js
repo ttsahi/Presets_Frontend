@@ -46,7 +46,7 @@
 
           function Preset(options) {
             this._id = guid();
-            this._types = [];
+            this._types = {};
             this._workspacesList = {};
             this._workspacesListArr = [];
             this._currentWorkspace = null;

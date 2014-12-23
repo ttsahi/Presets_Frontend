@@ -1,0 +1,21 @@
+<div class="container">
+  <fieldset>
+    <legend>Create tile</legend>
+    <div ng-hide="typeSelected">
+      <select class="form-control" ng-model="selectedType" ng-options="tileType.name for tileType in tilesTypes">
+        <option value="">select type...</option>
+      </select>
+      <br />
+      <button type="button" class="btn btn-primary" ng-click="next(selectedType)" ng-disabled="!selectedType">Next</button>
+      <button type="button" class="btn btn-danger" ng-click="cancel()">Cancel</button>
+    </div>
+    <div ng-show="typeSelected">
+      <div add-update-tile=""></div>
+    </div>
+    <hr />
+    <div ng-show="typeSelected">
+      <button type="button" class="btn btn-primary" ng-click="create()">Create</button>
+      <button type="button" class="btn btn-danger" ng-click="cancel()">Cancel</button>
+    </div>
+  </fieldset>
+</div>

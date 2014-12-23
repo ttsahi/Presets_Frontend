@@ -6,8 +6,8 @@
 
   'use strict';
 
-  app.directive('workspace', ['$compile', '$q', '$http', '$templateCache', 'MVC', 'Preset', 'WorkspaceData',
-    function($compile, $q, $http, $templateCache, MVC, Preset, WorkspaceData) {
+  app.directive('workspace', ['$compile', '$q', '$http', '$templateCache', '$animate', 'MVC', 'Preset', 'WorkspaceData',
+    function($compile, $q, $http, $templateCache, $animate, MVC, Preset, WorkspaceData) {
 
       function DeveloperError(message){
         this.message = message;
@@ -56,11 +56,11 @@
       function TempPanel() {
         this.id = null;
         this.position = null;
-        this.tile = null;
         this.inUse = false;
         this.referTo = null;
         this.children = [];
         this.corners = null;
+        this.container = null;
       }
 
       function convertPositionToIndex(x, y, cols) {
@@ -1599,44 +1599,60 @@
 
       }
 
-      //calculate new panel by size ///////////////////////////////////////////////////////////////////////////////////
+      function calculatePanelByTile(tile, rows, cols, panels){
+        var newPanel = new TempPanel();
+        newPanel.id = tile.position - 1;
+        var y = Math.ceil(tile.position / rows);
+        var x = tile.position - (y - 1) * cols;
+        newPanel.position = new Position(x - 1, y - 1);
+        newPanel.corners = null;
+        newPanel.children = [];
 
-      function resetPanel(panel){
-        panel.overlay.css('z-index', '2');
+        if(tile.size.width > 1 || tile.size.height > 1){
 
-        panel.container.width = 0;
-        panel.container.height = 0;
+          newPanel.corners = new Corners();
+          var mainPosition = tile.position;
 
-        panel.container.element.css({
-          width: '100%',
-          height: '100%'
-        });
-
-        panel.corners = null;
-
-        if(panel.children.length !== 0){
-          while(panel.children.length !== 0){
-            var child = panel.children.pop();
-            child.inUse = false;
-            child.referTo = null;
+          for(y = 0; y < tile.size.height; y++){
+            for(x = 0; x < tile.size.width; x++){
+              var realPosition = mainPosition - 1;
+              if(y === 0 && x === 0){
+                newPanel.corners.topLeft = panels[realPosition];
+              }
+              if(y === 0 && x + 1 === tile.size.width){
+                newPanel.corners.topRight = panels[realPosition];
+              }
+              if(y + 1 === tile.size.height && x === 0){
+                newPanel.corners.bottomLeft = panels[realPosition];
+              }
+              if(y + 1 === tile.size.height && x + 1 === tile.size.width){
+                newPanel.corners.bottomRight = panels[realPosition];
+              }
+              newPanel.children.push(panels[realPosition]);
+              mainPosition++;
+            }
+            mainPosition += (cols - (tile.size.width - 1) - 1);
           }
+
         }
+
+        if(newPanel.corners !== null){
+          newPanel.container = new Container(null,
+            newPanel.corners.topRight.position.x - newPanel.corners.topLeft.position.x + 1,
+            newPanel.corners.bottomLeft.position.y - newPanel.corners.topLeft.position.y + 1
+          );
+        }else{
+          newPanel.container = new Container(null, 1, 1);
+        }
+
+        return newPanel;
       }
 
-      function changePanelSizeAndPosition(newPanel, originPanel, tiles, panels){
+      function applyNewTile(tile, rows, cols, panels){
+
+        var newPanel = calculatePanelByTile(tile, rows, cols, panels);
 
         var realPanel = panels[newPanel.id];
-
-        resetPanel(originPanel);
-
-        if(realPanel.id !== originPanel.id){
-          var tempTile = tiles[originPanel.id];
-          tiles[originPanel.id] = tiles[realPanel.id];
-          tiles[realPanel.id] = tempTile;
-        }
-
-        //change tile position and size ///////////////////////////////////////////////////////////////////////////////////
-        console.log('change tile size here!!!!');
 
         if(newPanel.corners !== null) {
           realPanel.corners = newPanel.corners;
@@ -1663,6 +1679,75 @@
           height: newPanel.container.height * 100 + '%'
         });
 
+        realPanel.content.css('background-color', '#ffffff');
+
+        return realPanel;
+      }
+
+      function resetPanel(panel){
+        panel.overlay.css('z-index', '2');
+
+        panel.container.width = 0;
+        panel.container.height = 0;
+
+        panel.container.element.css({
+          width: '100%',
+          height: '100%'
+        });
+
+        panel.content.css('background-color', '');
+
+        panel.corners = null;
+
+        if(panel.children.length !== 0){
+          while(panel.children.length !== 0){
+            var child = panel.children.pop();
+            child.inUse = false;
+            child.referTo = null;
+          }
+        }
+      }
+
+      function changePanelSizeAndPosition(presetsScope, newPanel, originPanel, tiles, panels){
+
+        var realPanel = panels[newPanel.id];
+
+        resetPanel(originPanel);
+
+        if(realPanel.id !== originPanel.id){
+          var tempTile = tiles[originPanel.id];
+          tiles[originPanel.id] = tiles[realPanel.id];
+          tiles[realPanel.id] = tempTile;
+          presetsScope.$digest();
+        }
+
+        if(newPanel.corners !== null) {
+          realPanel.corners = newPanel.corners;
+
+          realPanel.children = newPanel.children;
+          for (var i = 0; i < realPanel.children.length; i++) {
+            realPanel.children[i].inUse = true;
+            if(i > 0){
+              realPanel.children[i].referTo = realPanel;
+            }
+          }
+        }else{
+          realPanel.inUse = true;
+          realPanel.corners = null;
+          realPanel.children = [];
+        }
+
+        realPanel.overlay.css('z-index', '3');
+        realPanel.container.width = newPanel.container.width - 1;
+        realPanel.container.height = newPanel.container.height - 1;
+
+        realPanel.container.element.css({
+          width: newPanel.container.width * 100 + '%',
+          height: newPanel.container.height * 100 + '%'
+        });
+
+        realPanel.content.css('background-color', '#ffffff');
+
         return realPanel;
       }
 
@@ -1675,13 +1760,15 @@
         event.stopPropagation();
         event.preventDefault();
 
+        event.data.common.realPanel = event.data.panel.referTo ? event.data.panel.referTo : event.data.panel;
+
         if(!event.data.panel.inUse){
-          //return; /////////////////////////////////// can't edit empty panel
+          event.data.common.workspaceData.enterAddMode(event.data.common.realPanel.id + 1);
+          return;
         }
 
         event.data.common.extendStart = true;
         event.data.common.originId = event.data.panel.id;
-        event.data.common.realPanel = event.data.panel.referTo ? event.data.panel.referTo : event.data.panel;
         event.data.common.container = event.data.common.realPanel.container;
         setMouseCursors(event.data.common.container.cursor.type, event.data.common.panels);
 
@@ -1750,7 +1837,7 @@
 
           if(!event.data.common.extendCanceled) {
             if (event.data.panel !== event.data.common.panels[event.data.common.originId] && event.data.panel !== event.data.common.errorPanel) {
-              var panel = changePanelSizeAndPosition(event.data.common.newPanel, event.data.common.realPanel, event.data.common.tiles, event.data.common.panels);
+              var panel = changePanelSizeAndPosition(event.data.common.presetsScope, event.data.common.newPanel, event.data.common.realPanel, event.data.common.tiles, event.data.common.panels);
               var resizeInfo = { position: panel.id + 1, size: { width: panel.container.width + 1, height: panel.container.height + 1 }};
               event.data.common.onPanelSizeChanged(event.data.common.tiles[panel.id], resizeInfo);
             }
@@ -1813,19 +1900,20 @@
           );
 
         }else{
+          if(event.data.panel.inUse){
+            var container = event.data.panel.referTo ? event.data.panel.referTo.container : event.data.panel.container;
+            var offset = container.element.offset();
 
-          var container = event.data.panel.referTo ? event.data.panel.referTo.container : event.data.panel.container;
-          var offset = container.element.offset();
+            var clientX = event.pageX - (offset.left);
+            var clientY = event.pageY - (offset.top);
 
-          var clientX = event.pageX - (offset.left);
-          var clientY = event.pageY - (offset.top);
+            var hitArea = getHitArea(container.element.outerWidth(), container.element.outerHeight(), clientX, clientY);
+            var cursorType = getCursorType(hitArea);
 
-          var hitArea = getHitArea(container.element.outerWidth(), container.element.outerHeight(), clientX, clientY);
-          var cursorType = getCursorType(hitArea);
-
-          event.data.panel.overlay.css('cursor', cursorType);
-          container.element.css('cursor', cursorType);
-          container.cursor = new Cursor(hitArea, cursorType);
+            event.data.panel.overlay.css('cursor', cursorType);
+            container.element.css('cursor', cursorType);
+            container.cursor = new Cursor(hitArea, cursorType);
+          }
         }
       }
 
@@ -1861,7 +1949,10 @@
       }
 
       function stopEdit(){
-        this.container.element.css('pointer-events', '');
+        this.container.element.css({
+          'cursor': 'initial',
+          'pointer-events': ''
+        });
         this.overlay.unbind('mousedown');
         this.overlay.unbind('mouseup');
         this.overlay.unbind('mouseenter');
@@ -1900,6 +1991,8 @@
         this.currentPanel = null;
         this.nowOnPanel = null;
         this.optionalPanels = [];
+        this.presetsScope = null;
+        this.workspaceData = null;
         this.onPanelSizeChanged = function(){};
       }
 
@@ -1931,12 +2024,6 @@
         this.icon = icon;
       }
 
-      function getTemplatePromise(templateUrl) {
-        return $http.get(templateUrl, {cache: $templateCache}).then(function (result) {
-              return result.data;
-            });
-      }
-
       return {
         restrict: 'EA',
         replace: true,
@@ -1946,24 +2033,21 @@
         },
         link: function (scope, element, attrs, controller) {
 
-          var addHtml = null;
-          var updateHtml = null;
-
           var presetsScope = null;
           var presetContainer = null;
 
-          var addEditContainer = null;
+          var addUpdateContainer = null;
           var addContainer = null;
           var addElement = null;
-          var editContainer = null;
-          var editElement = null;
+          var updateContainer = null;
+          var updateElement = null;
 
           var workspaceContainer = null;
           var workspacePanelsOverlay = null;
           var workspacePanelsContainer = null;
 
           var addScope = null;
-          var editScope = null;
+          var updateScope = null;
           var commonData = null;
 
           function createPanel(position) {
@@ -2027,21 +2111,18 @@
           };
 
           function clearAddEditScopesAndElements(){
-            if(addElement !== null){
-              addElement.remove();
-              addElement = null;
+            if(presetsScope !== null){
+              presetsScope.isAddTileMode = false;
+              presetsScope.isUpdateTileMode = false;
             }
-            if(editElement !== null){
-              editElement.remove();
-              editElement = null;
-            }
+
             if(addScope !== null){
               addScope.$destroy();
               addScope = null;
             }
-            if(editScope !== null){
-              editScope.$destroy();
-              editScope = null;
+            if(updateScope !== null){
+              updateScope.$destroy();
+              updateScope = null;
             }
           }
 
@@ -2056,9 +2137,9 @@
               presetContainer.remove();
               presetContainer = null;
 
-              addEditContainer = null;
+              addUpdateContainer = null;
               addContainer = null;
-              editContainer = null;
+              updateContainer = null;
 
               workspaceContainer = null;
               workspacePanelsOverlay = null;
@@ -2077,14 +2158,18 @@
 
             commonData = new CommonData();
 
-            presetsScope.isAddMode = true;
-            presetsScope.isAddUpdateMode = false;
+            presetsScope.isAddTileMode = false;
+            presetsScope.isUpdateTileMode = false;
+            presetsScope.isAddUpdateTileMode = false;
 
-            presetsScope.isEditMode = true;
+            presetsScope.isEditMode = false;
 
+            presetsScope.workspaceData = workspaceData;
             presetsScope.tiles = workspaceData.tiles;
             presetsScope.panelsOverlays = [];
 
+            commonData.presetsScope = presetsScope;
+            commonData.workspaceData = workspaceData;
             commonData.rows = workspaceData.rows;
             commonData.cols = workspaceData.cols;
             commonData.tiles = workspaceData.tiles;
@@ -2111,20 +2196,21 @@
 
             presetContainer = angular.element('<div class="presets-container"></div>');
 
-            addEditContainer = angular.element('<div ng-show="isAddUpdateMode" class="presets-workspace-add-edit-container"></div>');
-            addContainer = angular.element('<div ng-show="isAddMode" class="presets-workspace-add-container"></div>');
-            editContainer = angular.element('<div ng-hide="isAddMode" class="presets-workspace-edit-container"></div>');
-            addEditContainer.append(addContainer);
-            addEditContainer.append(editContainer);
+            addUpdateContainer = angular.element('<div ng-class="{\'presets-add-update-container-animation\' : isAddUpdateTileMode}" ng-show="isAddTileMode || isUpdateTileMode" class="presets-workspace-add-update-container">' +
+                                               '<div ng-show="isAddTileMode || isUpdateTileMode" class="overlay presets-add-update-overlay-animation" ng-click="workspaceData.enterEditMode()"></div></div>');
+            addContainer = angular.element('<div ng-show="isAddTileMode" class="presets-workspace-add-container presets-add-update-animation"></div>');
+            updateContainer = angular.element('<div ng-show="isUpdateTileMode" class="presets-workspace-update-container"></div>');
+            addUpdateContainer.append(addContainer);
+            addUpdateContainer.append(updateContainer);
 
-            workspaceContainer = angular.element('<div ng-hide="isAddUpdateMode" class="presets-workspace-panels-container"></div>');
-            workspacePanelsOverlay = angular.element('<div class="presets-workspace-panels-overlay"></div>');
+            workspaceContainer = angular.element('<div class="presets-workspace-panels-container"></div>');
+            workspacePanelsOverlay = angular.element('<div ng-show="isEditMode" class="presets-workspace-panels-overlay preset-edit-mode-animation"></div>');
             workspacePanelsContainer = angular.element('<div class="presets-panels-container"></div>');
             workspaceContainer.append(workspacePanelsOverlay);
             workspaceContainer.append(workspacePanelsContainer);
 
             presetContainer.append(workspaceContainer);
-            presetContainer.append(addEditContainer);
+            presetContainer.append(addUpdateContainer);
 
             workspacePanelsContainer.mouseleave(function(){
               if(commonData.extendStart && commonData.nowOnPanel){
@@ -2143,8 +2229,6 @@
                 commonData.panelsOverlays.push(panelOverlay);
 
                 var panel = createPanel(panelId);
-                panel.startEdit();
-                //panel.stopEdit();
                 workspacePanelsContainer.append(panel.overlay);
                 panel.id = panelId;
                 panel.position = new Position(j, i);
@@ -2156,28 +2240,49 @@
 
             presetContainer = $compile(presetContainer)(presetsScope);
 
-            workspaceData.enterAddMode = function(){
+            workspaceData.applyNewTile = applyNewTile;
+
+            workspaceData.resetTile = function(tile){
+              resetPanel(workspaceData.panels[tile.position -1]);
+            };
+
+            workspaceData.enterAddMode = function(position){
 
               clearAddEditScopesAndElements();
-              addScope = presetsScope.$new(true);
 
-              var creationInfo = {
-                template: '<div>{{name}}</div>',
-                controller: ['$scope', function($scope){
-                  $scope.name = "tsahi";
-                }]
+              var createAddModeInfo = {
+                templateUrl: Preset.templatesDir + 'templates/workspace/add-tile.html',
+                controller: 'addTileController'
               };
 
-              MVC.create(addScope, creationInfo, null, false, false, false).then(
+              var model = {
+                position: position,
+                workspaceData: workspaceData,
+                model: { name: 'tsahi', age: 24 },
+                creationInfo: {
+                  template: '<div>{{age}}</div>',
+                  controller: ['$scope',
+                    function($scope){
+                      $scope.age = 25;
+                    }
+                  ]
+                }
+              };
+
+              MVC.create(presetsScope, createAddModeInfo, model, true, true).then(
                 function(instance){
 
-                  addElement = angular.element(addHtml);
-                  addElement.append(instance.element);
-                  addElement = $compile(addElement)(addScope);
+                  if(addElement !== null){
+                    addElement.remove();
+                    addElement = null;
+                  }
+
+                  addScope = instance.scope;
+                  addElement = instance.element;
                   addContainer.append(addElement);
 
-                  presetsScope.isAddMode = true;
-                  presetsScope.isAddUpdateMode = true;
+                  presetsScope.isAddUpdateTileMode = true;
+                  presetsScope.isAddTileMode = true;
 
                 }, function(reason){
                   throw new LoadException("Can't load add mode!");
@@ -2185,43 +2290,106 @@
               );
             };
 
-            workspaceData.enterUpdateMode = function(){
+            workspaceData.enterUpdateMode = function(position){
 
               clearAddEditScopesAndElements();
-              editScope = presetsScope.$new(true);
 
-              var creationInfo = {
-                template: '<div>{{name}}</div>',
-                controller: ['$scope', function($scope){
-                  $scope.name = "omri";
-                }]
+              var createUpdateModeInfo = {
+                templateUrl: Preset.templatesDir + 'templates/workspace/update-tile.html',
+                controller: 'updateTileController'
               };
 
-              MVC.create(editScope, creationInfo, null, false, false, false).then(
+              var model = {
+                creationInfo: {
+                  template: '<div>{{age}}</div>',
+                  controller: ['$scope',
+                    function($scope){
+                      $scope.age = 25;
+                    }
+                  ]
+                }
+              };
+
+              MVC.create(presetsScope, createUpdateModeInfo, model, true, true).then(
                 function(instance){
 
-                  editElement = angular.element(updateHtml);
-                  editElement.append(instance.element);
-                  editElement = $compile(editElement)(editScope);
-                  editContainer.append(editElement);
+                  if(updateElement !== null){
+                    updateElement.remove();
+                    updateElement = null;
+                  }
 
-                  presetsScope.isAddMode = false;
-                  presetsScope.isAddUpdateMode = true;
+                  updateScope = instance.scope;
+                  updateElement = instance.element;
+                  updateContainer.append(updateElement);
+
+                  presetsScope.isAddUpdateTileMode = true;
+                  presetsScope.isUpdateTileMode = true;
 
                 }, function(reason){
-                  throw new LoadException("Can't load add mode!");
+                  throw new LoadException("Can't load edit mode!");
                 }
               );
             };
 
             workspaceData.enterPresentationMode = function(){
 
-              clearAddEditScopesAndElements();
+              for(var i = 0; i < workspaceData.panels.length; i++){
+                workspaceData.panels[i].stopEdit();
+              }
 
-              presetsScope.isAddUpdateMode = false;
+              clearAddEditScopesAndElements();
+              presetsScope.isEditMode = false;
+
+            };
+
+            workspaceData.enterEditMode = function(){
+
+              for(var i = 0; i < workspaceData.panels.length; i++){
+                workspaceData.panels[i].stopEdit();
+              }
+
+              for(i = 0; i < workspaceData.panels.length; i++){
+                workspaceData.panels[i].startEdit();
+              }
+
+              clearAddEditScopesAndElements();
+              presetsScope.isEditMode = true;
+
+            };
+
+            var firstLoad = true;
+
+            workspaceData.triggerEditMode = function(){
+
+              if(firstLoad && workspaceData.tilesCount === 0){
+                firstLoad = false;
+                workspaceData.enterEditMode();
+                return;
+              }
+
+              if(firstLoad && workspaceData.tilesCount > 0){
+                firstLoad = false;
+                return;
+              }
+
+              if(presetsScope.tiles.length === 0){
+                if(presetsScope.isEditMode){
+                  return;
+                }
+                workspaceData.enterEditMode();
+                return;
+              }
+
+              if(presetsScope.isEditMode){
+                workspaceData.enterPresentationMode();
+              }else{
+                workspaceData.enterEditMode();
+              }
+
             };
 
             workspaceData.init();
+            workspaceData.triggerEditMode();
 
             element.append(presetContainer);
 
@@ -2234,21 +2402,7 @@
               return;
             }
 
-            var addHtmlPromise = getTemplatePromise(Preset.templatesDir + 'templates/workspace/add-template.html');
-            var editHtmlPromise = getTemplatePromise(Preset.templatesDir + 'templates/workspace/update-template.html');
-
-            var templatesPromise = $q.all([addHtmlPromise, editHtmlPromise]);
-
-            templatesPromise.then(function resolveSuccess(templates) {
-
-              addHtml = templates[0];
-              updateHtml = templates[1];
-
-              init(workspaceData);
-
-            }, function resolveError(reason){
-              throw new LoadException("Can't load add and edit templates!");
-            });
+            init(workspaceData);
           });
         }
       };
