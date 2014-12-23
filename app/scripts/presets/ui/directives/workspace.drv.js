@@ -2033,6 +2033,10 @@
         },
         link: function (scope, element, attrs, controller) {
 
+          scope.workspaceChanged = true;
+          var mainWorkspaceContainer = $compile('<div ng-show="workspaceChanged" class="presets-container preset-workspace-changed-animation"></div>')(scope);
+          element.append(mainWorkspaceContainer);
+
           var presetsScope = null;
           var presetContainer = null;
 
@@ -2129,6 +2133,7 @@
           function clear(){
 
             if(presetContainer !== null){
+
               if(presetsScope !== null){
                 presetsScope.$destroy();
                 presetsScope = null;
@@ -2163,6 +2168,7 @@
             presetsScope.isAddUpdateTileMode = false;
 
             presetsScope.isEditMode = false;
+            presetsScope.firstLoad = true;
 
             presetsScope.workspaceData = workspaceData;
             presetsScope.tiles = workspaceData.tiles;
@@ -2204,7 +2210,7 @@
             addUpdateContainer.append(updateContainer);
 
             workspaceContainer = angular.element('<div class="presets-workspace-panels-container"></div>');
-            workspacePanelsOverlay = angular.element('<div ng-show="isEditMode" class="presets-workspace-panels-overlay preset-edit-mode-animation"></div>');
+            workspacePanelsOverlay = angular.element('<div ng-show="isEditMode" class="presets-workspace-panels-overlay" ng-class="{\'preset-edit-mode-animation\': !firstLoad}"></div>');
             workspacePanelsContainer = angular.element('<div class="presets-panels-container"></div>');
             workspaceContainer.append(workspacePanelsOverlay);
             workspaceContainer.append(workspacePanelsContainer);
@@ -2357,22 +2363,25 @@
 
             };
 
-            var firstLoad = true;
+            var triggerCount = 0;
 
             workspaceData.triggerEditMode = function(){
 
-              if(firstLoad && workspaceData.tilesCount === 0){
-                firstLoad = false;
+              if(triggerCount > 0){
+                presetsScope.firstLoad = false;
+              }
+              triggerCount++;
+
+              if(presetsScope.firstLoad && workspaceData.tilesCount === 0){
                 workspaceData.enterEditMode();
                 return;
               }
 
-              if(firstLoad && workspaceData.tilesCount > 0){
-                firstLoad = false;
+              if(presetsScope.firstLoad && workspaceData.tilesCount > 0){
                 return;
               }
 
-              if(presetsScope.tiles.length === 0){
+              if(workspaceData.tilesCount === 0){
                 if(presetsScope.isEditMode){
                   return;
                 }
@@ -2391,8 +2400,7 @@
             workspaceData.init();
             workspaceData.triggerEditMode();
 
-            element.append(presetContainer);
-
+            mainWorkspaceContainer.append(presetContainer);
             calculateLocationsAndSizes();
           }
 

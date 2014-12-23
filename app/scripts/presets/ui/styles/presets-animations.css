@@ -113,4 +113,16 @@
   animation: zoomIn 1.0s;
 }
 
+.preset-workspace-changed-animation {}
+
+.preset-workspace-changed-animation.ng-hide-add {
+  -webkit-animation: bounceOutLeft 1.0s;
+  animation: bounceOutLeft 1.0s;
+}
+
+.preset-workspace-changed-animation.ng-hide-remove {
+  -webkit-animation: bounceInLeft 1.0s;
+  animation: bounceInLeft 1.0s;
+}
+
 
