@@ -2033,8 +2033,9 @@
         },
         link: function (scope, element, attrs, controller) {
 
-          scope.workspaceChanged = true;
-          var mainWorkspaceContainer = $compile('<div ng-show="workspaceChanged" class="presets-container preset-workspace-changed-animation"></div>')(scope);
+          var workspacesIds = {};
+          var enableWorkspaceChangedAnimation = false;
+          var mainWorkspaceContainer = $compile('<div class="presets-container preset-workspace-changed-animation"></div>')(scope);
           element.append(mainWorkspaceContainer);
 
           var presetsScope = null;
@@ -2402,6 +2403,9 @@
 
             mainWorkspaceContainer.append(presetContainer);
             calculateLocationsAndSizes();
+            if(enableWorkspaceChangedAnimation){
+              $animate.enter(mainWorkspaceContainer, element);
+            }
           }
 
           scope.$watch('workspaceData', function(workspaceData){
@@ -2410,7 +2414,20 @@
               return;
             }
 
-            init(workspaceData);
+            if(workspacesIds[workspaceData.workspaceId] !== undefined){
+              enableWorkspaceChangedAnimation = true;
+            }else{
+              workspacesIds[workspaceData.workspaceId] = true;
+              enableWorkspaceChangedAnimation = false;
+            }
+
+            if(enableWorkspaceChangedAnimation){
+              $animate.leave(mainWorkspaceContainer).then(function() {
+                init(workspaceData);
+              });
+            }else{
+              init(workspaceData);
+            }
           });
         }
       };
