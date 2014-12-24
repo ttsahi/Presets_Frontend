@@ -1253,6 +1253,14 @@
         }
       }
 
+      function clearPanelsIconAnimation(panelsOverlays, presetsScope){
+        for(var i = 0; i < panelsOverlays.length; i++){
+          panelsOverlays[i].iconClasses = null;
+        }
+
+        presetsScope.$digest();
+      }
+
       function setMouseCursors(type, panels) {
         for (var i = 0; i < panels.length; i++) {
           panels[i].overlay.css('cursor', type);
@@ -1861,6 +1869,13 @@
 
           event.data.common.selectedCorner = event.data.panel;
 
+          clearPanelsIconAnimation(event.data.common.panelsOverlays, event.data.common.presetsScope);
+
+          if(!event.data.panel.inUse){
+            event.data.common.panelsOverlays[event.data.panel.id].iconClasses = 'preset-pic-hover';
+            event.data.common.presetsScope.$digest();
+          }
+
         } else {
 
           if(event.data.common.errorPanel !== null){
@@ -2022,6 +2037,7 @@
         this.cover = null;
         this.classes = null;
         this.icon = icon;
+        this.iconClasses = null;
       }
 
       return {
@@ -2072,7 +2088,9 @@
             var overlay = angular.element(
               '<div class="panel-overlay">' +
                 '<div class="content" ng-class="panelsOverlays[' + position + '].classes">' +
-                  '<img class="icon" ng-src="{{panelsOverlays[' + position + '].icon}}" />' +
+                  '<div ng-class="panelsOverlays[' + position + '].iconClasses" class="icon preset-pic">' +
+                    '<img class="img-icon" ng-src="{{panelsOverlays[' + position + '].icon}}" />' +
+                  '</div>' +
                 '</div>' +
               '</div>'
             );
@@ -2220,6 +2238,8 @@
             presetContainer.append(addUpdateContainer);
 
             workspacePanelsContainer.mouseleave(function(){
+              clearPanelsIconAnimation(commonData.panelsOverlays, commonData.presetsScope);
+
               if(commonData.extendStart && commonData.nowOnPanel){
                 commonData.extendCanceled = true;
                 commonData.nowOnPanel.cancelEdit();

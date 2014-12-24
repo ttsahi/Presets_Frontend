@@ -206,6 +206,14 @@
   left: 35%;
 }
 
+.presets-workspace-panels-overlay .img-icon {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0%;
+  left: 0%;
+}
+
 .presets-workspace-panels-overlay .panel-overlay .optional {
   position: absolute;
   top: 0px;

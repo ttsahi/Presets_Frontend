@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="32d0c907-dd96-494b-a32c-d7429bc3e1df" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/presets/ui/styles/presets-animations.css" afterPath="$PROJECT_DIR$/app/scripts/presets/ui/styles/presets-animations.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/presets/ui/styles/presets-main.css" afterPath="$PROJECT_DIR$/app/scripts/presets/ui/styles/presets-main.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js" afterPath="$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -41,18 +42,8 @@
       <file leaf-file-name="workspace.drv.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.51648355" vertical-offset="52679" max-vertical-offset="53746">
-              <caret line="2418" column="18" selection-start-line="2418" selection-start-column="18" selection-end-line="2418" selection-end-column="18" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="presets-animations.css" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/styles/presets-animations.css">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1934" max-vertical-offset="2948">
-              <caret line="115" column="38" selection-start-line="115" selection-start-column="38" selection-end-line="115" selection-end-column="38" />
+            <state vertical-scroll-proportion="0.6053946" vertical-offset="48674" max-vertical-offset="54186">
+              <caret line="2240" column="77" selection-start-line="2240" selection-start-column="77" selection-end-line="2240" selection-end-column="77" />
               <folding />
             </state>
           </provider>
@@ -73,8 +64,8 @@
       <file leaf-file-name="presets-main.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/styles/presets-main.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1554" max-vertical-offset="5117">
-              <caret line="133" column="1" selection-start-line="133" selection-start-column="1" selection-end-line="133" selection-end-column="28" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="3900" max-vertical-offset="6489">
+              <caret line="210" column="13" selection-start-line="210" selection-start-column="13" selection-end-line="210" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -183,7 +174,6 @@
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/templates/workspace/edit-tile.html" />
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/controllers/update-tile.ctrl.js" />
         <option value="$PROJECT_DIR$/app/index.html" />
-        <option value="$PROJECT_DIR$/app/scripts/presets/ui/styles/presets-main.css" />
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/directives/add-update-tile.drv.js" />
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/classes/presets.prv.js" />
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/classes/workspace.svc.js" />
@@ -196,6 +186,7 @@
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/controllers/add-tile.ctrl.js" />
         <option value="$PROJECT_DIR$/app/styles/animate.css" />
         <option value="$PROJECT_DIR$/app/scripts/controllers/presets.ctrl.js" />
+        <option value="$PROJECT_DIR$/app/scripts/presets/ui/styles/presets-main.css" />
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/styles/presets-animations.css" />
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js" />
       </list>
@@ -868,7 +859,13 @@
       <option name="project" value="LOCAL" />
       <updated>1419350816867</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="add change workspace animation.">
+      <created>1419401864295</created>
+      <option name="number" value="00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1419401864295</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -934,7 +931,6 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="Finish the basics." />
     <MESSAGE value="Create resizeable windows" />
     <MESSAGE value="fix resize function" />
     <MESSAGE value="Create base tile directive." />
@@ -959,7 +955,8 @@
     <MESSAGE value="fix bugs add resize options." />
     <MESSAGE value="create the edit workspace mode!" />
     <MESSAGE value="fix edit mode animation." />
-    <option name="LAST_COMMIT_MESSAGE" value="fix edit mode animation." />
+    <MESSAGE value="add change workspace animation." />
+    <option name="LAST_COMMIT_MESSAGE" value="add change workspace animation." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1278,14 +1275,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/services/preset-validators.svc.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1206" max-vertical-offset="6700">
-          <caret line="73" column="50" selection-start-line="73" selection-start-column="50" selection-end-line="73" selection-end-column="50" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/directives/preset.drv.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2891" max-vertical-offset="4263">
@@ -1298,24 +1287,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.1548583" vertical-offset="0" max-vertical-offset="988">
           <caret line="9" column="86" selection-start-line="9" selection-start-column="86" selection-end-line="9" selection-end-column="86" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/controllers/add-tile.ctrl.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="86" max-vertical-offset="1232">
-          <caret line="37" column="42" selection-start-line="37" selection-start-column="42" selection-end-line="37" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#42#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/styles/presets-main.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1554" max-vertical-offset="5117">
-          <caret line="133" column="1" selection-start-line="133" selection-start-column="1" selection-end-line="133" selection-end-column="28" />
           <folding />
         </state>
       </provider>
@@ -1338,18 +1309,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/styles/presets-animations.css">
+    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/controllers/add-tile.ctrl.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1934" max-vertical-offset="2948">
-          <caret line="115" column="38" selection-start-line="115" selection-start-column="38" selection-end-line="115" selection-end-column="38" />
-          <folding />
+        <state vertical-scroll-proportion="0.0" vertical-offset="86" max-vertical-offset="1232">
+          <caret line="37" column="42" selection-start-line="37" selection-start-column="42" selection-end-line="37" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#42#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/classes/presets.prv.js">
+    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/services/preset-validators.svc.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="5633" max-vertical-offset="13923">
-          <caret line="360" column="40" selection-start-line="360" selection-start-column="40" selection-end-line="360" selection-end-column="40" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1206" max-vertical-offset="6700">
+          <caret line="73" column="50" selection-start-line="73" selection-start-column="50" selection-end-line="73" selection-end-column="50" />
           <folding />
         </state>
       </provider>
@@ -1364,10 +1337,34 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/styles/presets-main.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3900" max-vertical-offset="6489">
+          <caret line="210" column="13" selection-start-line="210" selection-start-column="13" selection-end-line="210" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/classes/presets.prv.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="5633" max-vertical-offset="13923">
+          <caret line="360" column="40" selection-start-line="360" selection-start-column="40" selection-end-line="360" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/styles/presets-animations.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.43589744" vertical-offset="2374" max-vertical-offset="3520">
+          <caret line="128" column="29" selection-start-line="128" selection-start-column="29" selection-end-line="128" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.51648355" vertical-offset="52679" max-vertical-offset="53746">
-          <caret line="2418" column="18" selection-start-line="2418" selection-start-column="18" selection-end-line="2418" selection-end-column="18" />
+        <state vertical-scroll-proportion="0.6053946" vertical-offset="48674" max-vertical-offset="54186">
+          <caret line="2240" column="77" selection-start-line="2240" selection-start-column="77" selection-end-line="2240" selection-end-column="77" />
           <folding />
         </state>
       </provider>
