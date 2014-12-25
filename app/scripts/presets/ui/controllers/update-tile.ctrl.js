@@ -13,7 +13,6 @@
       var preset = $scope.workspaceData.preset;
       var validationCallback = function(){ return true; };
 
-      workspaceData.exitDragDropMode();
       var tile = workspaceData.tiles[$scope.position - 1];
       var tileType = preset.types[tile.type];
       $scope.model = tile.model;
@@ -46,7 +45,7 @@
 
         workspaceData.updateTileByPositionAsync($scope.position, $scope.model, preset.useCache ? false : true).then(
           function resolveSuccess(result){
-            workspaceData.enterEditMode();
+            workspaceData.enterDragDropMode();
           }, function resolveError(reason){
             console.log('tile update failed' + reason);
           }
@@ -56,7 +55,7 @@
       $scope.delete = function(){
         workspaceData.removeTileByPositionAsync($scope.position, preset.useCache ? false : true).then(
           function resolveSuccess(result){
-            workspaceData.enterEditMode();
+            workspaceData.enterDragDropMode();
           }, function resolveError(reason){
             console.log('tile delete failed' + reason);
           }
@@ -64,7 +63,7 @@
       };
 
       $scope.cancel = function(){
-        workspaceData.enterEditMode();
+        workspaceData.enterDragDropMode();
       };
     }
   ]);

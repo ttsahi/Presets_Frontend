@@ -1693,18 +1693,19 @@
       }
 
       function resetPanel(panel){
+        panel.overlay.removeClass('productBox');
         panel.overlay.css('z-index', '2');
 
         panel.container.width = 0;
         panel.container.height = 0;
 
-        panel.container.element.css({
-          width: '100%',
-          height: '100%'
-        });
+        //fucked the animation !?!?!?
+        //panel.container.element.css({
+        //  width: '100%',
+        //  height: '100%'
+        //});
 
         panel.content.css('background-color', '');
-        panel.overlay.removeClass('productBox');
 
         panel.corners = null;
 
@@ -1716,7 +1717,6 @@
           }
         }
 
-        panel.inEdit = false;
         panel.enableUpdate = false;
         panel.referTo = null;
         panel.inUse = false;
@@ -1730,10 +1730,14 @@
 
         if(realPanel.id !== originPanel.id){
           var tempTile = tiles[originPanel.id];
-          tiles[originPanel.id] = tiles[realPanel.id];
+          tiles[originPanel.id] = null;
+          tempTile.position = realPanel.id + 1;
           tiles[realPanel.id] = tempTile;
           presetsScope.$digest();
         }
+
+        tiles[realPanel.id].size.width = newPanel.container.width;
+        tiles[realPanel.id].size.height = newPanel.container.height;
 
         if(newPanel.corners !== null) {
           realPanel.corners = newPanel.corners;
@@ -1784,7 +1788,7 @@
 
                 event.data.common.realPanel.overlay.css('z-index', '3');
 
-                event.data.common.workspaceData.enterDragDropMode();
+                event.data.common.workspaceData.enterDragDropMode(true);
               }
 
             }, 2000);
@@ -1883,7 +1887,7 @@
             height: (event.data.common.startHeight + 1) * 100 + '%'
           });
 
-          event.data.common.realPanel.overlay.css('z-index', '2');
+          event.data.common.realPanel.overlay.css('z-index', '3');
 
           if(!event.data.common.extendCanceled) {
             if (event.data.panel !== event.data.common.panels[event.data.common.originId] && event.data.panel !== event.data.common.errorPanel) {
@@ -1908,11 +1912,6 @@
         event.data.common.nowOnPanel = event.data.panel;
 
         if (!event.data.common.extendStart) {
-
-          //if(event.data.panel.inUse){
-          //  var panel = event.data.panel.referTo ? event.data.panel.referTo : event.data.panel; //bold panel animation
-          //  panel.overlay.addClass('preset-tile-hover-animation');
-          //}
 
           event.data.common.selectedCorner = event.data.panel;
 
@@ -1988,6 +1987,7 @@
 
       function reset(){
         this.overlay.css('z-index', '2');
+        this.overlay.removeClass('productBox');
 
         this.container.width = 0;
         this.container.height = 0;
@@ -1996,6 +1996,8 @@
           width: '100%',
           height: '100%'
         });
+
+        this.content.css('background-color', '');
 
         this.corners = null;
 
@@ -2305,9 +2307,9 @@
             presetContainer = angular.element('<div class="presets-container"></div>');
 
             addUpdateContainer = angular.element('<div ng-class="{\'presets-add-update-container-animation\' : isAddUpdateTileMode}" ng-show="isAddTileMode || isUpdateTileMode" class="presets-workspace-add-update-container">' +
-                                               '<div ng-show="isAddTileMode || isUpdateTileMode" class="overlay presets-add-update-overlay-animation" ng-click="workspaceData.enterEditMode()"></div></div>');
-            addContainer = angular.element('<div ng-show="isAddTileMode" class="presets-workspace-add-container presets-add-update-animation"></div>');
-            updateContainer = angular.element('<div ng-show="isUpdateTileMode" class="presets-workspace-update-container presets-add-update-animation"></div>');
+                                               '<div ng-show="isAddTileMode || isUpdateTileMode" class="overlay presets-add-update-overlay-animation" ng-click="isAddTileMode ? workspaceData.enterEditMode() : workspaceData.enterDragDropMode()"></div></div>');
+            addContainer = angular.element('<div ng-class="{\'presets-add-update-animation\': !isUpdateTileMode}" ng-show="isAddTileMode" class="presets-workspace-add-container"></div>');
+            updateContainer = angular.element('<div ng-class="{\'presets-add-update-animation\': !isAddTileMode}" ng-show="isUpdateTileMode" class="presets-workspace-update-container"></div>');
             addUpdateContainer.append(addContainer);
             addUpdateContainer.append(updateContainer);
 
@@ -2378,7 +2380,7 @@
               var model = {
                 position: position,
                 workspaceData: workspaceData,
-                model: { name: 'tsahi', age: 24 } /////////////////////////////////////////////////// only for cheks!!!
+                model: { name: 'tsahi', age: 24 } ///////////////////////////////////////////////////////////////////////////////////////////// only for cheks!!!
               };
 
               MVC.create(presetsScope, createAddModeInfo, model, true, true).then(
@@ -2413,7 +2415,7 @@
 
               var model = {
                 position: position,
-                workspaceData: workspaceData,
+                workspaceData: workspaceData
               };
 
               MVC.create(presetsScope, createUpdateModeInfo, model, true, true).then(
@@ -2439,7 +2441,7 @@
 
             presetsScope.updateTile = function(position){
               workspaceData.enterUpdateMode(position);
-            }
+            };
 
             function enablePanelsEdit(){
               for(var i = 0; i < workspaceData.panels.length; i++){
@@ -2471,13 +2473,16 @@
               }
             }
 
-            workspaceData.enterDragDropMode = function(){
+            workspaceData.enterDragDropMode = function(digest){
 
               clearAddEditScopesAndElements();
               disablePanelsEdit();
               enablePanelsUpdate();
 
-              presetsScope.$digest();
+             if(digest === true){
+                presetsScope.$digest();
+              }
+
               presetsScope.isDragDropMode = true;
             };
 
