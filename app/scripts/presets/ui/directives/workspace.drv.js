@@ -1704,6 +1704,7 @@
         });
 
         panel.content.css('background-color', '');
+        panel.overlay.removeClass('productBox');
 
         panel.corners = null;
 
@@ -1714,6 +1715,11 @@
             child.referTo = null;
           }
         }
+
+        panel.inEdit = false;
+        panel.enableUpdate = false;
+        panel.referTo = null;
+        panel.inUse = false;
       }
 
       function changePanelSizeAndPosition(presetsScope, newPanel, originPanel, tiles, panels){
@@ -1764,6 +1770,38 @@
         this.common = common;
       }
 
+      function onMouseHold(event){
+        if(event.data.common.extendCanceled && event.type === "mousedown" && event.data.panel.inUse){
+
+          event.data.common.isMouseHold = true;
+
+          if(event.data.common.holdTimeOut === null){
+
+            event.data.common.holdTimeOut = setTimeout(function(){
+
+              if(event.data.common.isMouseHold === true){
+                event.data.panel.cancelEdit();
+
+                event.data.common.realPanel.overlay.css('z-index', '3');
+
+                event.data.common.workspaceData.enterDragDropMode();
+              }
+
+            }, 2000);
+          }
+        }
+        if(event.type === "mouseup" && event.data.panel.inUse){
+
+          event.data.common.isMouseHold = false;
+
+          if(event.data.common.holdTimeOut !== null){
+
+            clearTimeout(event.data.common.holdTimeOut);
+            event.data.common.holdTimeOut = null;
+          }
+        }
+      }
+
       function onMouseDown(event) {
         event.stopPropagation();
         event.preventDefault();
@@ -1779,6 +1817,10 @@
         event.data.common.originId = event.data.panel.id;
         event.data.common.container = event.data.common.realPanel.container;
         setMouseCursors(event.data.common.container.cursor.type, event.data.common.panels);
+
+        if(event.data.common.container.cursor.side === PanelSide.Middle){
+          event.data.common.extendCanceled = true;
+        }
 
         event.data.common.mousePosition = new Position(event.pageX, event.pageY);
 
@@ -1867,6 +1909,11 @@
 
         if (!event.data.common.extendStart) {
 
+          //if(event.data.panel.inUse){
+          //  var panel = event.data.panel.referTo ? event.data.panel.referTo : event.data.panel; //bold panel animation
+          //  panel.overlay.addClass('preset-tile-hover-animation');
+          //}
+
           event.data.common.selectedCorner = event.data.panel;
 
           clearPanelsIconAnimation(event.data.common.panelsOverlays, event.data.common.presetsScope);
@@ -1896,6 +1943,13 @@
           event.data.common.newPanel = calculateNewPanel(
             event.data.common.newPanel, event.data.panel, event.data.common.selectedSide, event.data.common.cols, event.data.common.panels
           );
+        }
+      }
+
+      function onMouseLeave(event){
+        if(event.data.panel.inUse){
+          var panel = event.data.panel.referTo ? event.data.panel.referTo : event.data.panel;
+          panel.overlay.removeClass('preset-tile-hover-animation');
         }
       }
 
@@ -1960,6 +2014,8 @@
         this.overlay.mouseup(this.eventsData, onMouseUp);
         this.overlay.mouseenter(this.eventsData, onMouseEnter);
         this.overlay.mousemove(this.eventsData, onMouseMove);
+        this.overlay.mouseleave(this.eventsData, onMouseLeave);
+        this.overlay.on('mousedown mouseup', this.eventsData, onMouseHold);
         this.inEdit = true;
       }
 
@@ -1972,6 +2028,7 @@
         this.overlay.unbind('mouseup');
         this.overlay.unbind('mouseenter');
         this.overlay.unbind('mousemove');
+        this.overlay.unbind('mousedown mouseup');
         this.inEdit = false;
       }
 
@@ -2008,11 +2065,12 @@
         this.optionalPanels = [];
         this.presetsScope = null;
         this.workspaceData = null;
+        this.isMouseHold = false;
+        this.holdTimeOut = null;
         this.onPanelSizeChanged = function(){};
       }
 
       function Panel(overlay, container, content, commonData){
-
         this.id = null;
         this.position = null;
         this.overlay = overlay;
@@ -2024,6 +2082,7 @@
         this.corners = null;
         this.eventsData = new EventData(this, commonData);
         this.inEdit = false;
+        this.enableUpdate = false;
       }
 
       Panel.prototype.reset = reset;
@@ -2071,11 +2130,33 @@
           var updateScope = null;
           var commonData = null;
 
-          function createPanel(position) {
+          function createPanel(position, commonData) {
 
             var overlay = angular.element('<div class="presets-workspace-panel"></div>');
             var container = angular.element('<div class="resize"></div>');
-            var content = angular.element('<div class="content"><div tile="tiles[' + position + ']"></div></div>');
+            var content = angular.element('<div class="content"></div>');
+            var editContent = angular.element(
+              '<div ng-show="panels[' + position + '].enableUpdate" class="presets-edit-content-container">' +
+                '<div class="presets-edit-content">' +
+                  '<div class="presets-edit-content-container"><div class="overlay"></div></div>' +
+                  '<div class="options">' +
+                      '<div class="btn-area">' +
+                        '<button type="button" class="btn btn-default btn-responsive" ng-click="removeTile(' + (position + 1) + ')">' +
+                          '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>' +
+                        '</button>' +
+                      '</div>' +
+                      '<div class="btn-area">' +
+                        '<button type="button" class="btn btn-default btn-responsive" ng-click="updateTile(' + (position + 1) + ')">' +
+                          '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>' +
+                        '</button>' +
+                      '</div>' +
+                  '</div>' +
+                '</div>' +
+              '</div>'
+            );
+
+            content.append(editContent);
+            content.append('<div tile="tiles[' + position + ']"></div>');
 
             container.append(content);
             overlay.append(container);
@@ -2185,12 +2266,14 @@
             presetsScope.isAddTileMode = false;
             presetsScope.isUpdateTileMode = false;
             presetsScope.isAddUpdateTileMode = false;
+            presetsScope.isDragDropMode = false;
 
             presetsScope.isEditMode = false;
             presetsScope.firstLoad = true;
 
             presetsScope.workspaceData = workspaceData;
             presetsScope.tiles = workspaceData.tiles;
+            presetsScope.panels = workspaceData.panels;
             presetsScope.panelsOverlays = [];
 
             commonData.presetsScope = presetsScope;
@@ -2224,7 +2307,7 @@
             addUpdateContainer = angular.element('<div ng-class="{\'presets-add-update-container-animation\' : isAddUpdateTileMode}" ng-show="isAddTileMode || isUpdateTileMode" class="presets-workspace-add-update-container">' +
                                                '<div ng-show="isAddTileMode || isUpdateTileMode" class="overlay presets-add-update-overlay-animation" ng-click="workspaceData.enterEditMode()"></div></div>');
             addContainer = angular.element('<div ng-show="isAddTileMode" class="presets-workspace-add-container presets-add-update-animation"></div>');
-            updateContainer = angular.element('<div ng-show="isUpdateTileMode" class="presets-workspace-update-container"></div>');
+            updateContainer = angular.element('<div ng-show="isUpdateTileMode" class="presets-workspace-update-container presets-add-update-animation"></div>');
             addUpdateContainer.append(addContainer);
             addUpdateContainer.append(updateContainer);
 
@@ -2255,7 +2338,7 @@
                 panelOverlay.id = panelId;
                 commonData.panelsOverlays.push(panelOverlay);
 
-                var panel = createPanel(panelId);
+                var panel = createPanel(panelId, commonData);
                 workspacePanelsContainer.append(panel.overlay);
                 panel.id = panelId;
                 panel.position = new Position(j, i);
@@ -2273,6 +2356,16 @@
               resetPanel(workspaceData.panels[tile.position -1]);
             };
 
+            presetsScope.removeTile = function(position){
+              var preset = workspaceData.preset;
+              workspaceData.removeTileByPositionAsync(position, preset.useCache ? false : true).then(
+                function resolveSuccess(result){
+                }, function resolveError(reason){
+                  console.log('cab\'t delete tile right now: ' + reason);
+                }
+              );
+            };
+
             workspaceData.enterAddMode = function(position){
 
               clearAddEditScopesAndElements();
@@ -2285,15 +2378,7 @@
               var model = {
                 position: position,
                 workspaceData: workspaceData,
-                model: { name: 'tsahi', age: 24 },
-                creationInfo: {
-                  template: '<div>{{age}}</div>',
-                  controller: ['$scope',
-                    function($scope){
-                      $scope.age = 25;
-                    }
-                  ]
-                }
+                model: { name: 'tsahi', age: 24 } /////////////////////////////////////////////////// only for cheks!!!
               };
 
               MVC.create(presetsScope, createAddModeInfo, model, true, true).then(
@@ -2327,14 +2412,8 @@
               };
 
               var model = {
-                creationInfo: {
-                  template: '<div>{{age}}</div>',
-                  controller: ['$scope',
-                    function($scope){
-                      $scope.age = 25;
-                    }
-                  ]
-                }
+                position: position,
+                workspaceData: workspaceData,
               };
 
               MVC.create(presetsScope, createUpdateModeInfo, model, true, true).then(
@@ -2353,16 +2432,67 @@
                   presetsScope.isUpdateTileMode = true;
 
                 }, function(reason){
-                  throw new LoadException("Can't load edit mode!");
+                  throw new LoadException("Can't load update mode!");
                 }
               );
             };
 
-            workspaceData.enterPresentationMode = function(){
+            presetsScope.updateTile = function(position){
+              workspaceData.enterUpdateMode(position);
+            }
 
+            function enablePanelsEdit(){
+              for(var i = 0; i < workspaceData.panels.length; i++){
+                workspaceData.panels[i].startEdit();
+              }
+            }
+
+            function disablePanelsEdit(){
               for(var i = 0; i < workspaceData.panels.length; i++){
                 workspaceData.panels[i].stopEdit();
               }
+            }
+
+            function enablePanelsUpdate(){
+              for(var i = 0; i < workspaceData.panels.length; i++){
+                if(workspaceData.panels[i].inUse && workspaceData.panels[i].referTo === null){
+                  workspaceData.panels[i].enableUpdate = true;
+                  workspaceData.panels[i].overlay.addClass('productBox');
+                }
+              }
+            }
+
+            function disablePanelsUpdate(){
+              for(var i = 0; i < workspaceData.panels.length; i++){
+                if(workspaceData.panels[i].inUse && workspaceData.panels[i].referTo === null){
+                  workspaceData.panels[i].enableUpdate = false;
+                  workspaceData.panels[i].overlay.removeClass('productBox');
+                }
+              }
+            }
+
+            workspaceData.enterDragDropMode = function(){
+
+              clearAddEditScopesAndElements();
+              disablePanelsEdit();
+              enablePanelsUpdate();
+
+              presetsScope.$digest();
+              presetsScope.isDragDropMode = true;
+            };
+
+            workspaceData.exitDragDropMode = function(){
+
+              disablePanelsUpdate();
+              enablePanelsEdit();
+              presetsScope.isDragDropMode = false;
+              commonData.holdTimeOut = null;
+            };
+
+            workspaceData.enterPresentationMode = function(){
+
+              disablePanelsEdit();
+              disablePanelsUpdate();
 
               clearAddEditScopesAndElements();
               presetsScope.isEditMode = false;
@@ -2371,13 +2501,8 @@
 
             workspaceData.enterEditMode = function(){
 
-              for(var i = 0; i < workspaceData.panels.length; i++){
-                workspaceData.panels[i].stopEdit();
-              }
-
-              for(i = 0; i < workspaceData.panels.length; i++){
-                workspaceData.panels[i].startEdit();
-              }
+              disablePanelsEdit();
+              enablePanelsEdit();
 
               clearAddEditScopesAndElements();
               presetsScope.isEditMode = true;
@@ -2387,6 +2512,11 @@
             var triggerCount = 0;
 
             workspaceData.triggerEditMode = function(){
+
+              if(presetsScope.isDragDropMode){
+                workspaceData.exitDragDropMode();
+                return;
+              }
 
               if(triggerCount > 0){
                 presetsScope.firstLoad = false;

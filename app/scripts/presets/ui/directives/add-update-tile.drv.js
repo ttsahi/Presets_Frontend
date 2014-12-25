@@ -27,13 +27,15 @@
                 createInstance = null;
               }
 
-              MVC.create(scope, creationInfo, {model: scope.model}, true, true).then(
+              MVC.create(scope, creationInfo, {model: scope.model, onModelValidation: scope.onModelValidation}, true, true).then(
                 function(instance){
                   createInstance = instance;
                   element.append(createInstance.element);
+                  scope.loadTemplateDeferred.resolve(instance);
                 },
-                function(failed){
-                  console.log('unable to load tile creation or update template: ' + failed);
+                function(reason){
+                  console.log('unable to load tile creation or update template: ' + reason);
+                  scope.loadTemplateDeferred.reject(reason);
                 }
               );
             }

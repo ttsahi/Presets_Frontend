@@ -175,6 +175,7 @@
   width: 60%;
   background-color: #ffffff;
   border-radius: 4px;
+  padding: 5px;
 }
 
 .presets-workspace-panels-overlay {
@@ -252,6 +253,45 @@
   overflow: auto;
 }
 
+.presets-edit-content-container {
+  width: 100%;
+  height: 100%;
+  padding: 3px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.presets-edit-content {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.presets-edit-content .overlay{
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: #002b36;
+  opacity: 0.5;
+}
+
+.presets-edit-content .options{
+  width: 60%;
+  height: 60%;
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  overflow: auto;
+}
+
+.presets-edit-content .options .btn-area{
+  width: 50%;
+  height: 100%;
+  overflow: auto;
+  float: left;
+}
+
 .presets-workspace-panel .selector {
   position: absolute;
   top: 0px;
@@ -286,7 +326,6 @@
   width: 100%;
   height: 100%;
   overflow: auto;
-  //background-color: #dbdbdb;
 }
 
 .presets-create-update-workspace-form{
@@ -297,7 +336,24 @@
   left: 30%;
 }
 
+.presets-add-update-tile-container {
+  width: 70%;
+  margin: auto;
+}
+
 .presets-errors {
   color: #dd4444;
   padding: 5px;
 }
+
+.btn-responsive {
+  padding: 2px 4px;
+  font-size: 300%;
+  line-height: 1;
+  border-radius: 3px;
+  width: 90%;
+  height: 90%;
+  top: 5%;
+  left: 5%;
+}
+

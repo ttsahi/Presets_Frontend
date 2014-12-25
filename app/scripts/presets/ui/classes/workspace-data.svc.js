@@ -213,7 +213,7 @@
               delete self._tilesMap[tile.id];
               delete tile.creationInfo;
               self._resetTile(tile);
-              this._onremoveListener(tile);
+              self._onremoveListener(tile);
               deferred.resolve(new CRUDResult(true, tile));
             }else{
               deferred.reject(result);
@@ -251,7 +251,7 @@
               delete self._tilesMap[tile.id];
               delete tile.creationInfo;
               self._resetTile(tile);
-              this._onremoveListener(tile);
+              self._onremoveListener(tile);
               deferred.resolve(new CRUDResult(true, tile));
             }else{
               deferred.reject(result);
@@ -295,7 +295,7 @@
             if(result.succeeded === true){
               tile.model = angular.copy(model);
               delete clonedTile.creationInfo;
-              this._onupdateListener(clonedTile);
+              self._onupdateListener(clonedTile);
               deferred.resolve(new CRUDResult(true, clonedTile));
             }else{
               deferred.reject(result);
@@ -339,7 +339,7 @@
             if(result.succeeded === true){
               tile.model = angular.copy(model);
               delete clonedTile.creationInfo;
-              this._onupdateListener(clonedTile);
+              self._onupdateListener(clonedTile);
               deferred.resolve(new CRUDResult(true, clonedTile));
             }else{
               deferred.reject(result);

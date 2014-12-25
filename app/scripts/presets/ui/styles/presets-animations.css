@@ -152,3 +152,21 @@
   -o-filter: grayscale(0);
   -ms-filter: grayscale(0);
 }
+
+@-webkit-keyframes wiggle {
+  from {-webkit-transform: rotateZ(1deg);}
+  50% {-webkit-transform: rotateZ(-1deg);}
+  to {-webkit-transform: rotateZ(1deg);}
+}
+
+.preset-tile-hover-animation {
+  transition: all .2s ease-in-out;
+  transform: scale(1.1);
+}
+
+.productBox {
+  -webkit-animation-name: wiggle;
+  -webkit-animation-duration: .4s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: ease;
+}
