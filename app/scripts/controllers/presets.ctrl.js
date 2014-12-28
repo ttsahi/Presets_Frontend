@@ -12,83 +12,45 @@
       $scope.preset = new Preset();
 
       $scope.preset.registerType({
-        name: 'person',
+        name: 'workspaceDescriptor',
         creationInfo: {
-          template: '<div><h1>Person creation template</h1></div>',
-          controller: ['$scope', function($scope){
-            $scope.model.latName = 'tal';
-          }]
+          templateUrl: 'scripts/tiles/workspace-descriptor/creation-template.html',
+          controller: ['$scope', 'workspace',
+            function($scope, workspace){
+              $scope.model = {
+                name: workspace.name,
+                description: workspace.description,
+                modified: workspace.modified,
+                expired: workspace.expires
+              };
+            }
+          ],
+          resolve: {
+            workspace: function(){
+              return $scope.preset.currentWorkspace;
+            }
+          }
         },
         presentationInfo: {
-          template: '<div><h1>Person presentation info</h1></div>' +
-                    '<div><h2>name: {{name}}</h2></div>' +
-                    '<div><h2>age: {{age}}</h2></div>'
-        }
-      });
-
-      /*
-      $scope.preset.registerType({
-        name: 'web',
-        creationInfo: {},
-        presentationInfo: {}
-      });
-
-      $scope.preset.registerTypes([{
-        name: 'workspaceDescriptor',
-        creationInfo: {},
-        presentationInfo: {}
-      }]);
-
-      console.log($scope.preset.types);
-
-      $scope.preset.addWorkspaceAsync({
-        id: 'jdsfsd9sdf4',
-        name: 'tsahi',
-        modified: new Date(),
-        expires: new Date(),
-        description: 'blblblblblbaaa',
-        rows: 4,
-        cols: 5
-      }, true).then(
-        function(result){
-          console.log(result);
-          var workspaceId = result.data.id;
-          $scope.preset.updateWorkspaceAsync(result.data.id, { name: 'omri'}, true).then(
-            function(result){
-              console.log(result);
-              $scope.preset.addTileAsync(result.data.id, {
-                id: 'dfsk4kdfdsf',
-                position: 1,
-                size: { width: 2, height: 2},
-                type: 'web',
-                model: { name: 'bar'}
-              }).then(
-                function(result){
-                  console.log(result);
-                  $scope.preset.updateTileAsync(workspaceId, result.data.id, {}).then(
-                    function(result){
-                      console.log(result);
-                      $scope.preset.removeTileAsync(workspaceId, result.data.id).then(
-                        function(result){
-                          console.log(result);
-                        }, function(reason){
-                          console.log(reason);
-                        }
-                      );
-                    }, function(reason){
-                      console.log(reason);
-                    }
-                  );
-                },function(reason){
-                  console.log(reason);
-                }
-              );
+          templateUrl: 'scripts/tiles/workspace-descriptor/presentation-template.html',
+          controller: ['$scope', 'description',
+            function($scope, description){
+              $scope.model = description;
             }
-          );
+          ],
+          resolve: {
+            description: function(){
+              var workspace = $scope.preset.currentWorkspace;
+              return {
+                name: workspace.name,
+                description: workspace.description,
+                modified: workspace.modified,
+                expired: workspace.expires
+              }
+            }
+          }
         }
-      );
-      */
-
+      });
     }
   ]);
 

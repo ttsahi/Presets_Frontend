@@ -1,0 +1,18 @@
+<form>
+  <div class="form-group">
+    <label for="workspaceName">Name</label>
+    <input type="text" class="form-control" id="workspaceName" placeholder="" value="{{model.name}}" disabled>
+  </div>
+  <div class="form-group">
+    <label for="workspaceDescription">Description</label>
+    <input type="text" class="form-control" id="workspaceDescription" placeholder="" value="{{model.description}}" disabled>
+  </div>
+  <div class="form-group">
+    <label for="workspaceModified">Modified</label>
+    <input type="text" class="form-control" id="workspaceModified" placeholder="" value="{{model.modified | date}}" disabled>
+  </div>
+  <div class="form-group">
+    <label for="workspaceExpired">Expired</label>
+    <input type="text" class="form-control" id="workspaceExpired" placeholder="" value="{{model.expired | date}}" disabled>
+  </div>
+</form>

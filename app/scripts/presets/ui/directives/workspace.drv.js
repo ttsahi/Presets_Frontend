@@ -2214,7 +2214,7 @@
                 index++;
               }
             }
-          };
+          }
 
           function clearAddEditScopesAndElements(){
             if(presetsScope !== null){
@@ -2380,7 +2380,7 @@
               var model = {
                 position: position,
                 workspaceData: workspaceData,
-                model: { name: 'tsahi', age: 24 } ///////////////////////////////////////////////////////////////////////////////////////////// only for cheks!!!
+                model: {}
               };
 
               MVC.create(presetsScope, createAddModeInfo, model, true, true).then(

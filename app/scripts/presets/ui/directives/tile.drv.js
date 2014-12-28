@@ -39,7 +39,7 @@
                 tileInstance = null;
               }
 
-              MVC.create(scope, creationInfo, scope.tile.model, true, true).then(
+              MVC.create(scope, creationInfo, { model: scope.tile.model }, true, true).then(
                 function(instance){
                   tileInstance = instance;
                   element.append(tileInstance.element);
@@ -55,7 +55,7 @@
           scope.$watch('tile.model', function(model){
             if(tileInstance !== null && angular.isObject(model)){
               angular.forEach(model, function(value, property){
-                tileInstance.scope[property] = value;
+                tileInstance.scope.model[property] = value;
               });
             }
 
