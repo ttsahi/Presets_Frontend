@@ -1,0 +1,8 @@
+<form name="fileForm" novalidate>
+  <div class="form-group">
+    <input type="text" class="form-control" placeholder="file url..." name="fileUrl" ng-model="model.fileUrl" required>
+  </div>
+  <div ng-messages="fileForm.fileUrl.$error" style="color: red;">
+    <div ng-message="required">invalid file path url.</div>
+  </div>
+</form>

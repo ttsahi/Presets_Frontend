@@ -25,6 +25,7 @@
 
         this._applyNewTile = function(){};
         this._resetTile = function(){};
+        this._updateTile = function(){};
 
         this._enterAddMode = function(){};
         this._enterUpdateMode = function(){};
@@ -102,6 +103,10 @@
           set: function(val) { this._resetTile = val; },
           get: function() { return this._resetTile; }
         },
+        updateTile: {
+          set: function(val) { this._updateTile = val; },
+          get: function() { return this._updateTile; }
+        },
         enterAddMode: {
           set: function(val) { this._enterAddMode = val; },
           get: function() { return this._enterAddMode; }
@@ -176,6 +181,7 @@
               self._applyNewTile(tile, self._rows, self._cols, self._panels);
               delete tile.presentationInfo;
               self._onadddListener(tile);
+              self._preset._onAddTile(clonedWorkspace, tile);
               deferred.resolve(new CRUDResult(true, tile));
             }else{
               deferred.reject(result);
@@ -214,6 +220,7 @@
               delete tile.creationInfo;
               self._resetTile(tile);
               self._onremoveListener(tile);
+              self._preset._onRemoveTile(clonedWorkspace, tile);
               deferred.resolve(new CRUDResult(true, tile));
             }else{
               deferred.reject(result);
@@ -252,6 +259,7 @@
               delete tile.creationInfo;
               self._resetTile(tile);
               self._onremoveListener(tile);
+              self._preset._onRemoveTile(clonedWorkspace, tile);
               deferred.resolve(new CRUDResult(true, tile));
             }else{
               deferred.reject(result);
@@ -293,9 +301,10 @@
             }
 
             if(result.succeeded === true){
-              tile.model = angular.copy(model);
+              self._updateTile(tile, angular.copy(model));
               delete clonedTile.creationInfo;
               self._onupdateListener(clonedTile);
+              self._preset._onUpdateTile(clonedWorkspace, clonedTile);
               deferred.resolve(new CRUDResult(true, clonedTile));
             }else{
               deferred.reject(result);
@@ -337,9 +346,10 @@
             }
 
             if(result.succeeded === true){
-              tile.model = angular.copy(model);
+              self._updateTile(tile, angular.copy(model));
               delete clonedTile.creationInfo;
               self._onupdateListener(clonedTile);
+              self._preset._onUpdateTile(clonedWorkspace, clonedTile);
               deferred.resolve(new CRUDResult(true, clonedTile));
             }else{
               deferred.reject(result);

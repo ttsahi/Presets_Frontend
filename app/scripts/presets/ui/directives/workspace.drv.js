@@ -1699,12 +1699,6 @@
         panel.container.width = 0;
         panel.container.height = 0;
 
-        //fucked the animation !?!?!?
-        //panel.container.element.css({
-        //  width: '100%',
-        //  height: '100%'
-        //});
-
         panel.content.css('background-color', '');
 
         panel.corners = null;
@@ -2356,6 +2350,10 @@
 
             workspaceData.resetTile = function(tile){
               resetPanel(workspaceData.panels[tile.position -1]);
+            };
+
+            workspaceData.updateTile = function(tile, model){
+              tile.model = model;
             };
 
             presetsScope.removeTile = function(position){

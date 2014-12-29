@@ -15,7 +15,7 @@
 
       var tile = workspaceData.tiles[$scope.position - 1];
       var tileType = preset.types[tile.type];
-      $scope.model = tile.model;
+      $scope.model = angular.copy(tile.model);
 
 
       $scope.isUpdateTemplateLoaded = false;

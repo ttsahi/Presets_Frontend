@@ -1,0 +1,9 @@
+<form name="webPageForm" novalidate>
+  <div class="form-group">
+    <input type="url" class="form-control" placeholder="page url..." name="pageUrl" ng-model="model.pageUrl"
+           ng-pattern="/(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/">
+  </div>
+  <div ng-messages="webPageForm.pageUrl.$error" style="color: red;">
+    <div ng-message="pattern">invalid web page url.</div>
+  </div>
+</form>

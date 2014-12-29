@@ -260,6 +260,7 @@
   position: absolute;
   top: 0px;
   left: 0px;
+  z-index: 1000;
 }
 
 .presets-edit-content {
@@ -283,6 +284,7 @@
   top: 20%;
   left: 20%;
   overflow: auto;
+  z-index: 1200;
 }
 
 .presets-edit-content .options .btn-area{
@@ -328,7 +330,7 @@
   overflow: auto;
 }
 
-.presets-create-update-workspace-form{
+.presets-create-update-workspace-form {
   width: 40%;
   height: 70%;
   position: absolute;

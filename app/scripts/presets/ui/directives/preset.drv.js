@@ -129,7 +129,7 @@
 
               $q.when((preset.useCache && (currentWorkspace instanceof Workspace)) ? preset.commitChanges(currentWorkspace) : true).then(
                 function resolveSuccess(){
-
+                  preset._onWorkspaceChanged();
                   if(selectedWorkspace instanceof ReducedWorkspace){
                     preset.getWorkspaceAsync(selectedWorkspace.id, true).then(
                       function resolveSuccess(result){

@@ -65,6 +65,15 @@
             this._confirmUpdate = function(workspace){ return new CRUDResult(true); };
             this._commitChanges = function(workspace){ return new CRUDResult(true); };
 
+            this._onAddWorkspace = function(){};
+            this._onRemoveWorkspace = function(){};
+            this._onUpdateWorkspace = function(){};
+            this._onWorkspaceChanged = function(){};
+
+            this._onAddTile = function(){};
+            this._onRemoveTile = function(){};
+            this._onUpdateTile = function(){};
+
             this._onAddToCacheListeners = [];
             this._onRefreshCacheListeners = [];
 
@@ -231,6 +240,72 @@
                 }
 
                 this._onRefreshCacheListeners.push(val);
+              }
+            }
+          });
+
+          Object.defineProperties(Preset.prototype, {
+            onAddWorkspace: {
+              set: function(val){
+                if (typeof val !== 'function') {
+                  throw new DeveloperError('on add workspace must be function!');
+                }
+
+                this._onAddWorkspace = val;
+              }
+            },
+            onRemoveWorkspace: {
+              set: function(val){
+                if (typeof val !== 'function') {
+                  throw new DeveloperError('on remove workspace must be function!');
+                }
+
+                this._onRemoveWorkspace = val;
+              }
+            },
+            onUpdateWorkspace: {
+              set: function(val){
+                if (typeof val !== 'function') {
+                  throw new DeveloperError('on update workspace must be function!');
+                }
+
+                this._onUpdateWorkspace = val;
+              }
+            },
+            onWorkspaceChanged: {
+              set: function(val){
+                if (typeof val !== 'function') {
+                  throw new DeveloperError('on workspace changed must be function!');
+                }
+
+                this._onWorkspaceChanged = val;
+              }
+            },
+            onAddTile: {
+              set: function(val){
+                if (typeof val !== 'function') {
+                  throw new DeveloperError('on add tile must be function!');
+                }
+
+                this._onAddTile = val;
+              }
+            },
+            onRemoveTile: {
+              set: function(val){
+                if (typeof val !== 'function') {
+                  throw new DeveloperError('on remove tile must be function!');
+                }
+
+                this._onRemoveTile = val;
+              }
+            },
+            onUpdateTile: {
+              set: function(val){
+                if (typeof val !== 'function') {
+                  throw new DeveloperError('on update tile must be function!');
+                }
+
+                this._onUpdateTile = val;
               }
             }
           });
@@ -419,7 +494,8 @@
                   }
                   self._workspacesList[workspace.id] = new ReducedWorkspace(cloned.id, cloned.name);
                   self.refreshWorkspacesListArr();
-                  deferred.resolve(new CRUDResult(true, angular.copy(workspace)));
+                  self._onAddWorkspace(workspace);
+                  deferred.resolve(new CRUDResult(true, workspace));
                 }else{
                   deferred.reject(result);
                 }
@@ -459,6 +535,7 @@
                           self._workspacesCache.delete(workspace.id);
                         }
                         self.refreshWorkspacesListArr();
+                        self._onRemoveWorkspace(workspace);
                         deferred.resolve(new CRUDResult(true, workspace));
                       }else{
                         deferred.reject(result);
@@ -547,6 +624,7 @@
                           self._workspacesCache.update(cloned);
                         }
                         self.refreshWorkspacesListArr();
+                        self._onUpdateWorkspace(clonedWorkspace);
                         deferred.resolve(new CRUDResult(true, clonedWorkspace));
                       }else{
                         deferred.reject(result);
@@ -617,6 +695,7 @@
                             var cloned = angular.copy(validateTileByWorkspace(tile, workspace));
                             self._workspacesCache.addTile(workspaceId, cloned);
                           }
+                          self._onAddTile(clonedWorkspace, tile);
                           deferred.resolve(new CRUDResult(true, tile));
                         }else{
                           deferred.reject(result);
@@ -630,6 +709,7 @@
                     if(self._useCache){
                       var cloned = angular.copy(validateTileByWorkspace(tile, workspace));
                       self._workspacesCache.addTile(workspaceId, cloned);
+                      self._onAddTile(clonedWorkspace, tile);
                       deferred.resolve(new CRUDResult(true, tile));
                     }else{
                       deferred.reject(new CRUDResult(true, tile, ['no workspace storage to add to!']));
@@ -669,11 +749,12 @@
                 function resolveSuccess(workspaceAndTile){
 
                   var workspace = workspaceAndTile[0].data;
+                  var clonedWorkspace = angular.copy(workspace);
                   var tile = workspaceAndTile[1].data;
                   var type = self._types[tile.type];
 
                   if(confirm === true){
-                    $q.when(type.confirmRemove(angular.copy(workspace), angular.copy(tile))).then(
+                    $q.when(type.confirmRemove(clonedWorkspace, angular.copy(tile))).then(
                       function resolveSuccess(result){
 
                         if(!result instanceof CRUDResult){
@@ -684,6 +765,7 @@
                           if(self._useCache){
                             self._workspacesCache.removeTile(workspaceId, tileId);
                           }
+                          self._onRemoveTile(clonedWorkspace, tile);
                           deferred.resolve(new CRUDResult(true, tile));
                         }else{
                           deferred.reject(result);
@@ -696,6 +778,7 @@
                   }else {
                     if(self._useCache) {
                       self._workspacesCache.removeTile(workspaceId, tileId);
+                      self._onRemoveTile(clonedWorkspace, tile);
                       deferred.resolve(new CRUDResult(true, tile));
                     } else {
                       deferred.reject(new CRUDResult(true, tile, ['no workspace storage to remove from!']));
@@ -736,13 +819,14 @@
                 function resolveSuccess(workspaceAndTile){
 
                   var workspace = workspaceAndTile[0].data;
+                  var clonedWorkspace = angular.copy(workspace)
                   var tile = workspaceAndTile[1].data;
                   tile.model = model;
                   var clonedTile = angular.copy(tile);
                   var type = self._types[tile.type];
 
                   if(confirm === true){
-                    $q.when(type.confirmUpdate(angular.copy(workspace), clonedTile)).then(
+                    $q.when(type.confirmUpdate(clonedWorkspace, clonedTile)).then(
                       function resolveSuccess(result){
 
                         if(!result instanceof CRUDResult){
@@ -753,6 +837,7 @@
                           if(self._useCache){
                             self._workspacesCache.updateTile(workspaceId, tile);
                           }
+                          self._onUpdateTile(clonedWorkspace, clonedTile);
                           deferred.resolve(new CRUDResult(true, clonedTile));
                         }else{
                           deferred.reject(result);
@@ -765,6 +850,7 @@
                   }else {
                     if(self._useCache){
                       self._workspacesCache.updateTile(workspaceId, tile);
+                      self._onUpdateTile(clonedWorkspace, clonedTile);
                       deferred.resolve(new CRUDResult(true, clonedTile));
                     } else {
                       deferred.reject(new CRUDResult(true, tile, ['no workspace storage to update into!']));
