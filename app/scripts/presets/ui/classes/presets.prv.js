@@ -128,7 +128,7 @@
               return new CRUDResult(true);
             };
 
-            this.loadWorkspacesList();
+            this._initWorkspacesList();
           };
 
           Object.defineProperties(Preset.prototype, {
@@ -326,7 +326,7 @@
             $q.when(this._loadWorkspace(workspaceId, includeTiles)).then(
               function resolveSuccess(result){
 
-                if(!result instanceof CRUDResult){
+                if(!(result instanceof CRUDResult)){
                   throw new DeveloperError('load workspace must return CRUDResult!');
                 }
 
@@ -354,7 +354,7 @@
             $q.when(this._loadTile(workspaceId, tileId)).then(
               function resolveSuccess(result){
 
-                if(!result instanceof CRUDResult){
+                if(!(result instanceof CRUDResult)){
                   throw new DeveloperError('load tile must return CRUDResult!');
                 }
 
@@ -376,13 +376,13 @@
             return deferred.promise;
           };
 
-          Preset.prototype.loadWorkspacesList = function(){
+          Preset.prototype._initWorkspacesList = function(){
             var self = this;
 
             $q.when(this._loadWorkspacesList()).then(
               function resolveSuccess(result){
 
-                if(!result instanceof CRUDResult){
+                if(!(result instanceof CRUDResult)){
                   throw new DeveloperError('load workspaces list must return CRUDResult!');
                 }
 
@@ -483,7 +483,7 @@
             $q.when(confirm === true ? this.confirmAdd(workspace) : new CRUDResult(true)).then(
               function resolveSuccess(result){
 
-                if(!result instanceof CRUDResult){
+                if(!(result instanceof CRUDResult)){
                   throw new DeveloperError('confirm add must return CRUDResult!');
                 }
 
@@ -525,7 +525,7 @@
                   $q.when(confirm === true ? self.confirmRemove(angular.copy(workspace)) : new CRUDResult(true)).then(
                     function resolveSuccess(result){
 
-                      if(!result instanceof CRUDResult){
+                      if(!(result instanceof CRUDResult)){
                         throw new DeveloperError('confirm remove must return CRUDResult!');
                       }
 
@@ -605,7 +605,7 @@
                   $q.when(confirm === true ? self.confirmUpdate(clonedWorkspace) : new CRUDResult(true)).then(
                     function resolveSuccess(result){
 
-                      if(!result instanceof CRUDResult){
+                      if(!(result instanceof CRUDResult)){
                         throw new DeveloperError('confirm update must return CRUDResult!');
                       }
 
@@ -686,7 +686,7 @@
                     $q.when(type.confirmAdd(clonedWorkspace, tile)).then(
                       function resolveSuccess(result){
 
-                        if(!result instanceof CRUDResult){
+                        if(!(result instanceof CRUDResult)){
                           throw new DeveloperError('confirm add must return CRUDResult!');
                         }
 
@@ -757,7 +757,7 @@
                     $q.when(type.confirmRemove(clonedWorkspace, angular.copy(tile))).then(
                       function resolveSuccess(result){
 
-                        if(!result instanceof CRUDResult){
+                        if(!(result instanceof CRUDResult)){
                           throw new DeveloperError('confirm remove must return CRUDResult!');
                         }
 
@@ -829,7 +829,7 @@
                     $q.when(type.confirmUpdate(clonedWorkspace, clonedTile)).then(
                       function resolveSuccess(result){
 
-                        if(!result instanceof CRUDResult){
+                        if(!(result instanceof CRUDResult)){
                           throw new DeveloperError('confirm update must return CRUDResult!');
                         }
 

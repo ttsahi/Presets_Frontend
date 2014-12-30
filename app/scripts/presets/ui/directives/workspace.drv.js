@@ -2132,7 +2132,7 @@
             var container = angular.element('<div class="resize"></div>');
             var content = angular.element('<div class="content"></div>');
             var editContent = angular.element(
-              '<div ng-show="panels[' + position + '].enableUpdate" class="presets-edit-content-container">' +
+              '<div ng-if="panels[' + position + '].enableUpdate" class="presets-edit-content-container">' +
                 '<div class="presets-edit-content">' +
                   '<div class="presets-edit-content-container"><div class="overlay"></div></div>' +
                   '<div class="options">' +
@@ -2557,7 +2557,7 @@
             mainWorkspaceContainer.append(presetContainer);
             calculateLocationsAndSizes();
             if(enableWorkspaceChangedAnimation){
-              $animate.enter(mainWorkspaceContainer, element);
+                $animate.enter(mainWorkspaceContainer, element);
             }
           }
 
