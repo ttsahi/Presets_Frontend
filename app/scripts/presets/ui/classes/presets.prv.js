@@ -325,7 +325,6 @@
 
             $q.when(this._loadWorkspace(workspaceId, includeTiles)).then(
               function resolveSuccess(result){
-
                 if(!(result instanceof CRUDResult)){
                   throw new DeveloperError('load workspace must return CRUDResult!');
                 }
@@ -395,7 +394,7 @@
                       self._workspacesList[list[i].id] = list[i];
                     }
 
-                    if(this._useCache === true){
+                    if(self._useCache === true){
                       var keys = self._workspacesCache.info().keys;
 
                       for(i = 0; i < keys.length; i++){
@@ -405,7 +404,7 @@
                       }
                     }
 
-                    this.refreshWorkspacesListArr();
+                    self.refreshWorkspacesListArr();
                   }
 
                 }else{
@@ -573,19 +572,19 @@
                   var clonedWorkspace = angular.copy(result.data);
 
                   if(typeof data !== 'object'){
-                    deferred.reject(new CRUDResult(false, workspace, ['nothing to update!']));
+                    deferred.reject(new CRUDResult(false, clonedWorkspace, ['nothing to update!']));
                     return deferred.promise;
                   }
 
                   var isUpdated = false;
                   angular.forEach(data, function(value, property){
                     if(property === 'id' && value !== id){
-                      deferred.reject(new CRUDResult(false, workspace, ["can't change id property!"]));
+                      deferred.reject(new CRUDResult(false, clonedWorkspace, ["can't change id property!"]));
                       return deferred.promise;
                     }
 
                     if(property === 'tiles'){
-                      deferred.reject(new CRUDResult(false, workspace, ["can't change tiles property!"]));
+                      deferred.reject(new CRUDResult(false, clonedWorkspace, ["can't change tiles property!"]));
                       return deferred.promise;
                     }
 
@@ -596,7 +595,7 @@
                   });
 
                   if(isUpdated === false){
-                    deferred.reject(new CRUDResult(false, workspace, ['nothing to update!']));
+                    deferred.reject(new CRUDResult(false, clonedWorkspace, ['nothing to update!']));
                     return deferred.promise;
                   }
 
