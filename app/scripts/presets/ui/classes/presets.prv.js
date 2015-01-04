@@ -711,7 +711,7 @@
                       self._onAddTile(clonedWorkspace, tile);
                       deferred.resolve(new CRUDResult(true, tile));
                     }else{
-                      deferred.reject(new CRUDResult(true, tile, ['no workspace storage to add to!']));
+                      deferred.reject(new CRUDResult(false, tile, ['no workspace storage to add to!']));
                     }
                   }
                 }, function resolveError(reason){
@@ -818,7 +818,7 @@
                 function resolveSuccess(workspaceAndTile){
 
                   var workspace = workspaceAndTile[0].data;
-                  var clonedWorkspace = angular.copy(workspace)
+                  var clonedWorkspace = angular.copy(workspace);
                   var tile = workspaceAndTile[1].data;
                   tile.model = model;
                   var clonedTile = angular.copy(tile);

@@ -539,8 +539,28 @@ describe('presets', function(){
           });
 
           describe('removeWorkspaceAsync', function(){
+            var preset, workspace;
+
+            beforeEach(function(){
+              preset = new Preset();
+              workspace = {
+                id: preset.generateId(),
+                name: 'some workspace',
+                modified: new Date(),
+                expires: new Date(),
+                description: '',
+                rows: 4,
+                cols: 5,
+                tiles: []
+              };
+              spyOn(preset, 'getWorkspaceAsync').and.callFake(function(){
+                return $q(function(resolve, reject){
+                  resolve(new CRUDResult(true, workspace, []));
+                });
+              });
+            });
+
             it('should return rejected promise when called with id that doesn\'t exist in _workspacesList.', function(){
-              var preset = new Preset();
               var error = jasmine.createSpy('error');
               preset.removeWorkspaceAsync('gfjdj-dkfkld-dfsd').then(angular.noop, error);
               $rootScope.$digest();
@@ -548,14 +568,8 @@ describe('presets', function(){
             });
 
             it('should invoke confirmRemove(...) when called with confirm = true.', function(){
-              var preset = new Preset();
               spyOn(preset, 'confirmRemove').and.callFake(function(){
                 return new CRUDResult(true, {}, []);
-              });
-              spyOn(preset, 'getWorkspaceAsync').and.callFake(function(){
-                return $q(function(resolve, reject){
-                  resolve(new CRUDResult(true, {}, []));
-                });
               });
               preset._workspacesList['gfjdj-dkfkld-dfsd'] = {};
               preset.removeWorkspaceAsync('gfjdj-dkfkld-dfsd', true);
@@ -564,14 +578,8 @@ describe('presets', function(){
             });
 
             it('should throw exception when confirmRemove(...) not implemented correctly.', function(){
-              var preset = new Preset();
               spyOn(preset, 'confirmRemove').and.callFake(function(){
                 return {};
-              });
-              spyOn(preset, 'getWorkspaceAsync').and.callFake(function(){
-                return $q(function(resolve, reject){
-                  resolve(new CRUDResult(true, {}, []));
-                });
               });
               preset._workspacesList['gfjdj-dkfkld-dfsd'] = {};
               preset.removeWorkspaceAsync('gfjdj-dkfkld-dfsd', true);
@@ -579,15 +587,6 @@ describe('presets', function(){
             });
 
             it('should return resolved CRUDResult promise when called with valid workspace id.', function(){
-              var preset = new Preset();
-              spyOn(preset, 'confirmRemove').and.callFake(function(){
-                return new CRUDResult(true, {}, []);
-              });
-              spyOn(preset, 'getWorkspaceAsync').and.callFake(function(){
-                return $q(function(resolve, reject){
-                  resolve(new CRUDResult(true, {}, []));
-                });
-              });
               preset._workspacesList['gfjdj-dkfkld-dfsd'] = {};
               var success = jasmine.createSpy('success');
               preset.removeWorkspaceAsync('gfjdj-dkfkld-dfsd').then(function(result){
@@ -600,29 +599,393 @@ describe('presets', function(){
           });
 
           describe('updateWorkspaceAsync', function(){
+            var preset, workspace;
+
+            beforeEach(function(){
+              preset = new Preset();
+              preset._useCache = false;
+              workspace = {
+                id: preset.generateId(),
+                name: 'some workspace',
+                modified: new Date(),
+                expires: new Date(),
+                description: '',
+                rows: 4,
+                cols: 5,
+                tiles: []
+              };
+              spyOn(preset, 'getWorkspaceAsync').and.callFake(function(){
+                return $q(function(resolve, reject){
+                  resolve(new CRUDResult(true, workspace, []));
+                });
+              });
+            });
+
             it('should return rejected promise when called with id that doesn\'t exist in _workspacesList.', function(){
-              var preset = new Preset();
               var error = jasmine.createSpy('error');
-              preset.updateWorkspaceAsync('gfjdj-dkfkld-dfsd').then(angular.noop, error);
+              preset.updateWorkspaceAsync(workspace.id).then(angular.noop, error);
               $rootScope.$digest();
               expect(error).toHaveBeenCalled();
             });
 
             it('should return rejected promise when called with data that isn\'t object.', function(){
-              var preset = new Preset();
-              spyOn(preset, 'getWorkspaceAsync').and.callFake(function(){
-                return $q(function(resolve, reject){
-                  resolve(new CRUDResult(true, {}, []));
-                });
-              });
               var error = jasmine.createSpy('error');
-              preset._workspacesList['gfjdj-dkfkld-dfsd'] = {};
-              preset.updateWorkspaceAsync('gfjdj-dkfkld-dfsd', {}).then(angular.noop, error);
+              preset._workspacesList[workspace.id] = {};
+              preset.updateWorkspaceAsync(workspace.id, null).then(angular.noop, error);
               $rootScope.$digest();
               expect(error).toHaveBeenCalled();
             });
+
+            it('should return rejected promise when called with data.id that not match id.', function(){
+              var error = jasmine.createSpy('error');
+              preset._workspacesList[workspace.id] = {};
+              preset.updateWorkspaceAsync(workspace.id, {id: '4534-45m5m5-435345'}).then(angular.noop, error);
+              $rootScope.$digest();
+              expect(error).toHaveBeenCalled();
+            });
+
+            it('should return rejected promise when called with data that try to change tiles property.', function(){
+              var error = jasmine.createSpy('error');
+              preset._workspacesList[workspace.id] = {};
+              preset.updateWorkspaceAsync(workspace.id, {tiles: [1, 2, 3]}).then(angular.noop, error);
+              $rootScope.$digest();
+              expect(error).toHaveBeenCalled();
+            });
+
+            it('should invoke confirmUpdate(...) when called with confirm = true.', function(){
+              spyOn(preset, 'confirmUpdate').and.callFake(function(){
+                return new CRUDResult(true, {}, []);
+              });
+              preset._workspacesList[workspace.id] = {};
+              preset.updateWorkspaceAsync(workspace.id, {name: 'anonymous'}, true);
+              $rootScope.$digest();
+              expect(preset.confirmUpdate).toHaveBeenCalled();
+            });
+
+            it('should invoke refreshWorkspacesListArr() and _onUpdateWorkspace() when called with valid params', function(){
+              spyOn(preset, 'refreshWorkspacesListArr');
+              spyOn(preset, '_onUpdateWorkspace');
+              preset._workspacesList[workspace.id] = {};
+              preset.updateWorkspaceAsync(workspace.id, {name: 'anonymous'});
+              $rootScope.$digest();
+              expect(preset.refreshWorkspacesListArr).toHaveBeenCalled();
+              expect(preset._onUpdateWorkspace).toHaveBeenCalled();
+            });
+
+            it('should return resolved CRUDResult promise when called with valid params.', function(){
+              var success = jasmine.createSpy('success');
+              preset._workspacesList[workspace.id] = {};
+              preset.updateWorkspaceAsync(workspace.id, {name: 'anonymous'}).then(function(result){
+                success();
+                expect(result).toBeInstanceOf(CRUDResult);
+              });
+              $rootScope.$digest();
+              expect(success).toHaveBeenCalled();
+            });
+
           });
 
+          describe('addTileAsync', function(){
+            var WorkspaceData, preset, workspace, tile;
+
+            beforeEach(inject(function(_WorkspaceData_){
+              WorkspaceData = _WorkspaceData_;
+            }));
+
+            beforeEach(function(){
+              preset = new Preset();
+              preset._useCache = false;
+              workspace = {
+                id: preset.generateId(),
+                name: 'some workspace',
+                modified: new Date(),
+                expires: new Date(),
+                description: '',
+                rows: 4,
+                cols: 5,
+                tiles: []
+              };
+              tile = {
+                id: preset.generateId(),
+                position: 1,
+                size: { width: 1, height: 1},
+                type: 'type1',
+                model: {}
+              };
+              spyOn(preset, 'getWorkspaceAsync').and.callFake(function(){
+                return $q(function(resolve, reject){
+                  resolve(new CRUDResult(true, workspace, []));
+                });
+              });
+            });
+
+            it('should return rejected promise when called with tile.type that doesn\'t exist.', function(){
+              var error = jasmine.createSpy('error');
+              preset._workspacesList[workspace.id] = {};
+              preset.addTileAsync(workspace.id, tile).then(angular.noop, error);
+              $rootScope.$digest();
+              expect(error).toHaveBeenCalled();
+            });
+
+            it('should return rejected promise when called with workspace id that doesn\'t exist in _workspacesList.', function(){
+              var error = jasmine.createSpy('error');
+              preset._types[tile.type] = {};
+              preset.addTileAsync(workspace.id, tile).then(angular.noop, error);
+              $rootScope.$digest();
+              expect(error).toHaveBeenCalled();
+            });
+
+            it('should invoke _currentWorkspaceData.addTileAsync(...) when workspaceId = _currentWorkspaceData.id.', function(){
+              preset._currentWorkspaceData = new WorkspaceData(preset, workspace);
+              spyOn(preset._currentWorkspaceData, 'addTileAsync');
+              preset._workspacesList[workspace.id] = {};
+              preset._types[tile.type] = {};
+              preset.addTileAsync(workspace.id, tile);
+              $rootScope.$digest();
+              expect(preset._currentWorkspaceData.addTileAsync).toHaveBeenCalled();
+            });
+
+            it('should return rejected promise when _useCache = true and tile already exist in cache.', function(){
+              preset._useCache = true;
+              preset._workspacesList[workspace.id] = {};
+              preset._types[tile.type] = {};
+              workspace.tiles.push(tile);
+              preset._workspacesCache.put(workspace);
+              var error = jasmine.createSpy('error');
+              preset.addTileAsync(workspace.id, tile).then(angular.noop, error);
+              $rootScope.$digest();
+              expect(error).toHaveBeenCalled();
+            });
+
+            it('should invoke tile.type.confirmAdd(...) when confirm = true', function(){
+              preset._workspacesList[workspace.id] = {};
+              preset._types[tile.type] = { confirmAdd: function(){ return new CRUDResult(true, {}, []); } };
+              spyOn(preset._types[tile.type], 'confirmAdd').and.callThrough();
+              preset.addTileAsync(workspace.id, tile, true);
+              $rootScope.$digest();
+              expect(preset._types[tile.type].confirmAdd).toHaveBeenCalled();
+            });
+
+            it('should throw exception when tile.type.confirmAdd(...) not implemented correctly.', function(){
+              preset._workspacesList[workspace.id] = {};
+              preset._types[tile.type] = { confirmAdd: angular.noop };
+              preset.addTileAsync(workspace.id, tile, true);
+              expect(function(){ $rootScope.$digest(); }).toThrow();
+            });
+
+            it('should invoke _onAddTile(...) and return resolved CRUDResult promise when called with valid params.', function(){
+              preset._workspacesList[workspace.id] = {};
+              preset._types[tile.type] = { confirmAdd: function(){ return new CRUDResult(true, {}, []); } };
+              spyOn(preset, '_onAddTile');
+              var success = jasmine.createSpy('success');
+              preset.addTileAsync(workspace.id, tile, true).then(function(result){
+                success();
+                expect(result).toBeInstanceOf(CRUDResult);
+              });
+              $rootScope.$digest();
+              expect(success).toHaveBeenCalled();
+              expect(preset._onAddTile).toHaveBeenCalled();
+            });
+
+          });
+
+          describe('removeTileAsync', function(){
+            var WorkspaceData, preset, workspace, tile;
+
+            beforeEach(inject(function(_WorkspaceData_){
+              WorkspaceData = _WorkspaceData_;
+            }));
+
+            beforeEach(function(){
+              preset = new Preset();
+              preset._useCache = false;
+              workspace = {
+                id: preset.generateId(),
+                name: 'some workspace',
+                modified: new Date(),
+                expires: new Date(),
+                description: '',
+                rows: 4,
+                cols: 5,
+                tiles: []
+              };
+              tile = {
+                id: preset.generateId(),
+                position: 1,
+                size: { width: 1, height: 1},
+                type: 'type1',
+                model: {}
+              };
+              spyOn(preset, 'getWorkspaceAsync').and.callFake(function(){
+                return $q(function(resolve, reject){
+                  resolve(new CRUDResult(true, workspace, []));
+                });
+              });
+              spyOn(preset, 'getTileAsync').and.callFake(function(){
+                return $q(function(resolve, reject){
+                  resolve(new CRUDResult(true, tile, []));
+                });
+              });
+            });
+
+            it('should return rejected promise when called with workspace id that doesn\'t exist in _workspacesList.', function(){
+              var error = jasmine.createSpy('error');
+              preset._types[tile.type] = {};
+              preset.removeTileAsync(workspace.id, tile.id).then(angular.noop, error);
+              $rootScope.$digest();
+              expect(error).toHaveBeenCalled();
+            });
+
+            it('should invoke _currentWorkspaceData.removeTileByIdAsync(...) when workspaceId = _currentWorkspaceData.id.', function(){
+              preset._currentWorkspaceData = new WorkspaceData(preset, workspace);
+              spyOn(preset._currentWorkspaceData, 'removeTileByIdAsync');
+              preset._workspacesList[workspace.id] = {};
+              preset._types[tile.type] = {};
+              preset.removeTileAsync(workspace.id, tile.id);
+              $rootScope.$digest();
+              expect(preset._currentWorkspaceData.removeTileByIdAsync).toHaveBeenCalled();
+            });
+
+            it('should return rejected promise when _useCache = true and tile doesn\'t exist in cache.', function(){
+              preset._useCache = true;
+              preset._workspacesList[workspace.id] = {};
+              preset._types[tile.type] = {};
+              var error = jasmine.createSpy('error');
+              preset.removeTileAsync(workspace.id, tile.id).then(angular.noop, error);
+              $rootScope.$digest();
+              expect(error).toHaveBeenCalled();
+            });
+
+            it('should invoke tile.type.confirmRemove(...) when confirm = true', function(){
+              preset._workspacesList[workspace.id] = {};
+              preset._types[tile.type] = { confirmRemove: function(){ return new CRUDResult(true, {}, []); } };
+              spyOn(preset._types[tile.type], 'confirmRemove').and.callThrough();
+              preset.removeTileAsync(workspace.id, tile.id, true);
+              $rootScope.$digest();
+              expect(preset._types[tile.type].confirmRemove).toHaveBeenCalled();
+            });
+
+            it('should throw exception when tile.type.confirmRemove(...) not implemented correctly.', function(){
+              preset._workspacesList[workspace.id] = {};
+              preset._types[tile.type] = { confirmRemove: angular.noop };
+              preset.removeTileAsync(workspace.id, tile.id, true);
+              expect(function(){ $rootScope.$digest(); }).toThrow();
+            });
+
+            it('should invoke _onRemoveTile(...) and return resolved CRUDResult promise when called with valid params.', function(){
+              preset._workspacesList[workspace.id] = {};
+              preset._types[tile.type] = { confirmRemove: function(){ return new CRUDResult(true, {}, []); } };
+              spyOn(preset, '_onRemoveTile');
+              var success = jasmine.createSpy('success');
+              preset.removeTileAsync(workspace.id, tile.id, true).then(function(result){
+                success();
+                expect(result).toBeInstanceOf(CRUDResult);
+              });
+              $rootScope.$digest();
+              expect(success).toHaveBeenCalled();
+              expect(preset._onRemoveTile).toHaveBeenCalled();
+            });
+
+          });
+
+          describe('updateTileAsync', function(){
+            var WorkspaceData, preset, workspace, tile;
+
+            beforeEach(inject(function(_WorkspaceData_){
+              WorkspaceData = _WorkspaceData_;
+            }));
+
+            beforeEach(function(){
+              preset = new Preset();
+              preset._useCache = false;
+              workspace = {
+                id: preset.generateId(),
+                name: 'some workspace',
+                modified: new Date(),
+                expires: new Date(),
+                description: '',
+                rows: 4,
+                cols: 5,
+                tiles: []
+              };
+              tile = {
+                id: preset.generateId(),
+                position: 1,
+                size: { width: 1, height: 1},
+                type: 'type1',
+                model: {}
+              };
+              spyOn(preset, 'getWorkspaceAsync').and.callFake(function(){
+                return $q(function(resolve, reject){
+                  resolve(new CRUDResult(true, workspace, []));
+                });
+              });
+              spyOn(preset, 'getTileAsync').and.callFake(function(){
+                return $q(function(resolve, reject){
+                  resolve(new CRUDResult(true, tile, []));
+                });
+              });
+            });
+
+            it('should return rejected promise when called with workspace id that doesn\'t exist in _workspacesList.', function(){
+              var error = jasmine.createSpy('error');
+              preset._types[tile.type] = {};
+              preset.updateTileAsync(workspace.id, tile.id, {}).then(angular.noop, error);
+              $rootScope.$digest();
+              expect(error).toHaveBeenCalled();
+            });
+
+            it('should invoke _currentWorkspaceData.updateTileByIdAsync(...) when workspaceId = _currentWorkspaceData.id.', function(){
+              preset._currentWorkspaceData = new WorkspaceData(preset, workspace);
+              spyOn(preset._currentWorkspaceData, 'updateTileByIdAsync');
+              preset._workspacesList[workspace.id] = {};
+              preset._types[tile.type] = {};
+              preset.updateTileAsync(workspace.id, tile.id, {});
+              $rootScope.$digest();
+              expect(preset._currentWorkspaceData.updateTileByIdAsync).toHaveBeenCalled();
+            });
+
+            it('should return rejected promise when _useCache = true and tile doesn\'t exist in cache.', function(){
+              preset._useCache = true;
+              preset._workspacesList[workspace.id] = {};
+              preset._types[tile.type] = {};
+              var error = jasmine.createSpy('error');
+              preset.updateTileAsync(workspace.id, tile.id, []).then(angular.noop, error);
+              $rootScope.$digest();
+              expect(error).toHaveBeenCalled();
+            });
+
+            it('should invoke tile.type.confirmUpdate(...) when confirm = true', function(){
+              preset._workspacesList[workspace.id] = {};
+              preset._types[tile.type] = { confirmUpdate: function(){ return new CRUDResult(true, {}, []); } };
+              spyOn(preset._types[tile.type], 'confirmUpdate').and.callThrough();
+              preset.updateTileAsync(workspace.id, tile.id, {}, true);
+              $rootScope.$digest();
+              expect(preset._types[tile.type].confirmUpdate).toHaveBeenCalled();
+            });
+
+            it('should throw exception when tile.type.confirmUpdate(...) not implemented correctly.', function(){
+              preset._workspacesList[workspace.id] = {};
+              preset._types[tile.type] = { confirmUpdate: angular.noop };
+              preset.updateTileAsync(workspace.id, tile.id, {}, true);
+              expect(function(){ $rootScope.$digest(); }).toThrow();
+            });
+
+            it('should invoke _onUpdateTile(...) and return resolved CRUDResult promise when called with valid params.', function(){
+              preset._workspacesList[workspace.id] = {};
+              preset._types[tile.type] = { confirmUpdate: function(){ return new CRUDResult(true, {}, []); } };
+              spyOn(preset, '_onUpdateTile');
+              var success = jasmine.createSpy('success');
+              preset.updateTileAsync(workspace.id, tile.id, {}, true).then(function(result){
+                success();
+                expect(result).toBeInstanceOf(CRUDResult);
+              });
+              $rootScope.$digest();
+              expect(success).toHaveBeenCalled();
+              expect(preset._onUpdateTile).toHaveBeenCalled();
+            });
+
+          });
         });
       });
     });
