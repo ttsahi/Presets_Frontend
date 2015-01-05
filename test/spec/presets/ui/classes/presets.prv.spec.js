@@ -986,6 +986,53 @@ describe('presets', function(){
             });
 
           });
+
+          describe('registerType', function(){
+
+            var TileType, preset;
+
+            beforeEach(inject(function(_TileType_){
+              TileType = _TileType_;
+              preset = new Preset();
+            }));
+
+            it('should throw exception when called with invalid type.', function(){
+              expect(function(){ preset.registerType({}); }).toThrow();
+            });
+
+            it('should throw exception if when called with type that his name already exist.', function(){
+              preset._types['type1'] = {};
+              var type = new TileType('type1', {}, {});
+              expect(function(){ preset.registerType(type); }).toThrow();
+            });
+
+            it('should set _types with new type info when called with valid type.', function(){
+              var type = new TileType('type1', {}, {});
+              preset.registerType(type);
+              expect(preset._types[type.name]).toEqual(type);
+            });
+          });
+
+          describe('registerTypes', function(){
+
+            var TileType, preset;
+
+            beforeEach(inject(function(_TileType_){
+              TileType = _TileType_;
+              preset = new Preset();
+            }));
+
+            it('should return false when called with non array value.', function(){
+              expect(preset.registerTypes({})).toBeFalsy();
+            });
+
+            it('should invoke registerType(...) types.length times when called with valid types array.', function(){
+              spyOn(preset, 'registerType');
+              var types = [new TileType('type1', {}, {}), new TileType('type2', {}, {}), new TileType('type3', {}, {})];
+              preset.registerTypes(types);
+              expect(preset.registerType.calls.count()).toEqual(3);
+            });
+          });
         });
       });
     });

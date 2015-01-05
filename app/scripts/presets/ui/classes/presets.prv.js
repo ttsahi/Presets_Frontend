@@ -869,7 +869,7 @@
           Preset.prototype.registerType = function(tileType){
             tileType = validateTileType(tileType);
 
-            if (this._types[tileType.name] !== undefined) {
+            if(this._types[tileType.name] !== undefined) {
               throw new DeveloperError('tile type already exist!');
             }
 
