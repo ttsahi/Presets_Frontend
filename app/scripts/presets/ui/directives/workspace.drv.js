@@ -1693,7 +1693,20 @@
       }
 
       function resetPanel(panel){
-        panel.overlay.removeClass('productBox');
+        var resetContainerSize = function(){
+          panel.container.element.css({
+            width: '100%',
+            height: '100%'
+          });
+        };
+
+        if(panel.overlay.hasClass('productBox')){
+          $animate.removeClass(panel.overlay, 'productBox').then(resetContainerSize);
+        }else{
+          panel.overlay.removeClass('productBox');
+          resetContainerSize();
+        }
+
         panel.overlay.css('z-index', '2');
 
         panel.container.width = 0;
