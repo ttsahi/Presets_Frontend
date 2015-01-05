@@ -349,7 +349,13 @@ describe('presets', function(){
           }));
 
           beforeEach(function(){
-            preset._types['type1'] = { name: 'type1', presentationInfo: {}, confirmAdd: angular.noop };
+            preset._types['type1'] = {
+              name: 'type1',
+              presentationInfo: {},
+              confirmAdd: angular.noop,
+              confirmRemove: angular.noop,
+              confirmUpdate: angular.noop
+            };
             workspaceData = new WorkspaceData(preset, workspace);
             workspaceData._panels = [];
             var panelsCount = workspaceData.rows * workspaceData.cols;
@@ -380,7 +386,7 @@ describe('presets', function(){
               expect(error).toHaveBeenCalled();
             });
 
-            it('should invoke confirmAdd when called with confirm = true.', function(){
+            it('should invoke confirmAdd(...) when called with confirm = true.', function(){
               spyOn(preset._types['type1'], 'confirmAdd').and.callFake(function(){
                 return new CRUDResult(true, tile, []);
               });
@@ -404,7 +410,7 @@ describe('presets', function(){
               expect(workspaceData._tilesMap[tile.id]).toBe(tile.position - 1);
             });
 
-            it('should invoke _applyNewTile and _onadddListener and return resolved CRUDResult promise when called with valid tile.', function(){
+            it('should invoke _applyNewTile(...) and _onadddListener(...) and return resolved CRUDResult promise when called with valid tile.', function(){
               spyOn(workspaceData, '_applyNewTile');
               spyOn(workspaceData, '_onadddListener');
               var success = jasmine.createSpy('success');
@@ -419,8 +425,254 @@ describe('presets', function(){
             });
           });
 
-          describe('removeTileAsync', function(){
+          describe('removeTileByIdAsync', function(){
+            it('should return rejected promise when called with id that doesn\'t exist in workspaceData.', function(){
+              var error = jasmine.createSpy('error');
+              workspaceData.removeTileByIdAsync(tile.id).then(angular.noop, error);
+              $rootScope.$digest();
+              expect(error).toHaveBeenCalled();
+            });
 
+            it('should invoke confirmRemove(...) when called with confirm = true.', function(){
+              spyOn(preset._types['type1'], 'confirmRemove').and.callFake(function(){
+                return new CRUDResult(true, tile, []);
+              });
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              workspaceData.removeTileByIdAsync(tile.id, true);
+              $rootScope.$digest();
+              expect(preset._types['type1'].confirmRemove).toHaveBeenCalled();
+            });
+
+            it('should throw exception when confirmRemove(...) not implemented correctly.', function(){
+              spyOn(preset._types['type1'], 'confirmRemove');
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              workspaceData.removeTileByIdAsync(tile.id, true);
+              expect(function(){ $rootScope.$digest(); }).toThrow();
+            });
+
+            it('should clear _tiles and _tilesMap from the deleted tile info when called with valid tile.', function(){
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              workspaceData.removeTileByIdAsync(tile.id);
+              $rootScope.$digest();
+              expect(workspaceData._tiles[tile.position - 1]).toEqual(null);
+              expect(workspaceData._tilesMap[tile.id]).toBe(undefined);
+            });
+
+            it('should invoke _resetTile(...) and _onremoveListener(...) and return resolved CRUDResult promise when called with valid tile.', function(){
+              spyOn(workspaceData, '_resetTile');
+              spyOn(workspaceData, '_onremoveListener');
+              var success = jasmine.createSpy('success');
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              workspaceData.removeTileByIdAsync(tile.id).then(function(result){
+                success();
+                expect(result).toBeInstanceOf(CRUDResult);
+              });
+              $rootScope.$digest();
+              expect(workspaceData._resetTile).toHaveBeenCalled();
+              expect(workspaceData._onremoveListener).toHaveBeenCalled();
+              expect(success).toHaveBeenCalled();
+            });
+          });
+
+          describe('removeTileByPositionAsync', function(){
+            it('should return rejected promise when called with position that doesn\'t exist in workspaceData.', function(){
+              var error = jasmine.createSpy('error');
+              workspaceData._tiles = [null];
+              workspaceData.removeTileByPositionAsync(tile.position).then(angular.noop, error);
+              $rootScope.$digest();
+              expect(error).toHaveBeenCalled();
+            });
+
+            it('should invoke confirmRemove(...) when called with confirm = true.', function(){
+              spyOn(preset._types['type1'], 'confirmRemove').and.callFake(function(){
+                return new CRUDResult(true, tile, []);
+              });
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              workspaceData.removeTileByPositionAsync(tile.position, true);
+              $rootScope.$digest();
+              expect(preset._types['type1'].confirmRemove).toHaveBeenCalled();
+            });
+
+            it('should throw exception when confirmRemove(...) not implemented correctly.', function(){
+              spyOn(preset._types['type1'], 'confirmRemove');
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              workspaceData.removeTileByPositionAsync(tile.position, true);
+              expect(function(){ $rootScope.$digest(); }).toThrow();
+            });
+
+            it('should clear _tiles and _tilesMap from the deleted tile info when called with valid tile.', function(){
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              workspaceData.removeTileByPositionAsync(tile.position);
+              $rootScope.$digest();
+              expect(workspaceData._tiles[tile.position - 1]).toEqual(null);
+              expect(workspaceData._tilesMap[tile.id]).toBe(undefined);
+            });
+
+            it('should invoke _resetTile(...) and _onremoveListener(...) and return resolved CRUDResult promise when called with valid tile.', function(){
+              spyOn(workspaceData, '_resetTile');
+              spyOn(workspaceData, '_onremoveListener');
+              var success = jasmine.createSpy('success');
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              workspaceData.removeTileByPositionAsync(tile.position).then(function(result){
+                success();
+                expect(result).toBeInstanceOf(CRUDResult);
+              });
+              $rootScope.$digest();
+              expect(workspaceData._resetTile).toHaveBeenCalled();
+              expect(workspaceData._onremoveListener).toHaveBeenCalled();
+              expect(success).toHaveBeenCalled();
+            });
+          });
+
+          describe('updateTileByIdAsync', function(){
+            it('should return rejected promise when called with id that doesn\'t exist in workspaceData.', function(){
+              var error = jasmine.createSpy('error');
+              workspaceData.updateTileByIdAsync(tile.id, {}).then(angular.noop, error);
+              $rootScope.$digest();
+              expect(error).toHaveBeenCalled();
+            });
+
+            it('should return rejected promise when called with non object model.', function(){
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              var error = jasmine.createSpy('error');
+              workspaceData.updateTileByIdAsync(tile.id).then(angular.noop, error);
+              $rootScope.$digest();
+              expect(error).toHaveBeenCalled();
+            });
+
+            it('should invoke confirmUpdate(...) when called with confirm = true.', function(){
+              spyOn(preset._types['type1'], 'confirmUpdate').and.callFake(function(){
+                return new CRUDResult(true, tile, []);
+              });
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              workspaceData.updateTileByIdAsync(tile.id, {}, true);
+              $rootScope.$digest();
+              expect(preset._types['type1'].confirmUpdate).toHaveBeenCalled();
+            });
+
+            it('should throw exception when confirmUpdate(...) not implemented correctly.', function(){
+              spyOn(preset._types['type1'], 'confirmUpdate');
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              workspaceData.updateTileByIdAsync(tile.id, {}, true);
+              expect(function(){ $rootScope.$digest(); }).toThrow();
+            });
+
+            it('should invoke _updateTile(...) and _onupdateListener(...) and and preset._onUpdateTile(...) and return resolved CRUDResult promise when called with valid tile.', function(){
+              spyOn(workspaceData, '_updateTile');
+              spyOn(workspaceData, '_onupdateListener');
+              spyOn(workspaceData._preset, '_onUpdateTile');
+              var success = jasmine.createSpy('success');
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              workspaceData.updateTileByIdAsync(tile.id, {}).then(function(result){
+                success();
+                expect(result).toBeInstanceOf(CRUDResult);
+              });
+              $rootScope.$digest();
+              expect(workspaceData._updateTile).toHaveBeenCalled();
+              expect(workspaceData._onupdateListener).toHaveBeenCalled();
+              expect(workspaceData._preset._onUpdateTile).toHaveBeenCalled();
+              expect(success).toHaveBeenCalled();
+            });
+          });
+
+          describe('updateTileByPositionAsync', function(){
+            it('should return rejected promise when called with position that doesn\'t exist in workspaceData.', function(){
+              workspaceData._tiles = [null];
+              var error = jasmine.createSpy('error');
+              workspaceData.updateTileByPositionAsync(tile.position, {}).then(angular.noop, error);
+              $rootScope.$digest();
+              expect(error).toHaveBeenCalled();
+            });
+
+            it('should return rejected promise when called with non object model.', function(){
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              var error = jasmine.createSpy('error');
+              workspaceData.updateTileByPositionAsync(tile.position).then(angular.noop, error);
+              $rootScope.$digest();
+              expect(error).toHaveBeenCalled();
+            });
+
+            it('should invoke confirmUpdate(...) when called with confirm = true.', function(){
+              spyOn(preset._types['type1'], 'confirmUpdate').and.callFake(function(){
+                return new CRUDResult(true, tile, []);
+              });
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              workspaceData.updateTileByPositionAsync(tile.position, {}, true);
+              $rootScope.$digest();
+              expect(preset._types['type1'].confirmUpdate).toHaveBeenCalled();
+            });
+
+            it('should throw exception when confirmUpdate(...) not implemented correctly.', function(){
+              spyOn(preset._types['type1'], 'confirmUpdate');
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              workspaceData.updateTileByPositionAsync(tile.position, {}, true);
+              expect(function(){ $rootScope.$digest(); }).toThrow();
+            });
+
+            it('should invoke _updateTile(...) and _onupdateListener(...) and and preset._onUpdateTile(...) and return resolved CRUDResult promise when called with valid tile.', function(){
+              spyOn(workspaceData, '_updateTile');
+              spyOn(workspaceData, '_onupdateListener');
+              spyOn(workspaceData._preset, '_onUpdateTile');
+              var success = jasmine.createSpy('success');
+              var tempTile = presetValidators.validateTile(tile);
+              tempTile.presentationInfo = {};
+              workspaceData._tiles[tile.position - 1] = tempTile;
+              workspaceData._tilesMap[tile.id] = tile.position - 1;
+              workspaceData.updateTileByPositionAsync(tile.position, {}).then(function(result){
+                success();
+                expect(result).toBeInstanceOf(CRUDResult);
+              });
+              $rootScope.$digest();
+              expect(workspaceData._updateTile).toHaveBeenCalled();
+              expect(workspaceData._onupdateListener).toHaveBeenCalled();
+              expect(workspaceData._preset._onUpdateTile).toHaveBeenCalled();
+              expect(success).toHaveBeenCalled();
+            });
           });
         });
       });

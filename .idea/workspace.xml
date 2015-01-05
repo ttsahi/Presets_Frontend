@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32d0c907-dd96-494b-a32c-d7429bc3e1df" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/spec/presets/ui/classes/workspace-data.svc.spec.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js" afterPath="$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/presets/ui/classes/workspace-data.svc.js" afterPath="$PROJECT_DIR$/app/scripts/presets/ui/classes/workspace-data.svc.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/spec/presets/ui/classes/workspace-data.svc.spec.js" afterPath="$PROJECT_DIR$/test/spec/presets/ui/classes/workspace-data.svc.spec.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Presets_Frontend.iws" />
@@ -31,8 +31,8 @@
       <file leaf-file-name="workspace-data.svc.spec.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/spec/presets/ui/classes/workspace-data.svc.spec.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="8229" max-vertical-offset="9114">
-              <caret line="422" column="0" selection-start-line="422" selection-start-column="0" selection-end-line="422" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="12925" max-vertical-offset="14406">
+              <caret line="665" column="53" selection-start-line="665" selection-start-column="53" selection-end-line="665" selection-end-column="53" />
               <folding>
                 <element signature="e#0#42#0" expanded="false" />
               </folding>
@@ -40,21 +40,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="workspace.drv.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.39204547" vertical-offset="37344" max-vertical-offset="57398">
-              <caret line="1710" column="0" selection-start-line="1710" selection-start-column="0" selection-end-line="1710" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="workspace-data.svc.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="workspace-data.svc.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/classes/workspace-data.svc.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="2564" max-vertical-offset="6341">
-              <caret line="182" column="41" selection-start-line="182" selection-start-column="41" selection-end-line="182" selection-end-column="41" />
+            <state vertical-scroll-proportion="-0.6359833" vertical-offset="5624" max-vertical-offset="6341">
+              <caret line="306" column="40" selection-start-line="306" selection-start-column="27" selection-end-line="306" selection-end-column="40" />
               <folding>
                 <element signature="e#0#42#0" expanded="false" />
               </folding>
@@ -65,8 +55,8 @@
       <file leaf-file-name="presets.prv.spec.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/spec/presets/ui/classes/presets.prv.spec.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="12336" max-vertical-offset="21934">
-              <caret line="705" column="25" selection-start-line="705" selection-start-column="25" selection-end-line="705" selection-end-column="25" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="17616" max-vertical-offset="19940">
+              <caret line="934" column="47" selection-start-line="934" selection-start-column="47" selection-end-line="934" selection-end-column="47" />
               <folding>
                 <element signature="e#0#42#0" expanded="false" />
               </folding>
@@ -135,9 +125,9 @@
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/classes/presets.prv.js" />
         <option value="$PROJECT_DIR$/test/spec/presets/ui/classes/presets.prv.spec.js" />
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/services/preset-validators.svc.js" />
+        <option value="$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js" />
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/classes/workspace-data.svc.js" />
         <option value="$PROJECT_DIR$/test/spec/presets/ui/classes/workspace-data.svc.spec.js" />
-        <option value="$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js" />
       </list>
     </option>
   </component>
@@ -890,7 +880,13 @@
       <option name="project" value="LOCAL" />
       <updated>1420369806882</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="fix rotate animation bug!">
+      <created>1420450683631</created>
+      <option name="number" value="00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1420450683631</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -956,7 +952,6 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="Fix workspace service crud methods." />
     <MESSAGE value="Create add workspace flipper animation." />
     <MESSAGE value="Finish add workspace from validation." />
     <MESSAGE value="Finish create and update workspace views controllers and animations." />
@@ -981,7 +976,8 @@
     <MESSAGE value="Fix instanceof bug and starts adding tests." />
     <MESSAGE value="continue with Preset class tests." />
     <MESSAGE value="finish Preset class test. hamaaaavet!!!" />
-    <option name="LAST_COMMIT_MESSAGE" value="finish Preset class test. hamaaaavet!!!" />
+    <MESSAGE value="fix rotate animation bug!" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix rotate animation bug!" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1378,16 +1374,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/spec/presets/ui/classes/presets.prv.spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="15702" max-vertical-offset="21934">
-          <caret line="705" column="25" selection-start-line="705" selection-start-column="25" selection-end-line="705" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#42#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/services/preset-validators.svc.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-0.66387725" vertical-offset="561" max-vertical-offset="5695">
@@ -1396,10 +1382,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/classes/workspace-data.svc.js">
+    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2564" max-vertical-offset="6341">
-          <caret line="182" column="41" selection-start-line="182" selection-start-column="41" selection-end-line="182" selection-end-column="41" />
+        <state vertical-scroll-proportion="0.39204547" vertical-offset="37344" max-vertical-offset="57398">
+          <caret line="1710" column="0" selection-start-line="1710" selection-start-column="0" selection-end-line="1710" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/spec/presets/ui/classes/presets.prv.spec.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="17616" max-vertical-offset="19940">
+          <caret line="934" column="47" selection-start-line="934" selection-start-column="47" selection-end-line="934" selection-end-column="47" />
           <folding>
             <element signature="e#0#42#0" expanded="false" />
           </folding>
@@ -1408,19 +1402,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test/spec/presets/ui/classes/workspace-data.svc.spec.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="8229" max-vertical-offset="9114">
-          <caret line="422" column="0" selection-start-line="422" selection-start-column="0" selection-end-line="422" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="12925" max-vertical-offset="14406">
+          <caret line="665" column="53" selection-start-line="665" selection-start-column="53" selection-end-line="665" selection-end-column="53" />
           <folding>
             <element signature="e#0#42#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/directives/workspace.drv.js">
+    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/classes/workspace-data.svc.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.39204547" vertical-offset="37344" max-vertical-offset="57398">
-          <caret line="1710" column="0" selection-start-line="1710" selection-start-column="0" selection-end-line="1710" selection-end-column="0" />
-          <folding />
+        <state vertical-scroll-proportion="-0.6359833" vertical-offset="5624" max-vertical-offset="6341">
+          <caret line="306" column="40" selection-start-line="306" selection-start-column="27" selection-end-line="306" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#42#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

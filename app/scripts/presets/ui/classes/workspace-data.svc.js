@@ -199,7 +199,7 @@
         var deferred = $q.defer();
 
         if(this._tilesMap[id] === undefined){
-          deferred.reject(new CRUDResult(false, {}, ['tile id: ' + id + 'not found!']));
+          deferred.reject(new CRUDResult(false, {}, ['tile id: ' + id + ' not found!']));
           return deferred.promise;
         }
 
