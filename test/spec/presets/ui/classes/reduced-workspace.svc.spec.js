@@ -4,7 +4,7 @@
 
 'use strict';
 
-describe('prests', function(){
+describe('presets', function(){
 
   beforeEach(module('presetsApp'));
 
