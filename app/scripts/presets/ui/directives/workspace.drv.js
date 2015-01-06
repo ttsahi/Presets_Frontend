@@ -2315,8 +2315,8 @@
 
             addUpdateContainer = angular.element('<div ng-class="{\'presets-add-update-container-animation\' : isAddUpdateTileMode}" ng-show="isAddTileMode || isUpdateTileMode" class="presets-workspace-add-update-container">' +
                                                '<div ng-show="isAddTileMode || isUpdateTileMode" class="overlay presets-add-update-overlay-animation" ng-click="isAddTileMode ? workspaceData.enterEditMode() : workspaceData.enterDragDropMode()"></div></div>');
-            addContainer = angular.element('<div ng-class="{\'presets-add-update-animation\': !isUpdateTileMode}" ng-show="isAddTileMode" class="presets-workspace-add-container"></div>');
-            updateContainer = angular.element('<div ng-class="{\'presets-add-update-animation\': !isAddTileMode}" ng-show="isUpdateTileMode" class="presets-workspace-update-container"></div>');
+            addContainer = angular.element('<div ng-init="isAddTileMode=false" ng-show="isAddTileMode" class="presets-workspace-add-container presets-add-update-animation"></div>');
+            updateContainer = angular.element('<div ng-init="isUpdateTileMode=false" ng-show="isUpdateTileMode" class="presets-workspace-update-container presets-add-update-animation"></div>');
             addUpdateContainer.append(addContainer);
             addUpdateContainer.append(updateContainer);
 
