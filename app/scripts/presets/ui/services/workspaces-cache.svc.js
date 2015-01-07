@@ -65,13 +65,9 @@
       });
 
       WorkspacesCache.prototype.info = function(){
-        var count = 0;
-        var keys = [];
+        var keys = Object.keys(this.storage.workspaces);
+        var count = keys.length;
 
-        for(var workspaceId in this.storage.workspaces){
-          keys.push(workspaceId);
-          count++;
-        }
         return {
           presetId: this._presetId,
           lifetime: this._lifetime,
