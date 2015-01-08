@@ -250,11 +250,11 @@
           throw new DeveloperError('invalid workspace name!');
         }
 
-        if(!isNullOrUndefined(workspace.modified) && !(workspace.modified instanceof Date)){
+        if(isNullOrUndefined(workspace.modified) || !(workspace.modified instanceof Date)){
           throw new DeveloperError('invalid workspace modified value!');
         }
 
-        if(!isNullOrUndefined(workspace.expires) && !(workspace.expires instanceof Date)){
+        if(isNullOrUndefined(workspace.expires) || !(workspace.expires instanceof Date)){
           throw new DeveloperError('invalid workspace expires value!');
         }
 
@@ -274,8 +274,14 @@
           throw new DeveloperError('workspace tiles must be instance of array');
         }
 
-        for(var i = 0; i < workspace.tiles.length; i++){
-          workspace.tiles[i] = validateTileByWorkspace(workspace.tiles[i], workspace);
+        if(workspace.tiles.length > 0){
+          var tempTiles = [];
+          while(workspace.tiles.length !== 0){
+            tempTiles.push(workspace.tiles.pop());
+          }
+          for(var i = 0; i < tempTiles.length; i++){
+            workspace.tiles.push(validateTileByWorkspace(tempTiles[i], workspace));
+          }
         }
 
         workspace.id = workspace.id.trim();
@@ -300,11 +306,11 @@
           throw new DeveloperError('invalid tile type name!');
         }
 
-        if(typeof tileType.creationInfo !== 'object'){
+        if(tileType.creationInfo === null || typeof tileType.creationInfo !== 'object'){
           throw new DeveloperError('invalid tile type creation info!');
         }
 
-        if(typeof tileType.presentationInfo !== 'object'){
+        if(tileType.presentationInfo === null || typeof tileType.presentationInfo !== 'object'){
           throw new DeveloperError('invalid tile type presentation info!');
         }
 
