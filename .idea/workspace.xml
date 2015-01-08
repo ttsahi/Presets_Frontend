@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32d0c907-dd96-494b-a32c-d7429bc3e1df" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/presets/ui/services/preset-validators.svc.js" afterPath="$PROJECT_DIR$/app/scripts/presets/ui/services/preset-validators.svc.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/spec/presets/ui/services/presets-validators.svc.spec.js" afterPath="$PROJECT_DIR$/test/spec/presets/ui/services/presets-validators.svc.spec.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/spec/presets/ui/services/mvc-generator.svc.spec.js" afterPath="$PROJECT_DIR$/test/spec/presets/ui/services/mvc-generator.svc.spec.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Presets_Frontend.iws" />
@@ -27,30 +26,7 @@
     <favorites_list name="Presets_Frontend" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="presets-validators.svc.spec.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/test/spec/presets/ui/services/presets-validators.svc.spec.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6788991" vertical-offset="7326" max-vertical-offset="8169">
-              <caret line="372" column="47" selection-start-line="372" selection-start-column="47" selection-end-line="372" selection-end-column="47" />
-              <folding>
-                <element signature="e#0#42#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="preset-validators.svc.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/services/preset-validators.svc.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="5913" max-vertical-offset="6820">
-              <caret line="312" column="36" selection-start-line="312" selection-start-column="36" selection-end-line="312" selection-end-column="36" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -67,7 +43,6 @@
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/templates/workspace/update-tile.html" />
         <option value="$PROJECT_DIR$/test/karma.conf.js" />
         <option value="$PROJECT_DIR$/test/spec/controllers/main.js" />
-        <option value="$PROJECT_DIR$/test/spec/presets/ui/services/mvc-generator.svc.spec.js" />
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/styles/presets-animations.css" />
         <option value="$PROJECT_DIR$/app/scripts/tiles/workspace-descriptor/creation-template.html" />
         <option value="$PROJECT_DIR$/app/scripts/tiles/workspace-descriptor/presntation-template.html" />
@@ -114,6 +89,7 @@
         <option value="$PROJECT_DIR$/test/spec/presets/ui/services/workspaces-cache.svc.spec.js" />
         <option value="$PROJECT_DIR$/test/spec/presets/ui/services/presets-validators.svc.spec.js" />
         <option value="$PROJECT_DIR$/app/scripts/presets/ui/services/preset-validators.svc.js" />
+        <option value="$PROJECT_DIR$/test/spec/presets/ui/services/mvc-generator.svc.spec.js" />
       </list>
     </option>
   </component>
@@ -249,6 +225,10 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="ui" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controllers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -906,12 +886,18 @@
       <option name="project" value="LOCAL" />
       <updated>1420707126094</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="finish preset-validators service tests.">
+      <created>1420717086036</created>
+      <option name="number" value="00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1420717086036</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Grunt" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32973504" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -972,7 +958,6 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="Fix all preset directive bugs." />
     <MESSAGE value="Add preset get tile async." />
     <MESSAGE value="add on refresh event to workspace cache." />
     <MESSAGE value="finish preset service crud options." />
@@ -997,7 +982,8 @@
     <MESSAGE value="finish tests for all controllers." />
     <MESSAGE value="add test fore workspaces cache service." />
     <MESSAGE value="continue with tests." />
-    <option name="LAST_COMMIT_MESSAGE" value="continue with tests." />
+    <MESSAGE value="finish preset-validators service tests." />
+    <option name="LAST_COMMIT_MESSAGE" value="finish preset-validators service tests." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1081,6 +1067,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.39974618" vertical-offset="0" max-vertical-offset="788">
           <caret line="17" column="57" selection-start-line="17" selection-start-column="57" selection-end-line="17" selection-end-column="57" />
+          <folding>
+            <element signature="e#0#42#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1102,20 +1091,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="788">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/services/mvc-generator.svc.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.47971013" vertical-offset="162" max-vertical-offset="2023">
-          <caret line="29" column="11" selection-start-line="29" selection-start-column="11" selection-end-line="29" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/spec/presets/ui/services/mvc-generator.svc.spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.17246377" vertical-offset="0" max-vertical-offset="690">
-          <caret line="7" column="30" selection-start-line="7" selection-start-column="30" selection-end-line="7" selection-end-column="30" />
         </state>
       </provider>
     </entry>
@@ -1418,14 +1393,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/services/preset-validators.svc.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="5913" max-vertical-offset="6820">
-          <caret line="312" column="36" selection-start-line="312" selection-start-column="36" selection-end-line="312" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/spec/presets/ui/services/presets-validators.svc.spec.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.6788991" vertical-offset="7326" max-vertical-offset="8169">
@@ -1433,6 +1400,30 @@
           <folding>
             <element signature="e#0#42#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/services/preset-validators.svc.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.49025488" vertical-offset="5913" max-vertical-offset="6820">
+          <caret line="312" column="36" selection-start-line="312" selection-start-column="36" selection-end-line="312" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/presets/ui/services/mvc-generator.svc.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.056971513" vertical-offset="489" max-vertical-offset="2023">
+          <caret line="31" column="7" selection-start-line="31" selection-start-column="7" selection-end-line="31" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/spec/presets/ui/services/mvc-generator.svc.spec.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="3.2113943" vertical-offset="0" max-vertical-offset="2667">
+          <caret line="102" column="87" selection-start-line="102" selection-start-column="87" selection-end-line="102" selection-end-column="87" />
+          <folding />
         </state>
       </provider>
     </entry>
