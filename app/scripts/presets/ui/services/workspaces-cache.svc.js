@@ -153,7 +153,7 @@
         }
 
         return null;
-      }
+      };
 
       WorkspacesCache.prototype.getTileAsync = function(workspaceId, tileId, fresh){
         var deferred = $q.defer();
